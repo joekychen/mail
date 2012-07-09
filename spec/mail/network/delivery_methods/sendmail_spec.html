@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › network › delivery_methods › sendmail_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>sendmail_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="s2">&quot;sendmail delivery agent&quot;</span> <span class="k">do</span>
+  
+  <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Reset all defaults back to original state</p></td><td class="code"><div class="highlight"><pre>    <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+      <span class="n">delivery_method</span> <span class="ss">:smtp</span><span class="p">,</span> <span class="p">{</span> <span class="ss">:address</span>              <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+                               <span class="ss">:port</span>                 <span class="o">=&gt;</span> <span class="mi">25</span><span class="p">,</span>
+                               <span class="ss">:domain</span>               <span class="o">=&gt;</span> <span class="s1">&#39;localhost.localdomain&#39;</span><span class="p">,</span>
+                               <span class="ss">:user_name</span>            <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                               <span class="ss">:password</span>             <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                               <span class="ss">:authentication</span>       <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                               <span class="ss">:enable_starttls_auto</span> <span class="o">=&gt;</span> <span class="kp">true</span>  <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should send an email using sendmail&quot;</span> <span class="k">do</span>
+    <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+      <span class="n">delivery_method</span> <span class="ss">:sendmail</span>
+    <span class="k">end</span>
+    
+    <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+      <span class="n">from</span>    <span class="s1">&#39;roger@test.lindsaar.net&#39;</span>
+      <span class="n">to</span>      <span class="s1">&#39;marcel@test.lindsaar.net, bob@test.lindsaar.net&#39;</span>
+      <span class="n">subject</span> <span class="s1">&#39;invalid RFC2822&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="no">Mail</span><span class="o">::</span><span class="no">Sendmail</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:call</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="s1">&#39;/usr/sbin/sendmail&#39;</span><span class="p">,</span> 
+                                              <span class="s1">&#39;-i -t -f &quot;roger@test.lindsaar.net&quot;&#39;</span><span class="p">,</span> 
+                                              <span class="s1">&#39;marcel@test.lindsaar.net bob@test.lindsaar.net&#39;</span><span class="p">,</span> 
+                                              <span class="n">mail</span><span class="p">)</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">deliver!</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;return path&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should send an email with a return-path using sendmail&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">delivery_method</span> <span class="ss">:sendmail</span>
+      <span class="k">end</span>
+
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+        <span class="n">to</span> <span class="s2">&quot;to@test.lindsaar.net&quot;</span>
+        <span class="n">from</span> <span class="s2">&quot;from@test.lindsaar.net&quot;</span>
+        <span class="n">sender</span> <span class="s2">&quot;sender@test.lindsaar.net&quot;</span>
+        <span class="n">subject</span> <span class="s2">&quot;Can&#39;t set the return-path&quot;</span>
+        <span class="n">return_path</span> <span class="s2">&quot;return@test.lindsaar.net&quot;</span>
+        <span class="n">message_id</span> <span class="s2">&quot;&lt;1234@test.lindsaar.net&gt;&quot;</span>
+        <span class="n">body</span> <span class="s2">&quot;body&quot;</span>
+      <span class="k">end</span>
+      
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Sendmail</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:call</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="s1">&#39;/usr/sbin/sendmail&#39;</span><span class="p">,</span>
+                                                <span class="s1">&#39;-i -t -f &quot;return@test.lindsaar.net&quot;&#39;</span><span class="p">,</span> 
+                                                <span class="s1">&#39;to@test.lindsaar.net&#39;</span><span class="p">,</span> 
+                                                <span class="n">mail</span><span class="p">)</span>
+                                                
+      <span class="n">mail</span><span class="o">.</span><span class="n">deliver</span>
+
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should use the sender address is no return path is specified&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">delivery_method</span> <span class="ss">:sendmail</span>
+      <span class="k">end</span>
+
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+        <span class="n">to</span> <span class="s2">&quot;to@test.lindsaar.net&quot;</span>
+        <span class="n">from</span> <span class="s2">&quot;from@test.lindsaar.net&quot;</span>
+        <span class="n">sender</span> <span class="s2">&quot;sender@test.lindsaar.net&quot;</span>
+        <span class="n">subject</span> <span class="s2">&quot;Can&#39;t set the return-path&quot;</span>
+        <span class="n">message_id</span> <span class="s2">&quot;&lt;1234@test.lindsaar.net&gt;&quot;</span>
+        <span class="n">body</span> <span class="s2">&quot;body&quot;</span>
+      <span class="k">end</span>
+
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Sendmail</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:call</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="s1">&#39;/usr/sbin/sendmail&#39;</span><span class="p">,</span>
+                                                <span class="s1">&#39;-i -t -f &quot;sender@test.lindsaar.net&quot;&#39;</span><span class="p">,</span> 
+                                                <span class="s1">&#39;to@test.lindsaar.net&#39;</span><span class="p">,</span> 
+                                                <span class="n">mail</span><span class="p">)</span>
+
+      <span class="n">mail</span><span class="o">.</span><span class="n">deliver</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should use the from address is no return path or sender are specified&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">delivery_method</span> <span class="ss">:sendmail</span>
+      <span class="k">end</span>
+
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+        <span class="n">to</span> <span class="s2">&quot;to@test.lindsaar.net&quot;</span>
+        <span class="n">from</span> <span class="s2">&quot;from@test.lindsaar.net&quot;</span>
+        <span class="n">subject</span> <span class="s2">&quot;Can&#39;t set the return-path&quot;</span>
+        <span class="n">message_id</span> <span class="s2">&quot;&lt;1234@test.lindsaar.net&gt;&quot;</span>
+        <span class="n">body</span> <span class="s2">&quot;body&quot;</span>
+      <span class="k">end</span>
+
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Sendmail</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:call</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="s1">&#39;/usr/sbin/sendmail&#39;</span><span class="p">,</span>
+                                                <span class="s1">&#39;-i -t -f &quot;from@test.lindsaar.net&quot;&#39;</span><span class="p">,</span> 
+                                                <span class="s1">&#39;to@test.lindsaar.net&#39;</span><span class="p">,</span> 
+                                                <span class="n">mail</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">deliver</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should escape the return path address&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">delivery_method</span> <span class="ss">:sendmail</span>
+      <span class="k">end</span>
+
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+        <span class="n">to</span> <span class="s1">&#39;to@test.lindsaar.net&#39;</span>
+        <span class="n">from</span> <span class="s1">&#39;&quot;from+suffix test&quot;@test.lindsaar.net&#39;</span>
+        <span class="n">subject</span> <span class="s1">&#39;Can\&#39;t set the return-path&#39;</span>
+        <span class="n">message_id</span> <span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span>
+        <span class="n">body</span> <span class="s1">&#39;body&#39;</span>
+      <span class="k">end</span>
+
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Sendmail</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:call</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="s1">&#39;/usr/sbin/sendmail&#39;</span><span class="p">,</span>
+                                                <span class="s1">&#39;-i -t -f &quot;\&quot;from+suffix test\&quot;@test.lindsaar.net&quot;&#39;</span><span class="p">,</span>
+                                                <span class="s1">&#39;to@test.lindsaar.net&#39;</span><span class="p">,</span>
+                                                <span class="n">mail</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">deliver</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should still send an email if the settings have been set to nil&quot;</span> <span class="k">do</span>
+    <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+      <span class="n">delivery_method</span> <span class="ss">:sendmail</span><span class="p">,</span> <span class="ss">:arguments</span> <span class="o">=&gt;</span> <span class="kp">nil</span>
+    <span class="k">end</span>
+    
+    <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+      <span class="n">from</span>    <span class="s1">&#39;from@test.lindsaar.net&#39;</span>
+      <span class="n">to</span>      <span class="s1">&#39;marcel@test.lindsaar.net, bob@test.lindsaar.net&#39;</span>
+      <span class="n">subject</span> <span class="s1">&#39;invalid RFC2822&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="no">Mail</span><span class="o">::</span><span class="no">Sendmail</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:call</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="s1">&#39;/usr/sbin/sendmail&#39;</span><span class="p">,</span> 
+                                              <span class="s1">&#39;-f &quot;from@test.lindsaar.net&quot;&#39;</span><span class="p">,</span> 
+                                              <span class="s1">&#39;marcel@test.lindsaar.net bob@test.lindsaar.net&#39;</span><span class="p">,</span> 
+                                              <span class="n">mail</span><span class="p">)</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">deliver!</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should escape evil haxxor attemptes&quot;</span> <span class="k">do</span>
+    <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+      <span class="n">delivery_method</span> <span class="ss">:sendmail</span><span class="p">,</span> <span class="ss">:arguments</span> <span class="o">=&gt;</span> <span class="kp">nil</span>
+    <span class="k">end</span>
+    
+    <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+      <span class="n">from</span>    <span class="s1">&#39;&quot;foo\&quot;;touch /tmp/PWNED;\&quot;&quot;@blah.com&#39;</span>
+      <span class="n">to</span>      <span class="s1">&#39;&quot;foo\&quot;;touch /tmp/PWNED;\&quot;&quot;@blah.com&#39;</span>
+      <span class="n">subject</span> <span class="s1">&#39;invalid RFC2822&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="no">Mail</span><span class="o">::</span><span class="no">Sendmail</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:call</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="s1">&#39;/usr/sbin/sendmail&#39;</span><span class="p">,</span> 
+                                              <span class="s2">&quot;-f </span><span class="se">\&quot;\\\&quot;</span><span class="s2">foo</span><span class="se">\\\\\\\&quot;\\</span><span class="s2">;touch /tmp/PWNED</span><span class="se">\\</span><span class="s2">;</span><span class="se">\\\\\\\&quot;\\\&quot;</span><span class="s2">@blah.com</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span> 
+                                              <span class="s2">&quot;</span><span class="se">\\\&quot;</span><span class="s2">foo</span><span class="se">\\\\\\\&quot;\\</span><span class="s2">;touch /tmp/PWNED</span><span class="se">\\</span><span class="s2">;</span><span class="se">\\\\\\\&quot;\\\&quot;</span><span class="s2">@blah.com&quot;</span><span class="p">,</span> 
+                                              <span class="n">mail</span><span class="p">)</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">deliver!</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

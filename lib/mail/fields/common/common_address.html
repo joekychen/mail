@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › fields › common › common_address.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>common_address.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;mail/fields/common/address_container&#39;</span>
+
+<span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">module</span> <span class="nn">CommonAddress</span> <span class="c1"># :nodoc:</span>
+      
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">val</span> <span class="o">=</span> <span class="n">value</span><span class="p">)</span>
+      <span class="k">unless</span> <span class="n">val</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="vi">@tree</span> <span class="o">=</span> <span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">encode_if_needed</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+      <span class="k">else</span>
+        <span class="kp">nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">charset</span>
+      <span class="vi">@charset</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">encode_if_needed</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+      <span class="no">Encodings</span><span class="o">.</span><span class="n">address_encode</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Allows you to iterate through each address object in the syntax tree</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">each</span>
+      <span class="n">tree</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">address</span><span class="o">|</span>
+        <span class="k">yield</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Returns the address string of all the addresses in the address list</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">addresses</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">address</span> <span class="p">}</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">AddressContainer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">list</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Returns the formatted string of all the addresses in the address list</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">formatted</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">format</span> <span class="p">}</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">AddressContainer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">list</span><span class="p">)</span>
+    <span class="k">end</span>
+  </pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Returns the display name of all the addresses in the address list</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">display_names</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">display_name</span> <span class="p">}</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">AddressContainer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">list</span><span class="p">)</span>
+    <span class="k">end</span>
+  </pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>Returns the actual address objects in the address list</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">addrs</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">addresses</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">AddressContainer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">list</span><span class="p">)</span>
+    <span class="k">end</span>
+  </pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>Returns a hash of group name => address strings for the address list</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">groups</span>
+      <span class="vi">@groups</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">tree</span><span class="o">.</span><span class="n">group_recipients</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">group</span><span class="o">|</span>
+        <span class="vi">@groups</span><span class="o">[</span><span class="n">group</span><span class="o">.</span><span class="n">group_name</span><span class="o">.</span><span class="n">text_value</span><span class="o">.</span><span class="n">to_str</span><span class="o">]</span> <span class="o">=</span> <span class="n">get_group_addresses</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">group_list</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="vi">@groups</span>
+    <span class="k">end</span>
+  </pre></div></td></tr>
+
+
+<tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>Returns the addresses that are part of groups</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">group_addresses</span>
+      <span class="n">groups</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">v</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">format</span> <span class="p">}</span> <span class="p">}</span><span class="o">.</span><span class="n">flatten</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-9"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-9">&#182;</a></div><p>Returns the name of all the groups in a string</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">group_names</span> <span class="c1"># :nodoc:</span>
+      <span class="n">tree</span><span class="o">.</span><span class="n">group_names</span>
+    <span class="k">end</span>
+  
+    <span class="k">def</span> <span class="nf">default</span>
+      <span class="n">addresses</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">&lt;&lt;</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">val</span><span class="o">.</span><span class="n">nil?</span>
+        <span class="k">raise</span> <span class="no">ArgumentError</span><span class="p">,</span> <span class="s2">&quot;Need to pass an address to &lt;&lt;&quot;</span>
+      <span class="k">when</span> <span class="n">val</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="n">parse</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="n">parse</span><span class="p">((</span><span class="n">formatted</span> <span class="o">+</span> <span class="o">[</span><span class="n">val</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">))</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  
+    <span class="kp">private</span>
+  
+    <span class="k">def</span> <span class="nf">do_encode</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+      <span class="k">return</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">blank?</span>
+      <span class="n">address_array</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">reject</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">group_addresses</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">encoded</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">compact</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">encoded</span> <span class="p">}</span>
+      <span class="n">address_text</span>  <span class="o">=</span> <span class="n">address_array</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;, </span><span class="se">\r\n\s</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">group_array</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">v</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">encoded</span> <span class="si">}</span><span class="s2">.join(&quot;</span><span class="p">,</span> <span class="p">\</span><span class="n">r</span><span class="p">\</span><span class="n">n</span><span class="p">\</span><span class="n">s</span><span class="s2">&quot;)};&quot;</span> <span class="p">}</span>
+      <span class="n">group_text</span>  <span class="o">=</span> <span class="n">group_array</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot; </span><span class="se">\r\n\s</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">return_array</span> <span class="o">=</span> <span class="o">[</span><span class="n">address_text</span><span class="p">,</span> <span class="n">group_text</span><span class="o">].</span><span class="n">reject</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">blank?</span> <span class="p">}</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">return_array</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;, </span><span class="se">\r\n\s</span><span class="s2">&quot;</span><span class="p">)</span><span class="si">}</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">do_decode</span>
+      <span class="k">return</span> <span class="kp">nil</span> <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">blank?</span>
+      <span class="n">address_array</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">reject</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">group_addresses</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">decoded</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">decoded</span> <span class="p">}</span>
+      <span class="n">address_text</span>  <span class="o">=</span> <span class="n">address_array</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+      <span class="n">group_array</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">v</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">decoded</span> <span class="si">}</span><span class="s2">.join(&quot;</span><span class="p">,</span> <span class="s2">&quot;)};&quot;</span> <span class="p">}</span>
+      <span class="n">group_text</span>  <span class="o">=</span> <span class="n">group_array</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+      <span class="n">return_array</span> <span class="o">=</span> <span class="o">[</span><span class="n">address_text</span><span class="p">,</span> <span class="n">group_text</span><span class="o">].</span><span class="n">reject</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">blank?</span> <span class="p">}</span>
+      <span class="n">return_array</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-10"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-10">&#182;</a></div><p>Returns the syntax tree of the Addresses</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">tree</span> <span class="c1"># :nodoc:</span>
+      <span class="vi">@tree</span> <span class="o">||=</span> <span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">end</span>
+  
+    <span class="k">def</span> <span class="nf">get_group_addresses</span><span class="p">(</span><span class="n">group_list</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">group_list</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:addresses</span><span class="p">)</span>
+        <span class="n">group_list</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">address_tree</span><span class="o">|</span>
+          <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">address_tree</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="k">else</span>
+        <span class="o">[]</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

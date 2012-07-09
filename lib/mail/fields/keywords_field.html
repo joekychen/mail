@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › fields › keywords_field.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>keywords_field.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p>
+
+<p>keywords        =       "Keywords:" phrase *("," phrase) CRLF</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">class</span> <span class="nc">KeywordsField</span> <span class="o">&lt;</span> <span class="no">StructuredField</span>
+    
+    <span class="no">FIELD_NAME</span> <span class="o">=</span> <span class="s1">&#39;keywords&#39;</span>
+    <span class="no">CAPITALIZED_FIELD</span> <span class="o">=</span> <span class="s1">&#39;Keywords&#39;</span>
+    
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">,</span> <span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="n">charset</span>
+      <span class="k">super</span><span class="p">(</span><span class="no">CAPITALIZED_FIELD</span><span class="p">,</span> <span class="n">strip_field</span><span class="p">(</span><span class="no">FIELD_NAME</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">charset</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">parse</span>
+      <span class="nb">self</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">val</span> <span class="o">=</span> <span class="n">value</span><span class="p">)</span>
+      <span class="k">unless</span> <span class="n">val</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="vi">@phrase_list</span> <span class="o">||=</span> <span class="no">PhraseList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">phrase_list</span>
+      <span class="vi">@phrase_list</span> <span class="o">||=</span> <span class="no">PhraseList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">end</span>
+      
+    <span class="k">def</span> <span class="nf">keywords</span>
+      <span class="n">phrase_list</span><span class="o">.</span><span class="n">phrases</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">encoded</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="no">CAPITALIZED_FIELD</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">keywords</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span><span class="si">}</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">decoded</span>
+      <span class="n">keywords</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">default</span>
+      <span class="n">keywords</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

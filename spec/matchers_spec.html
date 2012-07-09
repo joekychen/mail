@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › matchers_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../index.html"></a><h1>matchers_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">)),</span> <span class="s1">&#39;spec_helper&#39;</span><span class="p">)</span>
+
+<span class="n">describe</span> <span class="s2">&quot;have_sent_email&quot;</span> <span class="k">do</span>
+  <span class="kp">include</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Matchers</span>
+
+  <span class="k">def</span> <span class="nf">send_test_email</span>
+    <span class="no">Mail</span><span class="o">.</span><span class="n">deliver</span> <span class="k">do</span>
+      <span class="n">from</span>    <span class="s1">&#39;phil@example.com&#39;</span>
+      <span class="n">to</span>      <span class="o">[</span><span class="s1">&#39;bob@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;fred@example.com&#39;</span><span class="o">]</span>
+      <span class="n">subject</span> <span class="s1">&#39;The facts you requested&#39;</span>
+      <span class="n">body</span>    <span class="s1">&#39;Here are the facts you requested. One-onethousand, two-onethousand.&#39;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">before</span><span class="p">(</span><span class="ss">:all</span><span class="p">)</span> <span class="k">do</span>
+    <span class="vg">$old_delivery_method</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">delivery_method</span>
+
+    <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+      <span class="n">delivery_method</span> <span class="ss">:test</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">after</span><span class="p">(</span><span class="ss">:all</span><span class="p">)</span> <span class="k">do</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Although this breaks encapsulation, it's the easiest way to ensure
+that the delivery method is <em>exactly</em> what it was before we started
+messing with it.</p></td><td class="code"><div class="highlight"><pre>    <span class="no">Mail</span><span class="o">::</span><span class="no">Configuration</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">instance_variable_set</span><span class="p">(</span><span class="ss">:@delivery_method</span><span class="p">,</span> <span class="vg">$old_delivery_method</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">&quot;without any modifiers&quot;</span> <span class="k">do</span>
+    <span class="n">context</span> <span class="s2">&quot;when no e-mail has been sent&quot;</span> <span class="k">do</span>
+      <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">TestMailer</span><span class="o">.</span><span class="n">deliveries</span><span class="o">.</span><span class="n">clear</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">TestMailer</span><span class="o">.</span><span class="n">deliveries</span><span class="o">.</span><span class="n">should</span> <span class="n">be_empty</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">have_sent_email</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">&quot;when e-mail has been sent&quot;</span> <span class="k">do</span>
+      <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+        <span class="n">send_test_email</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">TestMailer</span><span class="o">.</span><span class="n">deliveries</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_empty</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_sent_email</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">&quot;with #from&quot;</span> <span class="k">do</span>
+    <span class="n">context</span> <span class="s2">&quot;and a matching sender&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">from</span><span class="p">(</span><span class="s1">&#39;phil@example.com&#39;</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">&quot;and a non-matching sender&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">from</span><span class="p">(</span><span class="s1">&#39;sven@example.com&#39;</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">&quot;with #to&quot;</span> <span class="k">do</span>
+    <span class="n">context</span> <span class="s2">&quot;and a matching recipient&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;bob@example.com&#39;</span><span class="p">)</span> <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;fred@example.com&#39;</span><span class="p">)</span> <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;bob@example.com&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;fred@example.com&#39;</span><span class="p">)</span> <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="o">[</span><span class="s1">&#39;bob@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;fred@example.com&#39;</span><span class="o">]</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">&quot;and a non-matching recipient&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;sven@example.com&#39;</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">&quot;with #subject&quot;</span> <span class="k">do</span>
+    <span class="n">context</span> <span class="s2">&quot;and a matching subject&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">with_subject</span><span class="p">(</span><span class="s1">&#39;The facts you requested&#39;</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">&quot;and a non-matching subject&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">with_subject</span><span class="p">(</span><span class="s1">&#39;facts you requested&#39;</span><span class="p">)</span> <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">with_subject</span><span class="p">(</span><span class="s1">&#39;the facts you&#39;</span><span class="p">)</span> <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">with_subject</span><span class="p">(</span><span class="s1">&#39;outright lies&#39;</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">&quot;with #subject_matching&quot;</span> <span class="k">do</span>
+    <span class="n">context</span> <span class="s2">&quot;and a matching subject&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">matching_subject</span><span class="p">(</span><span class="sr">/(facts|fiction) you requested/</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">&quot;and a non-matching subject&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">matching_subject</span><span class="p">(</span><span class="sr">/The \d+ facts you requested/</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">&quot;with #with_body&quot;</span> <span class="k">do</span>
+    <span class="n">context</span> <span class="s2">&quot;and a matching body&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">with_body</span><span class="p">(</span><span class="s1">&#39;Here are the facts you requested. One-onethousand, two-onethousand.&#39;</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">&quot;and a non-matching body&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">with_body</span><span class="p">(</span><span class="s1">&#39;Here are the facts you requested.&#39;</span><span class="p">)</span> <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">with_body</span><span class="p">(</span><span class="s1">&#39;are the facts you requested. One-onethousand&#39;</span><span class="p">)</span> <span class="p">}</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">with_body</span><span class="p">(</span><span class="s1">&#39;Be kind to your web-footed friends, for a duck may be somebody\&#39;s mother&#39;</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">&quot;with #matching_body&quot;</span> <span class="k">do</span>
+    <span class="n">context</span> <span class="s2">&quot;and a matching body&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">matching_body</span><span class="p">(</span><span class="sr">/one-?one(hundred|thousand)/i</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">&quot;and a non-matching body&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="p">{</span> <span class="n">should_not</span> <span class="n">have_sent_email</span><span class="o">.</span><span class="n">matching_body</span><span class="p">(</span><span class="sr">/\d+-onethousand/</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">&quot;with a huge chain of modifiers&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="k">do</span>
+      <span class="n">should</span> <span class="n">have_sent_email</span><span class="o">.</span>
+             <span class="n">from</span><span class="p">(</span><span class="s1">&#39;phil@example.com&#39;</span><span class="p">)</span><span class="o">.</span>
+             <span class="n">to</span><span class="p">(</span><span class="s1">&#39;bob@example.com&#39;</span><span class="p">)</span><span class="o">.</span>
+             <span class="n">to</span><span class="p">(</span><span class="s1">&#39;fred@example.com&#39;</span><span class="p">)</span><span class="o">.</span>
+             <span class="n">with_subject</span><span class="p">(</span><span class="s1">&#39;The facts you requested&#39;</span><span class="p">)</span><span class="o">.</span>
+             <span class="n">matching_subject</span><span class="p">(</span><span class="sr">/facts (I|you)/</span><span class="p">)</span><span class="o">.</span>
+             <span class="n">with_body</span><span class="p">(</span><span class="s1">&#39;Here are the facts you requested. One-onethousand, two-onethousand.&#39;</span><span class="p">)</span><span class="o">.</span>
+             <span class="n">matching_body</span><span class="p">(</span><span class="sr">/(I|you) request/</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:1}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../javascript/docco.min.js"></script>
+</html>

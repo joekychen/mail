@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › fields.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>fields.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  <span class="nb">autoload</span> <span class="ss">:UnstructuredField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/unstructured_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:StructuredField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/structured_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:OptionalField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/optional_field&#39;</span>
+
+  <span class="nb">autoload</span> <span class="ss">:BccField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/bcc_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:CcField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/cc_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:CommentsField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/comments_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ContentDescriptionField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/content_description_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ContentDispositionField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/content_disposition_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ContentIdField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/content_id_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ContentLocationField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/content_location_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ContentTransferEncodingField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/content_transfer_encoding_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ContentTypeField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/content_type_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:DateField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/date_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:FromField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/from_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:InReplyToField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/in_reply_to_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:KeywordsField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/keywords_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:MessageIdField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/message_id_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:MimeVersionField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/mime_version_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ReceivedField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/received_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ReferencesField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/references_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ReplyToField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/reply_to_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ResentBccField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/resent_bcc_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ResentCcField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/resent_cc_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ResentDateField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/resent_date_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ResentFromField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/resent_from_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ResentMessageIdField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/resent_message_id_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ResentSenderField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/resent_sender_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ResentToField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/resent_to_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ReturnPathField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/return_path_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:SenderField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/sender_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:SubjectField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/subject_field&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:ToField</span><span class="p">,</span> <span class="s1">&#39;mail/fields/to_field&#39;</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

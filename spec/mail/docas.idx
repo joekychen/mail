@@ -1,0 +1,26 @@
+d | core_extensions |  | 1 items |  | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | example_emails_spec.rb | s | 14K | 282 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | encodings_spec.rb | s | 32K | 656 | Jan Varwig | jan@varwig.org | 1327759423 |  | Encodings.value_decode(str): Treat lines with mixed encoding correctly when the line ends with a plain text part.  Fixes mikel/mail#338
+d | encodings |  | 2 items |  | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | mime_messages_spec.rb | s | 18K | 421 | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+d | network |  | 2 items |  | Mikel Lindsaar | mikel@rubyx.com | 1331725467 |  | Preventing file system traversal in file_delivery method
+f | network_spec.rb | s | 12K | 302 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+d | version_specific |  | 1 items |  | Jeremy Kemper | jeremy@bitsweat.net | 1269763953 |  | Use LOAD_PATH for spec_helper instead of relative requires
+f | message_spec.rb | s | 69K | 1473 | Mikel Lindsaar | mikel@rubyx.com | 1327067645 |  | Merge branch 'master' into kennyj-fix_warning_use_of_==_in_void_context-2
+f | mail_spec.rb | s | 969B | 28 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | multipart_report_spec.rb | s | 3.6K | 88 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | utilities_spec.rb | s | 9.7K | 261 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | round_tripping_spec.rb | s | 1.4K | 39 | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | field_spec.rb | s | 11K | 226 | Bogdan Gusiev | agresso@gmail.com | 1327059326 |  | Normalize parse error
+f | attachments_list_spec.rb | s | 11K | 263 | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | core_extensions_spec.rb | s | 2.8K | 77 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | configuration_spec.rb | s | 1.6K | 37 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+d | elements |  | 7 items |  | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | header_spec.rb | s | 23K | 497 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | parts_list_spec.rb | s | 391B | 17 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+d | fields |  | 32 items |  | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | part_spec.rb | s | 4.6K | 122 | kennyj | kennyj@gmail.com | 1326549913 |  | Fix warning: ambiguous first argument; put parentheses or even spaces
+d | parsers |  | 2 items |  | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | field_list_spec.rb | s | 1.5K | 29 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | encoding_spec.rb | s | 7.8K | 176 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | body_spec.rb | s | 16K | 336 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"

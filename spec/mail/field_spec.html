@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span> <span class="k">do</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;initialization&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should be instantiated&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span><span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;To: Mikel&#39;</span><span class="p">)}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;To: Mikel&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to init on an array&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To&quot;</span><span class="p">,</span> <span class="o">[</span><span class="s1">&#39;test1@lindsaar.net&#39;</span><span class="p">,</span> <span class="s1">&#39;Mikel &lt;test2@lindsaar.net&gt;&#39;</span><span class="o">]</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;test1@lindsaar.net&quot;</span><span class="p">,</span> <span class="s2">&quot;test2@lindsaar.net&quot;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow us to pass an empty value&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span><span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;To&#39;</span><span class="p">)}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;To&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow us to pass a value&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span><span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;To&#39;</span><span class="p">,</span> <span class="s1">&#39;Mikel&#39;</span><span class="p">)}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;To&#39;</span><span class="p">,</span> <span class="s1">&#39;Mikel&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should match up fields to class names&quot;</span> <span class="k">do</span>
+      <span class="n">structured_fields</span> <span class="o">=</span> <span class="sx">%w[ Date From Sender Reply-To To Cc Bcc Message-ID In-Reply-To</span>
+<span class="sx">                              References Keywords Resent-Date Resent-From Resent-Sender</span>
+<span class="sx">                              Resent-To Resent-Cc Resent-Bcc Resent-Message-ID</span>
+<span class="sx">                              Return-Path Received Subject Comments Mime-Version</span>
+<span class="sx">                              Content-Transfer-Encoding Content-Description</span>
+<span class="sx">                              Content-Disposition Content-Type ]</span>
+      <span class="n">structured_fields</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">sf</span><span class="o">|</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">capitalize</span> <span class="p">}</span>
+        <span class="n">klass</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">words</span><span class="o">.</span><span class="n">join</span><span class="si">}</span><span class="s2">Field&quot;</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">sf</span><span class="si">}</span><span class="s2">: &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">.</span><span class="n">const_get</span><span class="p">(</span><span class="n">klass</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should match up fields to class names regardless of case&quot;</span> <span class="k">do</span>
+      <span class="n">structured_fields</span> <span class="o">=</span> <span class="sx">%w[ dATE fROM sENDER REPLY-TO TO CC BCC MESSAGE-ID IN-REPLY-TO</span>
+<span class="sx">                              REFERENCES KEYWORDS resent-date resent-from rESENT-sENDER</span>
+<span class="sx">                              rESENT-tO rESent-cc resent-bcc reSent-MESSAGE-iD</span>
+<span class="sx">                              rEtURN-pAtH rEcEiVeD Subject Comments Mime-VeRSIOn</span>
+<span class="sx">                              cOntenT-transfer-EnCoDiNg Content-Description</span>
+<span class="sx">                              Content-Disposition cOnTENt-TyPe ]</span>
+      <span class="n">structured_fields</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">sf</span><span class="o">|</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">capitalize</span> <span class="p">}</span>
+        <span class="n">klass</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">words</span><span class="o">.</span><span class="n">join</span><span class="si">}</span><span class="s2">Field&quot;</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">sf</span><span class="si">}</span><span class="s2">: &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">.</span><span class="n">const_get</span><span class="p">(</span><span class="n">klass</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should say anything that is not a known field is an optional field&quot;</span> <span class="k">do</span>
+      <span class="n">unstructured_fields</span> <span class="o">=</span> <span class="sx">%w[ Too Becc bccc Random X-Mail MySpecialField ]</span>
+      <span class="n">unstructured_fields</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">sf</span><span class="o">|</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">sf</span><span class="si">}</span><span class="s2">: Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">OptionalField</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should split the name and values out of the raw field passed in&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;To: Bob&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;To&#39;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Bob&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should split the name and values out of the raw field passed in if missing whitespace&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;To:Bob&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;To&#39;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Bob&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should split the name and values out of the raw field passed in if having added inapplicable whitespace&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;To                  :                   Bob                      &#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;To&#39;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Bob&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should return an unstuctured field if the structured field parsing raises an error&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:new</span><span class="p">)</span><span class="o">.</span><span class="n">and_raise</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">::</span><span class="no">ParseError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="p">,</span> <span class="s1">&#39;To: Bob, ,,, Frank, Smith&#39;</span><span class="p">,</span> <span class="s2">&quot;Some reason&quot;</span><span class="p">))</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;To: Bob, ,,, Frank, Smith&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;To&#39;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Bob, ,,, Frank, Smith&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should call to_s on it&#39;s field when sent to_s&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Subject: Hello bob&#39;</span><span class="p">)</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:new</span><span class="p">)</span><span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="vi">@field</span><span class="p">)</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:to_s</span><span class="p">)</span><span class="o">.</span><span class="n">once</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Subject: Hello bob&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_s</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should pass missing methods to it&#39;s instantiated field class&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;To: Bob&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:addresses</span><span class="p">)</span><span class="o">.</span><span class="n">once</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">addresses</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should change it&#39;s type if you change the name&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: mikel@me.com&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;bob@me.com&quot;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should create a field without trying to parse if given a symbol&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Message-ID&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should inherit charset&quot;</span> <span class="k">do</span>
+      <span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;iso-2022-jp&#39;</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Subject: こんにちは&#39;</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">charset</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">charset</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;error handling&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should populate the errors array if it finds a field it can&#39;t deal with&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Transfer-Encoding: bit&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">errors</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Content-Transfer-Encoding&#39;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">errors</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">1</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;bit&#39;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">errors</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">2</span><span class="o">].</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="o">=~</span> <span class="sr">/ContentTransferEncodingElement can not parse |17-bit|/</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;helper methods&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should reply if it is responsible for a field name as a capitalized string - structured field&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: mikel@test.lindsaar.net&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">responsible_for?</span><span class="p">(</span><span class="s2">&quot;To&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should reply if it is responsible for a field as a lower case string - structured field&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: mikel@test.lindsaar.net&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">responsible_for?</span><span class="p">(</span><span class="s2">&quot;to&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should reply if it is responsible for a field as a symbol - structured field&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: mikel@test.lindsaar.net&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">responsible_for?</span><span class="p">(</span><span class="ss">:to</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should say it is == to another if their field names match&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: mikel&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">same</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: bob&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should say it is not == to another if their field names do not match&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;From: mikel&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should_not</span> <span class="o">==</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: bob&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should sort according to the field order&quot;</span> <span class="k">do</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="o">[</span><span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: mikel&quot;</span><span class="p">),</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Return-Path: bob&quot;</span><span class="p">)</span><span class="o">]</span>
+      <span class="n">list</span><span class="o">.</span><span class="n">sort</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Return-Path&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s1">&#39;user defined fields&#39;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should say it is == to another if their field names match&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;X-Foo: mikel&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">same</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;X-Foo: bob&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should say it is not == to another if their field names do not match&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;X-Foo: mikel&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should_not</span> <span class="o">==</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;X-Bar: bob&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;passing an encoding&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should allow you to send in unencoded strings to fields and encode them&quot;</span> <span class="k">do</span>
+      <span class="n">subject</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;This is あ string&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">subject</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Subject: =?UTF-8?Q?This_is_=E3=81=82_string?=</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">subject</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;This is あ string&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to send in unencoded strings to address fields and encode them&quot;</span> <span class="k">do</span>
+      <span class="n">to</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&quot;Mikel Lindsああr&quot; &lt;mikel@test.lindsaar.net&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">to</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;To: =?UTF-8?B?TWlrZWwgTGluZHPjgYLjgYJy?= &lt;mikel@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to send in unencoded strings without quotes to address fields and encode them&quot;</span> <span class="k">do</span>
+      <span class="n">to</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Mikel Lindsああr &lt;mikel@test.lindsaar.net&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">to</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;To: Mikel =?UTF-8?B?TGluZHPjgYLjgYJy?= &lt;mikel@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to send in unencoded strings to address fields and encode them&quot;</span> <span class="k">do</span>
+      <span class="n">to</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;あdあ &lt;ada@test.lindsaar.net&gt;&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">to</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;To: =?UTF-8?B?44GCZOOBgg==?= &lt;ada@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to send in multiple unencoded strings to address fields and encode them&quot;</span> <span class="k">do</span>
+      <span class="n">to</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">[</span><span class="s2">&quot;Mikel Lindsああr &lt;mikel@test.lindsaar.net&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;あdあ &lt;ada@test.lindsaar.net&gt;&quot;</span><span class="o">]</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">to</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;To: Mikel =?UTF-8?B?TGluZHPjgYLjgYJy?= &lt;mikel@test.lindsaar.net&gt;, </span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?B?44GCZOOBgg==?= &lt;ada@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to send in multiple unencoded strings to any address field&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span>
+      <span class="n">array</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;Mikel Lindsああr &lt;mikel@test.lindsaar.net&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;あdあ &lt;ada@test.lindsaar.net&gt;&quot;</span><span class="o">]</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">::</span><span class="no">CAPITALIZED_FIELD</span><span class="si">}</span><span class="s2">: Mikel =?UTF-8?B?TGluZHPjgYLjgYJy?= &lt;mikel@test.lindsaar.net&gt;, </span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?B?44GCZOOBgg==?= &lt;ada@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">FromField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Mail</span><span class="o">::</span><span class="no">FromField</span><span class="o">::</span><span class="no">CAPITALIZED_FIELD</span><span class="si">}</span><span class="s2">: Mikel =?UTF-8?B?TGluZHPjgYLjgYJy?= &lt;mikel@test.lindsaar.net&gt;, </span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?B?44GCZOOBgg==?= &lt;ada@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">CcField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Mail</span><span class="o">::</span><span class="no">CcField</span><span class="o">::</span><span class="no">CAPITALIZED_FIELD</span><span class="si">}</span><span class="s2">: Mikel =?UTF-8?B?TGluZHPjgYLjgYJy?= &lt;mikel@test.lindsaar.net&gt;, </span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?B?44GCZOOBgg==?= &lt;ada@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ReplyToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Mail</span><span class="o">::</span><span class="no">ReplyToField</span><span class="o">::</span><span class="no">CAPITALIZED_FIELD</span><span class="si">}</span><span class="s2">: Mikel =?UTF-8?B?TGluZHPjgYLjgYJy?= &lt;mikel@test.lindsaar.net&gt;, </span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?B?44GCZOOBgg==?= &lt;ada@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow an encoded value in the Subject field and decode it automatically (issue 44)&quot;</span> <span class="k">do</span>
+      <span class="n">pending</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+      <span class="n">subject</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;=?ISO-8859-1?Q?2_=FAlt?=&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">subject</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;2 últ&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to encoded text in the middle (issue 44)&quot;</span> <span class="k">do</span>
+      <span class="n">pending</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+      <span class="n">subject</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;ma=?ISO-8859-1?Q?=F1ana?=&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">subject</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;mañana&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;more tolerable to encoding definitions, ISO (issue 120)&quot;</span> <span class="k">do</span>
+      <span class="n">pending</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+      <span class="n">subject</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;ma=?ISO88591?Q?=F1ana?=&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">subject</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;mañana&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;more tolerable to encoding definitions, ISO-long (issue 120)&quot;</span> <span class="k">do</span>
+      <span class="n">pending</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+      <span class="n">subject</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;=?iso2022jp?B?SEVBUlQbJEIkSiQ0TyJNbRsoQg?=&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">subject</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span>  <span class="s2">&quot;HEARTなご連絡&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;more tolerable to encoding definitions, UTF (issue 120)&quot;</span> <span class="k">do</span>
+      <span class="n">to</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;=?utf8?B?44GCZOOBgg==?= &lt;ada@test.lindsaar.net&gt;&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">to</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;To: =?utf8?B?44GCZOOBgg==?= &lt;ada@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">to</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">あdあ</span><span class="se">\&quot;</span><span class="s2"> &lt;ada@test.lindsaar.net&gt;&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;more tolerable to encoding definitions, ISO (issue 120)&quot;</span> <span class="k">do</span>
+      <span class="n">subject</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;=?UTF8?B?UmU6IHRlc3QgZW52w61vIG1lbnNhamUgY29u?=&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">subject</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Re: test envío mensaje con&quot;</span>
+    <span class="k">end</span>
+
+
+    <span class="n">it</span> <span class="s2">&quot;more tolerable to encoding definitions, Windows (issue 120)&quot;</span> <span class="k">do</span>
+      <span class="n">pending</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+      <span class="n">subject</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;=?Windows1252?Q?It=92s_a_test=3F?=&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="n">subject</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;It’s a test?&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">::</span><span class="no">ParseError</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should be structured&quot;</span> <span class="k">do</span>
+      <span class="n">error</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="k">begin</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">DateTimeElement</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;invalid&quot;</span><span class="p">)</span>
+      <span class="k">rescue</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Field</span><span class="o">::</span><span class="no">ParseError</span> <span class="o">=&gt;</span> <span class="n">e</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">e</span>
+      <span class="k">end</span>
+      <span class="n">error</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_nil</span>
+      <span class="n">error</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="no">Mail</span><span class="o">::</span><span class="no">DateTimeElement</span>
+      <span class="n">error</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="s2">&quot;invalid&quot;</span>
+      <span class="n">error</span><span class="o">.</span><span class="n">reason</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_nil</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

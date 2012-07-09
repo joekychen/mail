@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › network › delivery_methods › smtp_connection.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>smtp_connection.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>== Sending Email with SMTP</p>
+
+<p>Mail allows you to send emails using an open SMTP connection.  This is done by
+passing a created Net::SMTP object.  This way we can get better performance to
+our local mail server by reducing the number of connections at any one time.</p>
+
+<p>=== Sending via SMTP server on Localhost</p>
+
+<p>To send mail open a connection with Net::Smtp using any options you like
+=== Delivering the email</p>
+
+<p>Once you have the settings right, sending the email is done by:</p>
+
+<p>smtp<em>conn = Net::SMTP.start(settings[:address], settings[:port])
+  Mail.defaults do
+    delivery</em>method :smtp<em>connection, { :connection => smtp</em>conn }
+  end</p>
+
+<p>Mail.deliver do
+    to 'mikel@test.lindsaar.net'
+    from 'ada@test.lindsaar.net'
+    subject 'testing sendmail'
+    body 'testing sendmail'
+  end</p>
+
+<p>Or by calling deliver on a Mail message</p>
+
+<p>mail = Mail.new do
+    to 'mikel@test.lindsaar.net'
+    from 'ada@test.lindsaar.net'
+    subject 'testing sendmail'
+    body 'testing sendmail'
+  end</p>
+
+<p>mail.deliver!</p></td><td class="code"><div class="highlight"><pre>  <span class="k">class</span> <span class="nc">SMTPConnection</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="no">ArgumentError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;A Net::SMTP object is required for this delivery method&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">values</span><span class="o">[</span><span class="ss">:connection</span><span class="o">].</span><span class="n">nil?</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">smtp</span> <span class="o">=</span> <span class="n">values</span><span class="o">[</span><span class="ss">:connection</span><span class="o">]</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="k">end</span>
+    
+    <span class="kp">attr_accessor</span> <span class="ss">:smtp</span>
+    <span class="kp">attr_accessor</span> <span class="ss">:settings</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Send the message via SMTP.
+The from and to attributes are optional. If not set, they are retrieve from the Message.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">deliver!</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Set the envelope from to be either the return-path, the sender or the first from address</p></td><td class="code"><div class="highlight"><pre>      <span class="n">envelope_from</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">return_path</span> <span class="o">||</span> <span class="n">mail</span><span class="o">.</span><span class="n">sender</span> <span class="o">||</span> <span class="n">mail</span><span class="o">.</span><span class="n">from_addrs</span><span class="o">.</span><span class="n">first</span>
+      <span class="k">if</span> <span class="n">envelope_from</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="k">raise</span> <span class="no">ArgumentError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;A sender (Return-Path, Sender or From) required to send a message&#39;</span><span class="p">)</span> 
+      <span class="k">end</span>
+      
+      <span class="n">destinations</span> <span class="o">||=</span> <span class="n">mail</span><span class="o">.</span><span class="n">destinations</span> <span class="k">if</span> <span class="n">mail</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:destinations</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">mail</span><span class="o">.</span><span class="n">destinations</span>
+      <span class="k">if</span> <span class="n">destinations</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="k">raise</span> <span class="no">ArgumentError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;At least one recipient (To, Cc or Bcc) is required to send a message&#39;</span><span class="p">)</span> 
+      <span class="k">end</span>
+      
+      <span class="n">message</span> <span class="o">||=</span> <span class="n">mail</span><span class="o">.</span><span class="n">encoded</span> <span class="k">if</span> <span class="n">mail</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:encoded</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="k">raise</span> <span class="no">ArgumentError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;A encoded content is required to send a message&#39;</span><span class="p">)</span>
+      <span class="k">end</span>
+            
+      <span class="n">response</span> <span class="o">=</span> <span class="n">smtp</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">envelope_from</span><span class="p">,</span> <span class="n">destinations</span><span class="p">)</span>
+      
+      <span class="n">settings</span><span class="o">[</span><span class="ss">:return_response</span><span class="o">]</span> <span class="p">?</span> <span class="n">response</span> <span class="p">:</span> <span class="nb">self</span> 
+    <span class="k">end</span>
+        
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

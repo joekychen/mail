@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › network_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>network_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="k">class</span> <span class="nc">MyDelivery</span><span class="p">;</span> <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">settings</span><span class="p">);</span> <span class="k">end</span><span class="p">;</span> <span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">MyRetriever</span><span class="p">;</span> <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">settings</span><span class="p">);</span> <span class="k">end</span><span class="p">;</span> <span class="k">end</span>
+
+<span class="n">describe</span> <span class="s2">&quot;Mail&quot;</span> <span class="k">do</span>
+
+  <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Reset all defaults back to original state</p></td><td class="code"><div class="highlight"><pre>    <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+      <span class="n">delivery_method</span> <span class="ss">:smtp</span><span class="p">,</span> <span class="p">{</span> <span class="ss">:address</span>              <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+                               <span class="ss">:port</span>                 <span class="o">=&gt;</span> <span class="mi">25</span><span class="p">,</span>
+                               <span class="ss">:domain</span>               <span class="o">=&gt;</span> <span class="s1">&#39;localhost.localdomain&#39;</span><span class="p">,</span>
+                               <span class="ss">:user_name</span>            <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                               <span class="ss">:password</span>             <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                               <span class="ss">:authentication</span>       <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                               <span class="ss">:enable_starttls_auto</span> <span class="o">=&gt;</span> <span class="kp">true</span>  <span class="p">}</span>
+    
+      <span class="n">retriever_method</span> <span class="ss">:pop3</span><span class="p">,</span> <span class="p">{</span> <span class="ss">:address</span>             <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+                                <span class="ss">:port</span>                <span class="o">=&gt;</span> <span class="mi">110</span><span class="p">,</span>
+                                <span class="ss">:user_name</span>           <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                <span class="ss">:password</span>            <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                <span class="ss">:enable_ssl</span>          <span class="o">=&gt;</span> <span class="kp">true</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;default delivery and retriever methods&quot;</span> <span class="k">do</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should set the delivery method&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">delivery_method</span> <span class="ss">:smtp</span>
+      <span class="k">end</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SMTP</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should default to settings for smtp&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SMTP</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="ss">:address</span>              <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+                                                <span class="ss">:port</span>                 <span class="o">=&gt;</span> <span class="mi">25</span><span class="p">,</span>
+                                                <span class="ss">:domain</span>               <span class="o">=&gt;</span> <span class="s1">&#39;localhost.localdomain&#39;</span><span class="p">,</span>
+                                                <span class="ss">:user_name</span>            <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                                <span class="ss">:password</span>             <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                                <span class="ss">:authentication</span>       <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                                <span class="ss">:enable_starttls_auto</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+                                                <span class="ss">:openssl_verify_mode</span>  <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                                <span class="ss">:ssl</span>                  <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                                <span class="ss">:tls</span>                  <span class="o">=&gt;</span> <span class="kp">nil</span> <span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should set the retriever method&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">retriever_method</span> <span class="ss">:pop3</span>
+      <span class="k">end</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">retriever_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">POP3</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should default to settings for pop3&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">retriever_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">POP3</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">retriever_method</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="ss">:address</span>              <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+                                                 <span class="ss">:port</span>                 <span class="o">=&gt;</span> <span class="mi">110</span><span class="p">,</span>
+                                                 <span class="ss">:user_name</span>            <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                                 <span class="ss">:password</span>             <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                                 <span class="ss">:authentication</span>       <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                                 <span class="ss">:enable_ssl</span>           <span class="o">=&gt;</span> <span class="kp">true</span>  <span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow us to overwrite anything we need on SMTP&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">delivery_method</span> <span class="ss">:smtp</span><span class="p">,</span> <span class="ss">:port</span> <span class="o">=&gt;</span> <span class="mi">999</span>
+      <span class="k">end</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:address</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;localhost&#39;</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:port</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">999</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow us to overwrite anything we need on POP3&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">retriever_method</span> <span class="ss">:pop3</span><span class="p">,</span> <span class="ss">:address</span> <span class="o">=&gt;</span> <span class="s1">&#39;foo.bar.com&#39;</span>
+      <span class="k">end</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">retriever_method</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:address</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;foo.bar.com&#39;</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">retriever_method</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:port</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">110</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to pass in your own delivery method&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">delivery_method</span> <span class="no">MyDelivery</span>
+      <span class="k">end</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">MyDelivery</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should ask the custom delivery agent for it&#39;s settings&quot;</span> <span class="k">do</span>
+      <span class="n">mock_my_delivery</span> <span class="o">=</span> <span class="n">mock</span><span class="p">(</span><span class="no">MyDelivery</span><span class="p">)</span>
+      <span class="n">mock_my_delivery</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:settings</span><span class="p">)</span><span class="o">.</span><span class="n">and_return</span><span class="p">({</span><span class="ss">:these_are</span> <span class="o">=&gt;</span> <span class="ss">:settings</span><span class="p">})</span>
+      <span class="no">MyDelivery</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:new</span><span class="p">)</span><span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="n">mock_my_delivery</span><span class="p">)</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">delivery_method</span> <span class="no">MyDelivery</span>
+      <span class="k">end</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="ss">:these_are</span> <span class="o">=&gt;</span> <span class="ss">:settings</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to pass in your own retriever method&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">retriever_method</span> <span class="no">MyRetriever</span>
+      <span class="k">end</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">retriever_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">MyRetriever</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should ask the custom retriever agent for it&#39;s settings&quot;</span> <span class="k">do</span>
+      <span class="n">mock_my_retriever</span> <span class="o">=</span> <span class="n">mock</span><span class="p">(</span><span class="no">MyRetriever</span><span class="p">)</span>
+      <span class="n">mock_my_retriever</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:settings</span><span class="p">)</span><span class="o">.</span><span class="n">and_return</span><span class="p">({</span><span class="ss">:these_are</span> <span class="o">=&gt;</span> <span class="ss">:settings</span><span class="p">})</span>
+      <span class="no">MyRetriever</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:new</span><span class="p">)</span><span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="n">mock_my_retriever</span><span class="p">)</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">retriever_method</span> <span class="no">MyRetriever</span>
+      <span class="k">end</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">retriever_method</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="ss">:these_are</span> <span class="o">=&gt;</span> <span class="ss">:settings</span><span class="p">})</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;instance delivery methods&quot;</span> <span class="k">do</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should copy the defaults defined by Mail.defaults&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SMTP</span>
+    <span class="k">end</span>
+  
+    <span class="n">it</span> <span class="s2">&quot;should be able to change the delivery_method&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">delivery_method</span> <span class="ss">:file</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">FileDelivery</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should be able to change the delivery_method and pass in settings&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">tmpdir</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../../../tmp/mail&#39;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">delivery_method</span> <span class="ss">:file</span><span class="p">,</span> <span class="ss">:location</span> <span class="o">=&gt;</span> <span class="n">tmpdir</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">FileDelivery</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="ss">:location</span> <span class="o">=&gt;</span> <span class="n">tmpdir</span><span class="p">})</span>
+    <span class="k">end</span>
+  
+    <span class="n">it</span> <span class="s2">&quot;should not change the default when it changes the delivery_method&quot;</span> <span class="k">do</span>
+      <span class="n">mail1</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">mail2</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">mail1</span><span class="o">.</span><span class="n">delivery_method</span> <span class="ss">:file</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SMTP</span>
+      <span class="n">mail1</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">FileDelivery</span>
+      <span class="n">mail2</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SMTP</span>
+    <span class="k">end</span>
+  
+    <span class="n">it</span> <span class="s2">&quot;should not change the default settings when it changes the delivery_method settings&quot;</span> <span class="k">do</span>
+      <span class="n">mail1</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">mail2</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">mail1</span><span class="o">.</span><span class="n">delivery_method</span> <span class="ss">:smtp</span><span class="p">,</span> <span class="ss">:address</span> <span class="o">=&gt;</span> <span class="s1">&#39;my.own.address&#39;</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:address</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;localhost&#39;</span>
+      <span class="n">mail1</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:address</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;my.own.address&#39;</span>
+      <span class="n">mail2</span><span class="o">.</span><span class="n">delivery_method</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:address</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;localhost&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;retrieving emails via POP3&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should retrieve all emails via POP3&quot;</span> <span class="k">do</span>
+      <span class="n">messages</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">all</span>
+
+      <span class="n">messages</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_empty</span>
+      <span class="k">for</span> <span class="n">message</span> <span class="k">in</span> <span class="n">messages</span>
+        <span class="n">message</span><span class="o">.</span><span class="n">should</span> <span class="n">be_instance_of</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;sending emails via SMTP&quot;</span> <span class="k">do</span>
+
+    <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Set the delivery method to test as the default</p></td><td class="code"><div class="highlight"><pre>      <span class="no">MockSMTP</span><span class="o">.</span><span class="n">clear_deliveries</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should deliver a mail message&quot;</span> <span class="k">do</span>
+      <span class="n">message</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">deliver</span> <span class="k">do</span>
+        <span class="n">from</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span>
+        <span class="n">to</span> <span class="s1">&#39;ada@test.lindsaar.net&#39;</span>
+        <span class="n">subject</span> <span class="s1">&#39;Re: No way!&#39;</span>
+        <span class="n">body</span> <span class="s1">&#39;Yeah sure&#39;</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>add_file 'New Header Image', '/somefile.png'</p></td><td class="code"><div class="highlight"><pre>      <span class="k">end</span>
+
+      <span class="no">MockSMTP</span><span class="o">.</span><span class="n">deliveries</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="n">message</span><span class="o">.</span><span class="n">encoded</span>
+      <span class="no">MockSMTP</span><span class="o">.</span><span class="n">deliveries</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">1</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;mikel@test.lindsaar.net&quot;</span>
+      <span class="no">MockSMTP</span><span class="o">.</span><span class="n">deliveries</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">2</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;ada@test.lindsaar.net&quot;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should deliver itself&quot;</span> <span class="k">do</span>
+      <span class="n">message</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+        <span class="n">from</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span>
+        <span class="n">to</span> <span class="s1">&#39;ada@test.lindsaar.net&#39;</span>
+        <span class="n">subject</span> <span class="s1">&#39;Re: No way!&#39;</span>
+        <span class="n">body</span> <span class="s1">&#39;Yeah sure&#39;</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>add_file 'New Header Image', '/somefile.png'</p></td><td class="code"><div class="highlight"><pre>      <span class="k">end</span>
+      
+      <span class="n">message</span><span class="o">.</span><span class="n">deliver!</span>
+
+      <span class="no">MockSMTP</span><span class="o">.</span><span class="n">deliveries</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="n">message</span><span class="o">.</span><span class="n">encoded</span>
+      <span class="no">MockSMTP</span><span class="o">.</span><span class="n">deliveries</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">1</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;mikel@test.lindsaar.net&quot;</span>
+      <span class="no">MockSMTP</span><span class="o">.</span><span class="n">deliveries</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">2</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;ada@test.lindsaar.net&quot;</span><span class="o">]</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;deliveries&quot;</span> <span class="k">do</span>
+    
+    <span class="k">class</span> <span class="nc">MyDeliveryMethod</span>
+      <span class="kp">attr_accessor</span> <span class="ss">:settings</span>
+      <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">values</span> <span class="o">=</span> <span class="p">{});</span> <span class="k">end</span>
+      <span class="k">def</span> <span class="nf">deliver!</span><span class="p">(</span><span class="n">message</span><span class="p">);</span> <span class="kp">true</span><span class="p">;</span> <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="k">class</span> <span class="nc">MyObserver</span>
+      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">delivered_email</span><span class="p">(</span><span class="n">message</span><span class="p">);</span> <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="k">class</span> <span class="nc">MyDeliveryHandler</span>
+      <span class="k">def</span> <span class="nf">deliver_mail</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span>
+        <span class="n">postman</span> <span class="o">=</span> <span class="no">MyDeliveryMethod</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">postman</span><span class="o">.</span><span class="n">deliver!</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">class</span> <span class="nc">MyYieldingDeliveryHandler</span>
+      <span class="k">def</span> <span class="nf">deliver_mail</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span>
+        <span class="k">yield</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+      <span class="vi">@message</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+        <span class="n">from</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span>
+        <span class="n">to</span> <span class="s1">&#39;ada@test.lindsaar.net&#39;</span>
+        <span class="n">subject</span> <span class="s1">&#39;Re: No way!&#39;</span>
+        <span class="n">body</span> <span class="s1">&#39;Yeah sure&#39;</span>
+      <span class="k">end</span>
+      <span class="vi">@message</span><span class="o">.</span><span class="n">delivery_method</span> <span class="ss">:test</span>
+    <span class="k">end</span>
+    
+    <span class="n">describe</span> <span class="s2">&quot;adding to Mail.deliveries&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should add itself to the deliveries collection on mail on delivery&quot;</span> <span class="k">do</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">change</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">TestMailer</span><span class="o">.</span><span class="n">deliveries</span><span class="p">,</span> <span class="ss">:size</span><span class="p">)</span><span class="o">.</span><span class="n">by</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="n">describe</span> <span class="s2">&quot;perform_deliveries&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should call deliver! on the delivery method by default&quot;</span> <span class="k">do</span>
+        <span class="n">delivery_agent</span> <span class="o">=</span> <span class="no">MyDeliveryMethod</span><span class="o">.</span><span class="n">new</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:delivery_method</span><span class="p">)</span><span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="n">delivery_agent</span><span class="p">)</span>
+        <span class="n">delivery_agent</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:deliver!</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="vi">@message</span><span class="p">)</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should not call deliver if perform deliveries is set to false&quot;</span> <span class="k">do</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">perform_deliveries</span> <span class="o">=</span> <span class="kp">false</span>
+        <span class="n">delivery_agent</span> <span class="o">=</span> <span class="no">MyDeliveryMethod</span><span class="o">.</span><span class="n">new</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">should_not_receive</span><span class="p">(</span><span class="ss">:delivery_method</span><span class="p">)</span><span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="n">delivery_agent</span><span class="p">)</span>
+        <span class="n">delivery_agent</span><span class="o">.</span><span class="n">should_not_receive</span><span class="p">(</span><span class="ss">:deliver!</span><span class="p">)</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should add to the deliveries array if perform_deliveries is true&quot;</span> <span class="k">do</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">perform_deliveries</span> <span class="o">=</span> <span class="kp">true</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">change</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">TestMailer</span><span class="o">.</span><span class="n">deliveries</span><span class="p">,</span> <span class="ss">:size</span><span class="p">)</span><span class="o">.</span><span class="n">by</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should not add to the deliveries array if perform_deliveries is false&quot;</span> <span class="k">do</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">perform_deliveries</span> <span class="o">=</span> <span class="kp">false</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">change</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">TestMailer</span><span class="o">.</span><span class="n">deliveries</span><span class="p">,</span> <span class="ss">:size</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="n">describe</span> <span class="s2">&quot;observers&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should tell it&#39;s observers that it was told to deliver an email&quot;</span> <span class="k">do</span>
+        <span class="no">Mail</span><span class="o">.</span><span class="n">register_observer</span><span class="p">(</span><span class="no">MyObserver</span><span class="p">)</span>
+        <span class="no">MyObserver</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:delivered_email</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="vi">@message</span><span class="p">)</span><span class="o">.</span><span class="n">once</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span>
+      <span class="k">end</span>
+      
+      <span class="n">it</span> <span class="s2">&quot;should tell it&#39;s observers that it was told to deliver an email even if perform_deliveries is false&quot;</span> <span class="k">do</span>
+        <span class="no">Mail</span><span class="o">.</span><span class="n">register_observer</span><span class="p">(</span><span class="no">MyObserver</span><span class="p">)</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">perform_deliveries</span> <span class="o">=</span> <span class="kp">false</span>
+        <span class="no">MyObserver</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:delivered_email</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="vi">@message</span><span class="p">)</span><span class="o">.</span><span class="n">once</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span>
+      <span class="k">end</span>
+      
+      <span class="n">it</span> <span class="s2">&quot;should tell it&#39;s observers that it was told to deliver an email even if it is using a delivery_handler&quot;</span> <span class="k">do</span>
+        <span class="no">Mail</span><span class="o">.</span><span class="n">register_observer</span><span class="p">(</span><span class="no">MyObserver</span><span class="p">)</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">delivery_handler</span> <span class="o">=</span> <span class="no">MyYieldingDeliveryHandler</span><span class="o">.</span><span class="n">new</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">perform_deliveries</span> <span class="o">=</span> <span class="kp">false</span>
+        <span class="no">MyObserver</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:delivered_email</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="vi">@message</span><span class="p">)</span><span class="o">.</span><span class="n">once</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span>
+      <span class="k">end</span>
+      
+    <span class="k">end</span>
+    
+    <span class="n">describe</span> <span class="s2">&quot;raise_delivery_errors&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should pass on delivery errors if raised&quot;</span> <span class="k">do</span>
+        <span class="n">delivery_agent</span> <span class="o">=</span> <span class="no">MyDeliveryMethod</span><span class="o">.</span><span class="n">new</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">stub!</span><span class="p">(</span><span class="ss">:delivery_method</span><span class="p">)</span><span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="n">delivery_agent</span><span class="p">)</span>
+        <span class="n">delivery_agent</span><span class="o">.</span><span class="n">stub!</span><span class="p">(</span><span class="ss">:deliver!</span><span class="p">)</span><span class="o">.</span><span class="n">and_raise</span><span class="p">(</span><span class="no">Exception</span><span class="p">)</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Exception</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should not pass on delivery errors if raised raise_delivery_errors is set to false&quot;</span> <span class="k">do</span>
+        <span class="n">delivery_agent</span> <span class="o">=</span> <span class="no">MyDeliveryMethod</span><span class="o">.</span><span class="n">new</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">stub!</span><span class="p">(</span><span class="ss">:delivery_method</span><span class="p">)</span><span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="n">delivery_agent</span><span class="p">)</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">raise_delivery_errors</span> <span class="o">=</span> <span class="kp">false</span>
+        <span class="n">delivery_agent</span><span class="o">.</span><span class="n">stub!</span><span class="p">(</span><span class="ss">:deliver!</span><span class="p">)</span><span class="o">.</span><span class="n">and_raise</span><span class="p">(</span><span class="no">Exception</span><span class="p">)</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Exception</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="n">describe</span> <span class="s2">&quot;delivery_handler&quot;</span> <span class="k">do</span>
+      
+      <span class="n">it</span> <span class="s2">&quot;should allow you to hand off performing the actual delivery to another object&quot;</span> <span class="k">do</span>
+        <span class="n">delivery_handler</span> <span class="o">=</span> <span class="no">MyYieldingDeliveryHandler</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">delivery_handler</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:deliver_mail</span><span class="p">)</span><span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="vi">@message</span><span class="p">)</span><span class="o">.</span><span class="n">exactly</span><span class="p">(</span><span class="ss">:once</span><span class="p">)</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">delivery_handler</span> <span class="o">=</span> <span class="n">delivery_handler</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;mail should be told to :deliver once and then :deliver! once by the delivery handler&quot;</span> <span class="k">do</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">delivery_handler</span> <span class="o">=</span> <span class="no">MyYieldingDeliveryHandler</span><span class="o">.</span><span class="n">new</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:do_delivery</span><span class="p">)</span><span class="o">.</span><span class="n">exactly</span><span class="p">(</span><span class="ss">:once</span><span class="p">)</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;mail only call it&#39;s delivery_method once&quot;</span> <span class="k">do</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">delivery_handler</span> <span class="o">=</span> <span class="no">MyYieldingDeliveryHandler</span><span class="o">.</span><span class="n">new</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:delivery_method</span><span class="p">)</span><span class="o">.</span><span class="n">exactly</span><span class="p">(</span><span class="ss">:once</span><span class="p">)</span><span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">TestMailer</span><span class="o">.</span><span class="n">new</span><span class="p">({}))</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;mail should not catch any exceptions when using a delivery_handler&quot;</span> <span class="k">do</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">delivery_handler</span> <span class="o">=</span> <span class="no">MyYieldingDeliveryHandler</span><span class="o">.</span><span class="n">new</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:delivery_method</span><span class="p">)</span><span class="o">.</span><span class="n">and_raise</span><span class="p">(</span><span class="no">Exception</span><span class="p">)</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">Exception</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;mail should not modify the Mail.deliveries object if using a delivery_handler that does not append to deliveries&quot;</span> <span class="k">do</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">delivery_handler</span> <span class="o">=</span> <span class="no">MyDeliveryHandler</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">change</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">TestMailer</span><span class="p">,</span> <span class="ss">:deliveries</span><span class="p">)</span>
+      <span class="k">end</span>
+      
+      <span class="n">it</span> <span class="s2">&quot;should be able to just yield and let mail do it&#39;s thing&quot;</span> <span class="k">do</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">delivery_handler</span> <span class="o">=</span> <span class="no">MyYieldingDeliveryHandler</span><span class="o">.</span><span class="n">new</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">should_receive</span><span class="p">(</span><span class="ss">:do_delivery</span><span class="p">)</span><span class="o">.</span><span class="n">exactly</span><span class="p">(</span><span class="ss">:once</span><span class="p">)</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">deliver</span>
+      <span class="k">end</span>
+      
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

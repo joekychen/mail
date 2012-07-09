@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › common › common_field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>common_field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">CommonField</span> <span class="k">do</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;multi-charset support&quot;</span> <span class="k">do</span>
+    
+    <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+      <span class="vi">@original</span> <span class="o">=</span> <span class="vg">$KCODE</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">after</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+      <span class="vg">$KCODE</span> <span class="o">=</span> <span class="vi">@original</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should leave ascii alone&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;This is a test&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Subject: This is a test</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;This is a test&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should encode a utf-8 string as utf-8 quoted printable&quot;</span> <span class="k">do</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;かきくけこ&quot;</span>
+      <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+        <span class="vg">$KCODE</span> <span class="o">=</span> <span class="s1">&#39;u&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Subject: =?UTF-8?Q?=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="k">else</span>
+        <span class="n">value</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Subject: =?UTF-8?Q?=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="k">end</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">value</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">value</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should wrap an encoded at 60 characters&quot;</span> <span class="k">do</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;かきくけこ かきくけこ かきくけこ かきくけこ かきくけこ かきくけこ かきくけこ かきくけこ かきくけこ&quot;</span>
+      <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+        <span class="vg">$KCODE</span> <span class="o">=</span> <span class="s1">&#39;u&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Subject: =?UTF-8?Q?=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="k">else</span>
+        <span class="n">value</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Subject: =?UTF-8?Q?=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF-8?Q?_=E3=81=8B=E3=81=8D=E3=81=8F=E3=81=91=E3=81=93?=</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="k">end</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">value</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">value</span>
+    <span class="k">end</span>
+  
+    <span class="n">it</span> <span class="s2">&quot;should handle charsets in assigned addresses&quot;</span> <span class="k">do</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&quot;かきくけこ&quot; &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+      <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+        <span class="vg">$KCODE</span> <span class="o">=</span> <span class="s1">&#39;u&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;From: =?UTF-8?B?44GL44GN44GP44GR44GT?= &lt;mikel@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="k">else</span>
+        <span class="n">value</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;From: =?UTF-8?B?44GL44GN44GP44GR44GT?= &lt;mikel@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="k">end</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">FromField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">value</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;=?UTF-8?B?44GL44GN44GP44GR44GT?= &lt;mikel@test.lindsaar.net&gt;&quot;</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › content_transfer_encoding_field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>content_transfer_encoding_field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span> <span class="k">do</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Content-Transfer-Encoding Header Field</p>
+
+<p>Many media types which could be usefully transported via email are
+represented, in their "natural" format, as 8bit character or binary
+data.  Such data cannot be transmitted over some transfer protocols.
+For example, RFC 821 (SMTP) restricts mail messages to 7bit US-ASCII
+data with lines no longer than 1000 characters including any trailing
+CRLF line separator.</p>
+
+<p>It is necessary, therefore, to define a standard mechanism for
+encoding such data into a 7bit short line format.  Proper labelling
+of unencoded material in less restrictive formats for direct use over
+less restrictive transports is also desireable.  This document
+specifies that such encodings will be indicated by a new "Content-
+Transfer-Encoding" header field.  This field has not been defined by
+any previous standard.</p>
+
+<p>6.1.  Content-Transfer-Encoding Syntax</p>
+
+<p>The Content-Transfer-Encoding field's value is a single token
+specifying the type of encoding, as enumerated below.  Formally:</p>
+
+<p>encoding := "Content-Transfer-Encoding" ":" mechanism</p>
+
+<p>mechanism := "7bit" / "8bit" / "binary" /
+               "quoted-printable" / "base64" /
+               ietf-token / x-token</p>
+
+<p>These values are not case sensitive -- Base64 and BASE64 and bAsE64
+are all equivalent.  An encoding type of 7BIT requires that the body</p>
+
+<p>is already in a 7bit mail-ready representation.  This is the default
+value -- that is, "Content-Transfer-Encoding: 7BIT" is assumed if the
+Content-Transfer-Encoding header field is not present.</p></td><td class="code"><div class="highlight"><pre>  <span class="n">describe</span> <span class="s2">&quot;initialization&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should initialize&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Content-Transfer-Encoding: 7bit&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string with the field name&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Transfer-Encoding: 7bit&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Content-Transfer-Encoding&#39;</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;7bit&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string without the field name&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;7bit&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Content-Transfer-Encoding&#39;</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;7bit&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render an encoded field&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;7bit&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Content-Transfer-Encoding: 7bit</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render a decoded field&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;7bit&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;7bit&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;parsing the value&quot;</span> <span class="k">do</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should return an encoding string&quot;</span> <span class="k">do</span>
+      <span class="o">[</span><span class="s2">&quot;7bit&quot;</span><span class="p">,</span> <span class="s2">&quot;8bit&quot;</span><span class="p">,</span> <span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s1">&#39;quoted-printable&#39;</span><span class="p">,</span> <span class="s2">&quot;base64&quot;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">encoding</span><span class="o">|</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">encoding</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">encoding</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should handle any valid &#39;x-token&#39; value&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;X-This-is_MY-encoding&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">encoding</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;x-this-is_my-encoding&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should handle an x-encoding&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;x-uuencode&quot;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">encoding</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;x-uuencode&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should replace the existing value&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;7bit&quot;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;quoted-printable&quot;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">encoding</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;quoted-printable&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an error on bogus values&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;broken@foo&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">raise_error</span>
+    <span class="k">end</span> 
+    
+    <span class="n">it</span> <span class="s2">&quot;should handle an empty content transfer encoding&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">encoding</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle a hyphen&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;7-bit&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;7bit&#39;</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTransferEncodingField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;8-bit&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;8bit&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

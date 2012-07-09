@@ -1,0 +1,6 @@
+d | string |  | 2 items |  | Garami Gábor | hron@hron.me | 1325598830 |  | Fixing undefined method 'constantize' error when no ActiveSupport loaded
+f | shell_escape.rb | s | 1.5K | 49 | Mikel Lindsaar | mikel@rubyx.com | 1332572334 |  | Remove duplicated line feed from regexp
+f | nil.rb | s | 186B | 13 | John Barker | jebarker@gmail.com | 1305791788 |  | Define blank? returning true on NilClass so nil.blank? returns true in code that does not include active_support
+f | object.rb | s | 181B | 11 | Mikel Lindsaar | mikel@rubyx.com | 1303810229 |  | Making further changes for active support removal
+f | string.rb | s | 657B | 28 | Mikel Lindsaar | raasdnil@gmail.com | 1326501915 |  | Merge pull request #281 from dmathieu/tostr_gsub  use to_str before gsubing on a string
+f | smtp.rb | s | 763B | 24 | Mikel Lindsaar | mikel@rubyx.com | 1303810229 |  | Making further changes for active support removal

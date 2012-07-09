@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › network.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>network.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;mail/network/retriever_methods/base&#39;</span>
+
+<span class="k">module</span> <span class="nn">Mail</span>
+  <span class="nb">autoload</span> <span class="ss">:SMTP</span><span class="p">,</span> <span class="s1">&#39;mail/network/delivery_methods/smtp&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:FileDelivery</span><span class="p">,</span> <span class="s1">&#39;mail/network/delivery_methods/file_delivery&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:Sendmail</span><span class="p">,</span> <span class="s1">&#39;mail/network/delivery_methods/sendmail&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:Exim</span><span class="p">,</span> <span class="s1">&#39;mail/network/delivery_methods/exim&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:SMTPConnection</span><span class="p">,</span> <span class="s1">&#39;mail/network/delivery_methods/smtp_connection&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:TestMailer</span><span class="p">,</span> <span class="s1">&#39;mail/network/delivery_methods/test_mailer&#39;</span>
+
+  <span class="nb">autoload</span> <span class="ss">:POP3</span><span class="p">,</span> <span class="s1">&#39;mail/network/retriever_methods/pop3&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:IMAP</span><span class="p">,</span> <span class="s1">&#39;mail/network/retriever_methods/imap&#39;</span>
+  <span class="nb">autoload</span> <span class="ss">:TestRetriever</span><span class="p">,</span> <span class="s1">&#39;mail/network/retriever_methods/test_retriever&#39;</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

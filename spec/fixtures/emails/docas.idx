@@ -1,0 +1,8 @@
+d | multipart_report_emails |  | 5 items |  | Mikel Lindsaar | raasdnil@gmail.com | 1284176755 |  | Fixed bounce detection for multipart reports that contain a human readable report status part
+d | mime_emails |  | 13 items |  | Luke Grimstrup | luke@youdo.co.nz | 1259797755 |  | fixed issue where email would not parse if the word "From" appeared in the body
+f | sample_output_multipart | g | 0B |  | Mikel Lindsaar | raasdnil@gmail.com | 1250336546 |  | Moved example emails out to separate spec
+d | rfc2822 |  | 13 items |  | Mikel Lindsaar | raasdnil@gmail.com | 1270281443 |  | Got auto encoding of header fields working with all specs passing
+d | plain_emails |  | 19 items |  | liufengyun | liufengyunchina@gmail.com | 1324475255 |  | support @ in display name  e.g. To: smith@gmail.com, Mikel@Lindsaar <raasdnil@gmail.com>, abc@ddd <abc@gamil.com>
+d | error_emails |  | 24 items |  | Karl | karl.baum@weshop.us | 1292865449 |  | made supplying an encoding optional as it was blowing up on an email with a funny subject
+d | attachment_emails |  | 7 items |  | Ubiratan Pires Alberton | u.alberton@gmail.com | 1273230139 |  | Added recursive parsing of attachments inside message/rfc822 parts.
+d | multi_charset |  | 3 items |  | Mikel Lindsaar | raasdnil@gmail.com | 1256986806 |  | Adding changes to get compatibility with actionmailer, also handled attachment handling

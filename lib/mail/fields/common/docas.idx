@@ -1,0 +1,6 @@
+f | common_field.rb | s | 732B | 40 | Mikel Lindsaar | mikel@rubyx.com | 1293099016 |  | Removing warning on @name not being initialized
+f | parameter_hash.rb | s | 1.7K | 52 | Derek Prior | derekprior@gmail.com | 1306249855 |  | Fixed more test suite warnings under 1.9.2:  - 'warning: shadowing outer local variable - smtp' in 1.9.2  - 'warning: character class has duplicated range' under 1.9.2  - Fixed final occurrence of 'warning: URI.escape is obsolete' in specs under 1.9.2
+f | common_message_id.rb | s | 821B | 36 | dcormier | daniel.cormier@gmail.com | 1298599751 |  | Fixed a NilClass (NoMethodError) when the In-Reply-To or References fields are present but empty and you call to_s on an instance of Mail.
+f | common_address.rb | s | 3.4K | 106 | Mikel Lindsaar | raasdnil@gmail.com | 1274143359 |  | Changing \r\n\t to \r\n\s throughout mail
+f | common_date.rb | s | 757B | 34 | Jeremy Kemper | jeremy@bitsweat.net | 1268007852 |  | Remove superfluous InstanceMethods modules
+f | address_container.rb | s | 204B | 11 | Mikel Lindsaar | raasdnil@gmail.com | 1264224984 |  | Added ability to use << on the results returned by the various address fields, ie, mail.to << 'new@address' now works

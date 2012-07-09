@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › core_extensions › string.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>string.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">String</span> <span class="c1">#:nodoc:</span>
+  <span class="k">def</span> <span class="nf">to_crlf</span>
+    <span class="n">to_str</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/\n|\r\n|\r/</span><span class="p">)</span> <span class="p">{</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">to_lf</span>
+    <span class="n">to_str</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/\n|\r\n|\r/</span><span class="p">)</span> <span class="p">{</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">unless</span> <span class="nb">String</span><span class="o">.</span><span class="n">instance_methods</span><span class="p">(</span><span class="kp">false</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span><span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="n">m</span><span class="o">.</span><span class="n">to_sym</span><span class="p">}</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="ss">:blank?</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">blank?</span>
+      <span class="nb">self</span> <span class="o">!~</span> <span class="sr">/\S/</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">unless</span> <span class="nb">method_defined?</span><span class="p">(</span><span class="ss">:ascii_only?</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Provides all strings with the Ruby 1.9 method of .ascii_only? and
+returns true or false</p></td><td class="code"><div class="highlight"><pre>    <span class="no">US_ASCII_REGEXP</span> <span class="o">=</span> <span class="sx">%Q{</span><span class="se">\x00</span><span class="sx">-</span><span class="se">\x7f</span><span class="sx">}</span>
+    <span class="k">def</span> <span class="nf">ascii_only?</span>
+      <span class="o">!</span><span class="p">(</span><span class="nb">self</span> <span class="o">=~</span> <span class="sr">/[^</span><span class="si">#{</span><span class="no">US_ASCII_REGEXP</span><span class="si">}</span><span class="sr">]/</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">not_ascii_only?</span>
+    <span class="o">!</span><span class="n">ascii_only?</span>
+  <span class="k">end</span>
+
+  <span class="k">unless</span> <span class="nb">method_defined?</span><span class="p">(</span><span class="ss">:bytesize</span><span class="p">)</span>
+    <span class="k">alias</span> <span class="ss">:bytesize</span> <span class="ss">:length</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

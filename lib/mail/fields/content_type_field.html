@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › fields › content_type_field.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>content_type_field.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;mail/fields/common/parameter_hash&#39;</span>
+
+<span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">class</span> <span class="nc">ContentTypeField</span> <span class="o">&lt;</span> <span class="no">StructuredField</span>
+
+    <span class="no">FIELD_NAME</span> <span class="o">=</span> <span class="s1">&#39;content-type&#39;</span>
+    <span class="no">CAPITALIZED_FIELD</span> <span class="o">=</span> <span class="s1">&#39;Content-Type&#39;</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">,</span> <span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="n">charset</span>
+      <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">class</span> <span class="o">==</span> <span class="nb">Array</span>
+        <span class="vi">@main_type</span> <span class="o">=</span> <span class="n">value</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+        <span class="vi">@sub_type</span> <span class="o">=</span> <span class="n">value</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
+        <span class="vi">@parameters</span> <span class="o">=</span> <span class="no">ParameterHash</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">last</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="vi">@main_type</span> <span class="o">=</span> <span class="kp">nil</span>
+        <span class="vi">@sub_type</span> <span class="o">=</span> <span class="kp">nil</span>
+        <span class="vi">@parameters</span> <span class="o">=</span> <span class="kp">nil</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">strip_field</span><span class="p">(</span><span class="no">FIELD_NAME</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="k">super</span><span class="p">(</span><span class="no">CAPITALIZED_FIELD</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">parse</span>
+      <span class="nb">self</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">val</span> <span class="o">=</span> <span class="n">value</span><span class="p">)</span>
+      <span class="k">unless</span> <span class="n">val</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="nb">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="vi">@element</span> <span class="o">=</span> <span class="kp">nil</span>
+        <span class="n">element</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">element</span>
+      <span class="k">begin</span>
+        <span class="vi">@element</span> <span class="o">||=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeElement</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="k">rescue</span>
+        <span class="n">attempt_to_clean</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">attempt_to_clean</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Sanitize the value, handle special cases</p></td><td class="code"><div class="highlight"><pre>      <span class="vi">@element</span> <span class="o">||=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeElement</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">sanatize</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">rescue</span></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>All else fails, just get the MIME media type</p></td><td class="code"><div class="highlight"><pre>      <span class="vi">@element</span> <span class="o">||=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeElement</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">get_mime_type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">main_type</span>
+      <span class="vi">@main_type</span> <span class="o">||=</span> <span class="n">element</span><span class="o">.</span><span class="n">main_type</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">sub_type</span>
+      <span class="vi">@sub_type</span> <span class="o">||=</span> <span class="n">element</span><span class="o">.</span><span class="n">sub_type</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">string</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">main_type</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">sub_type</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">default</span>
+      <span class="n">decoded</span>
+    <span class="k">end</span>
+
+    <span class="k">alias</span> <span class="ss">:content_type</span> <span class="ss">:string</span>
+
+    <span class="k">def</span> <span class="nf">parameters</span>
+      <span class="k">unless</span> <span class="vi">@parameters</span>
+        <span class="vi">@parameters</span> <span class="o">=</span> <span class="no">ParameterHash</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">element</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="nb">p</span><span class="o">|</span> <span class="vi">@parameters</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="nb">p</span><span class="p">)</span> <span class="p">}</span>
+      <span class="k">end</span>
+      <span class="vi">@parameters</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">ContentTypeField</span><span class="o">.</span><span class="nf">with_boundary</span><span class="p">(</span><span class="n">type</span><span class="p">)</span>
+      <span class="kp">new</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">type</span><span class="si">}</span><span class="s2">; boundary=</span><span class="si">#{</span><span class="n">generate_boundary</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">ContentTypeField</span><span class="o">.</span><span class="nf">generate_boundary</span>
+      <span class="s2">&quot;--==_mimepart_</span><span class="si">#{</span><span class="no">Mail</span><span class="o">.</span><span class="n">random_tag</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">value</span>
+      <span class="k">if</span> <span class="vi">@value</span><span class="o">.</span><span class="n">class</span> <span class="o">==</span> <span class="nb">Array</span>
+        <span class="s2">&quot;</span><span class="si">#{</span><span class="vi">@main_type</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="vi">@sub_type</span><span class="si">}</span><span class="s2">; </span><span class="si">#{</span><span class="n">stringify</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="k">else</span>
+        <span class="vi">@value</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">stringify</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+      <span class="n">params</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">#{</span><span class="no">Encodings</span><span class="o">.</span><span class="n">param_encode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">}</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;; &quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">filename</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;filename&#39;</span><span class="o">]</span>
+        <span class="vi">@filename</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;filename&#39;</span><span class="o">]</span>
+      <span class="k">when</span> <span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;name&#39;</span><span class="o">]</span>
+        <span class="vi">@filename</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;name&#39;</span><span class="o">]</span>
+      <span class="k">else</span>
+        <span class="vi">@filename</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="k">end</span>
+      <span class="vi">@filename</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>TODO: Fix this up</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">encoded</span>
+      <span class="k">if</span> <span class="n">parameters</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="nb">p</span> <span class="o">=</span> <span class="s2">&quot;;</span><span class="se">\r\n\s</span><span class="si">#{</span><span class="n">parameters</span><span class="o">.</span><span class="n">encoded</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="k">else</span>
+        <span class="nb">p</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+      <span class="k">end</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="no">CAPITALIZED_FIELD</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">content_type</span><span class="si">}#{</span><span class="nb">p</span><span class="si">}</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">decoded</span>
+      <span class="k">if</span> <span class="n">parameters</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="nb">p</span> <span class="o">=</span> <span class="s2">&quot;; </span><span class="si">#{</span><span class="n">parameters</span><span class="o">.</span><span class="n">decoded</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="k">else</span>
+        <span class="nb">p</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+      <span class="k">end</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">content_type</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">p</span>
+    <span class="k">end</span>
+
+    <span class="kp">private</span>
+
+    <span class="k">def</span> <span class="nf">method_missing</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nb">name</span><span class="o">.</span><span class="n">to_s</span> <span class="o">=~</span> <span class="sr">/(\w+)=/</span>
+        <span class="nb">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="vg">$1</span><span class="o">]</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">first</span>
+        <span class="vi">@value</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">content_type</span><span class="si">}</span><span class="s2">; </span><span class="si">#{</span><span class="n">stringify</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="k">else</span>
+        <span class="k">super</span>
+      <span class="k">end</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Various special cases from random emails found that I am not going to change
+the parser for</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">sanatize</span><span class="p">(</span> <span class="n">val</span> <span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>TODO: check if there are cases where whitespace is not a separator</p></td><td class="code"><div class="highlight"><pre>      <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="o">.</span>
+        <span class="n">squeeze</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="o">.</span>
+        <span class="nb">gsub</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="s1">&#39;; &#39;</span><span class="p">)</span><span class="o">.</span> <span class="c1">#use &#39;; &#39; as a separator (or EOL)</span>
+        <span class="nb">gsub</span><span class="p">(</span><span class="sr">/;\s*$/</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="c1">#remove trailing to keep examples below</span>
+
+      <span class="k">if</span> <span class="n">val</span> <span class="o">=~</span> <span class="sr">/(boundary=(\S*))/i</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="vg">$`</span><span class="o">.</span><span class="n">downcase</span><span class="si">}</span><span class="s2">boundary=</span><span class="si">#{</span><span class="vg">$2</span><span class="si">}#{</span><span class="vg">$&#39;</span><span class="o">.</span><span class="n">downcase</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="k">else</span>
+        <span class="n">val</span><span class="o">.</span><span class="n">downcase!</span>
+      <span class="k">end</span>
+
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">val</span><span class="o">.</span><span class="n">chomp</span> <span class="o">=~</span> <span class="sr">/^\s*([\w\-]+)\/([\w\-]+)\s*;;+(.*)$/i</span></pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>Handles 'text/plain;; format="flowed"' (double semi colon)</p></td><td class="code"><div class="highlight"><pre>        <span class="s2">&quot;</span><span class="si">#{</span><span class="vg">$1</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="vg">$2</span><span class="si">}</span><span class="s2">; </span><span class="si">#{</span><span class="vg">$3</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="k">when</span> <span class="n">val</span><span class="o">.</span><span class="n">chomp</span> <span class="o">=~</span> <span class="sr">/^\s*([\w\-]+)\/([\w\-]+)\s*;\s?(ISO[\w\-]+)$/i</span></pre></div></td></tr>
+
+
+<tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>Microsoft helper:
+Handles 'type/subtype;ISO-8559-1'</p></td><td class="code"><div class="highlight"><pre>        <span class="s2">&quot;</span><span class="si">#{</span><span class="vg">$1</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="vg">$2</span><span class="si">}</span><span class="s2">; charset=</span><span class="si">#{</span><span class="n">quote_atom</span><span class="p">(</span><span class="vg">$3</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="k">when</span> <span class="n">val</span><span class="o">.</span><span class="n">chomp</span> <span class="o">=~</span> <span class="sr">/^text;?$/i</span></pre></div></td></tr>
+
+
+<tr id="section-9"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-9">&#182;</a></div><p>Handles 'text;' and 'text'</p></td><td class="code"><div class="highlight"><pre>        <span class="s2">&quot;text/plain;&quot;</span>
+      <span class="k">when</span> <span class="n">val</span><span class="o">.</span><span class="n">chomp</span> <span class="o">=~</span> <span class="sr">/^(\w+);\s(.*)$/i</span></pre></div></td></tr>
+
+
+<tr id="section-10"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-10">&#182;</a></div><p>Handles 'text; <parameters>'</p></td><td class="code"><div class="highlight"><pre>        <span class="s2">&quot;text/plain; </span><span class="si">#{</span><span class="vg">$2</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="k">when</span> <span class="n">val</span> <span class="o">=~</span> <span class="sr">/([\w\-]+\/[\w\-]+);\scharset=&quot;charset=&quot;(\w+)&quot;&quot;/i</span></pre></div></td></tr>
+
+
+<tr id="section-11"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-11">&#182;</a></div><p>Handles text/html; charset="charset="GB2312""</p></td><td class="code"><div class="highlight"><pre>        <span class="s2">&quot;</span><span class="si">#{</span><span class="vg">$1</span><span class="si">}</span><span class="s2">; charset=</span><span class="si">#{</span><span class="n">quote_atom</span><span class="p">(</span><span class="vg">$2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="k">when</span> <span class="n">val</span> <span class="o">=~</span> <span class="sr">/([\w\-]+\/[\w\-]+);\s+(.*)/i</span>
+        <span class="n">type</span> <span class="o">=</span> <span class="vg">$1</span></pre></div></td></tr>
+
+
+<tr id="section-12"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-12">&#182;</a></div><p>Handles misquoted param values
+e.g: application/octet-stream; name=archiveshelp1[1].htm
+and: audio/x-midi;\r\n\sname=Part .exe</p></td><td class="code"><div class="highlight"><pre>        <span class="n">params</span> <span class="o">=</span> <span class="vg">$2</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sr">/\s+/</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">i</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">chomp</span><span class="o">.</span><span class="n">strip</span> <span class="p">}</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sr">/\s*\=\s*/</span><span class="p">)</span> <span class="p">}</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">i</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="si">}</span><span class="s2">=</span><span class="si">#{</span><span class="n">dquote</span><span class="p">(</span><span class="n">i</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_s</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">}</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;; &#39;</span><span class="p">)</span>
+        <span class="s2">&quot;</span><span class="si">#{</span><span class="n">type</span><span class="si">}</span><span class="s2">; </span><span class="si">#{</span><span class="n">params</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="k">when</span> <span class="n">val</span> <span class="o">=~</span> <span class="sr">/^\s*$/</span>
+        <span class="s1">&#39;text/plain&#39;</span>
+      <span class="k">else</span>
+        <span class="s1">&#39;&#39;</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">get_mime_type</span><span class="p">(</span> <span class="n">val</span> <span class="p">)</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">val</span> <span class="o">=~</span> <span class="sr">/^([\w\-]+)\/([\w\-]+);.+$/i</span>
+        <span class="s2">&quot;</span><span class="si">#{</span><span class="vg">$1</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="vg">$2</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="k">else</span>
+        <span class="s1">&#39;text/plain&#39;</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

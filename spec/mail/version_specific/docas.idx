@@ -1,0 +1,1 @@
+f | escape_paren_1_8_spec.rb | s | 721B | 23 | Jeremy Kemper | jeremy@bitsweat.net | 1269763953 |  | Use LOAD_PATH for spec_helper instead of relative requires

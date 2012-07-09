@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › references_field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>references_field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>The "References:" field will contain the contents of the parent's
+   "References:" field (if any) followed by the contents of the parent's
+   "Message-ID:" field (if any).  If the parent message does not contain
+   a "References:" field but does have an "In-Reply-To:" field
+   containing a single message identifier, then the "References:" field
+   will contain the contents of the parent's "In-Reply-To:" field
+   followed by the contents of the parent's "Message-ID:" field (if
+   any).  If the parent has none of the "References:", "In-Reply-To:",
+   or "Message-ID:" fields, then the new message will have no
+   "References:" field.</p></td><td class="code"><div class="highlight"><pre><span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ReferencesField</span> <span class="k">do</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should initialize&quot;</span> <span class="k">do</span>
+    <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ReferencesField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;&lt;1234@test.lindsaar.net&gt;&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should accept a string with the field name&quot;</span> <span class="k">do</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ReferencesField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;References: &lt;1234@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;References&#39;</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@test.lindsaar.net&#39;</span>
+  <span class="k">end</span>
+  
+  <span class="n">it</span> <span class="s2">&quot;should accept a string without the field name&quot;</span> <span class="k">do</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ReferencesField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;References&#39;</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@test.lindsaar.net&#39;</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should accept multiple message ids&quot;</span> <span class="k">do</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ReferencesField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&lt;1234@test.lindsaar.net&gt; &lt;5678@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;References&#39;</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&lt;1234@test.lindsaar.net&gt; &lt;5678@test.lindsaar.net&gt;&#39;</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@test.lindsaar.net&#39;</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">message_ids</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;1234@test.lindsaar.net&#39;</span><span class="p">,</span> <span class="s1">&#39;5678@test.lindsaar.net&#39;</span><span class="o">]</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&lt;1234@test.lindsaar.net&gt; &lt;5678@test.lindsaar.net&gt;&#39;</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should accept no message ids&quot;</span> <span class="k">do</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ReferencesField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;References&#39;</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">nil</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

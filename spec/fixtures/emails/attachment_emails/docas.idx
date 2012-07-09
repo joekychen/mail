@@ -1,0 +1,7 @@
+f | attachment_pdf.eml | g | 3.6K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253457324 |  | Found and squashed a bug in the part header detection, uncovered a bug in base64 on Ruby 1.9, unresolved yet
+f | attachment_with_encoded_name.eml | g | 1.8K |  | Mikel Lindsaar | raasdnil@gmail.com | 1257208245 |  | Added handling of multi value parameters, like filename*1*="us-ascii'en'blah" filename*2="bleh"
+f | attachment_content_location.eml | g | 952B |  | Mikel Lindsaar | raasdnil@gmail.com | 1256986806 |  | Adding changes to get compatibility with actionmailer, also handled attachment handling
+f | attachment_with_quoted_filename.eml | g | 3.5K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253457324 |  | Found and squashed a bug in the part header detection, uncovered a bug in base64 on Ruby 1.9, unresolved yet
+f | attachment_only_email.eml | g | 799B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253457324 |  | Found and squashed a bug in the part header detection, uncovered a bug in base64 on Ruby 1.9, unresolved yet
+f | attachment_message_rfc822.eml | g | 4.1K |  | Ubiratan Pires Alberton | u.alberton@gmail.com | 1273230139 |  | Added recursive parsing of attachments inside message/rfc822 parts.
+f | attachment_content_disposition.eml | g | 662B |  | Mikel Lindsaar | raasdnil@gmail.com | 1256986806 |  | Adding changes to get compatibility with actionmailer, also handled attachment handling

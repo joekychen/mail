@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › core_extensions › smtp.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>smtp.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Net</span>
+  <span class="k">class</span> <span class="nc">SMTP</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>This is a backport of r30294 from ruby trunk because of a bug in net/smtp.
+http://svn.ruby-lang.org/cgi-bin/viewvc.cgi?view=rev&amp;revision=30294</p>
+
+<p>Fixed in what will be Ruby 1.9.3 - tlsconnect also does not exist in some early versions of ruby</p></td><td class="code"><div class="highlight"><pre>    <span class="n">remove_method</span> <span class="ss">:tlsconnect</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Net</span><span class="o">::</span><span class="no">SMTP</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">tlsconnect</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">tlsconnect</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+      <span class="n">verified</span> <span class="o">=</span> <span class="kp">false</span>
+      <span class="n">s</span> <span class="o">=</span> <span class="no">OpenSSL</span><span class="o">::</span><span class="no">SSL</span><span class="o">::</span><span class="no">SSLSocket</span><span class="o">.</span><span class="n">new</span> <span class="n">s</span><span class="p">,</span> <span class="vi">@ssl_context</span>
+      <span class="n">logging</span> <span class="s2">&quot;TLS connection started&quot;</span>
+      <span class="n">s</span><span class="o">.</span><span class="n">sync_close</span> <span class="o">=</span> <span class="kp">true</span>
+      <span class="n">s</span><span class="o">.</span><span class="n">connect</span>
+      <span class="k">if</span> <span class="vi">@ssl_context</span><span class="o">.</span><span class="n">verify_mode</span> <span class="o">!=</span> <span class="no">OpenSSL</span><span class="o">::</span><span class="no">SSL</span><span class="o">::</span><span class="no">VERIFY_NONE</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">post_connection_check</span><span class="p">(</span><span class="vi">@address</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="n">verified</span> <span class="o">=</span> <span class="kp">true</span>
+      <span class="n">s</span>
+    <span class="k">ensure</span>
+      <span class="n">s</span><span class="o">.</span><span class="n">close</span> <span class="k">unless</span> <span class="n">verified</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › network › delivery_methods › smtp.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>smtp.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>== Sending Email with SMTP</p>
+
+<p>Mail allows you to send emails using SMTP.  This is done by wrapping Net::SMTP in
+an easy to use manner.</p>
+
+<p>=== Sending via SMTP server on Localhost</p>
+
+<p>Sending locally (to a postfix or sendmail server running on localhost) requires
+no special setup.  Just to Mail.deliver &amp;block or message.deliver! and it will
+be sent in this method.</p>
+
+<p>=== Sending via MobileMe</p>
+
+<p>Mail.defaults do
+    delivery<em>method :smtp, { :address              => "smtp.me.com",
+                             :port                 => 587,
+                             :domain               => 'your.host.name',
+                             :user</em>name            => '<username>',
+                             :password             => '<password>',
+                             :authentication       => 'plain',
+                             :enable<em>starttls</em>auto => true  }
+  end</p>
+
+<p>=== Sending via GMail</p>
+
+<p>Mail.defaults do
+    delivery<em>method :smtp, { :address              => "smtp.gmail.com",
+                             :port                 => 587,
+                             :domain               => 'your.host.name',
+                             :user</em>name            => '<username>',
+                             :password             => '<password>',
+                             :authentication       => 'plain',
+                             :enable<em>starttls</em>auto => true  }
+  end</p>
+
+<p>=== Certificate verification</p>
+
+<p>When using TLS, some mail servers provide certificates that are self-signed
+or whose names do not exactly match the hostname given in the address.
+OpenSSL will reject these by default. The best remedy is to use the correct
+hostname or update the certificate authorities trusted by your ruby. If
+that isn't possible, you can control this behavior with
+an :openssl<em>verify</em>mode setting. Its value may be either an OpenSSL
+verify mode constant (OpenSSL::SSL::VERIFY<em>NONE), or a string containing
+the name of an OpenSSL verify mode (none, peer, client</em>once,
+fail<em>if</em>no<em>peer</em>cert).</p>
+
+<p>=== Others </p>
+
+<p>Feel free to send me other examples that were tricky</p>
+
+<p>=== Delivering the email</p>
+
+<p>Once you have the settings right, sending the email is done by:</p>
+
+<p>Mail.deliver do
+    to 'mikel@test.lindsaar.net'
+    from 'ada@test.lindsaar.net'
+    subject 'testing sendmail'
+    body 'testing sendmail'
+  end</p>
+
+<p>Or by calling deliver on a Mail message</p>
+
+<p>mail = Mail.new do
+    to 'mikel@test.lindsaar.net'
+    from 'ada@test.lindsaar.net'
+    subject 'testing sendmail'
+    body 'testing sendmail'
+  end</p>
+
+<p>mail.deliver!</p></td><td class="code"><div class="highlight"><pre>  <span class="k">class</span> <span class="nc">SMTP</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">:address</span>              <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+                        <span class="ss">:port</span>                 <span class="o">=&gt;</span> <span class="mi">25</span><span class="p">,</span>
+                        <span class="ss">:domain</span>               <span class="o">=&gt;</span> <span class="s1">&#39;localhost.localdomain&#39;</span><span class="p">,</span>
+                        <span class="ss">:user_name</span>            <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                        <span class="ss">:password</span>             <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                        <span class="ss">:authentication</span>       <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                        <span class="ss">:enable_starttls_auto</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+                        <span class="ss">:openssl_verify_mode</span>  <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                        <span class="ss">:ssl</span>                  <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                        <span class="ss">:tls</span>                  <span class="o">=&gt;</span> <span class="kp">nil</span>
+                      <span class="p">}</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="kp">attr_accessor</span> <span class="ss">:settings</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Send the message via SMTP.
+The from and to attributes are optional. If not set, they are retrieve from the Message.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">deliver!</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Set the envelope from to be either the return-path, the sender or the first from address</p></td><td class="code"><div class="highlight"><pre>      <span class="n">envelope_from</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">return_path</span> <span class="o">||</span> <span class="n">mail</span><span class="o">.</span><span class="n">sender</span> <span class="o">||</span> <span class="n">mail</span><span class="o">.</span><span class="n">from_addrs</span><span class="o">.</span><span class="n">first</span>
+      <span class="k">if</span> <span class="n">envelope_from</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="k">raise</span> <span class="no">ArgumentError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;A sender (Return-Path, Sender or From) required to send a message&#39;</span><span class="p">)</span> 
+      <span class="k">end</span>
+      
+      <span class="n">destinations</span> <span class="o">||=</span> <span class="n">mail</span><span class="o">.</span><span class="n">destinations</span> <span class="k">if</span> <span class="n">mail</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:destinations</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">mail</span><span class="o">.</span><span class="n">destinations</span>
+      <span class="k">if</span> <span class="n">destinations</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="k">raise</span> <span class="no">ArgumentError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;At least one recipient (To, Cc or Bcc) is required to send a message&#39;</span><span class="p">)</span> 
+      <span class="k">end</span>
+      
+      <span class="n">message</span> <span class="o">||=</span> <span class="n">mail</span><span class="o">.</span><span class="n">encoded</span> <span class="k">if</span> <span class="n">mail</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:encoded</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="k">raise</span> <span class="no">ArgumentError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;A encoded content is required to send a message&#39;</span><span class="p">)</span>
+      <span class="k">end</span>
+      
+      <span class="n">smtp</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">SMTP</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">settings</span><span class="o">[</span><span class="ss">:address</span><span class="o">]</span><span class="p">,</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:port</span><span class="o">]</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:tls</span><span class="o">]</span> <span class="o">||</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:ssl</span><span class="o">]</span>
+        <span class="k">if</span> <span class="n">smtp</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:enable_tls</span><span class="p">)</span>
+          <span class="k">unless</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:openssl_verify_mode</span><span class="o">]</span>
+            <span class="n">smtp</span><span class="o">.</span><span class="n">enable_tls</span>
+          <span class="k">else</span>
+            <span class="n">openssl_verify_mode</span> <span class="o">=</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:openssl_verify_mode</span><span class="o">]</span>
+            <span class="k">if</span> <span class="n">openssl_verify_mode</span><span class="o">.</span><span class="n">kind_of?</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+              <span class="n">openssl_verify_mode</span> <span class="o">=</span> <span class="s2">&quot;OpenSSL::SSL::VERIFY_</span><span class="si">#{</span><span class="n">openssl_verify_mode</span><span class="o">.</span><span class="n">upcase</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">constantize</span>
+            <span class="k">end</span>
+            <span class="n">context</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">SMTP</span><span class="o">.</span><span class="n">default_ssl_context</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">verify_mode</span> <span class="o">=</span> <span class="n">openssl_verify_mode</span>
+            <span class="n">smtp</span><span class="o">.</span><span class="n">enable_tls</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+          <span class="k">end</span>        
+        <span class="k">end</span>
+      <span class="k">elsif</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:enable_starttls_auto</span><span class="o">]</span>
+        <span class="k">if</span> <span class="n">smtp</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:enable_starttls_auto</span><span class="p">)</span> 
+          <span class="k">unless</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:openssl_verify_mode</span><span class="o">]</span>
+            <span class="n">smtp</span><span class="o">.</span><span class="n">enable_starttls_auto</span>
+          <span class="k">else</span>
+            <span class="n">openssl_verify_mode</span> <span class="o">=</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:openssl_verify_mode</span><span class="o">]</span>
+            <span class="k">if</span> <span class="n">openssl_verify_mode</span><span class="o">.</span><span class="n">kind_of?</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+              <span class="n">openssl_verify_mode</span> <span class="o">=</span> <span class="s2">&quot;OpenSSL::SSL::VERIFY_</span><span class="si">#{</span><span class="n">openssl_verify_mode</span><span class="o">.</span><span class="n">upcase</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">constantize</span>
+            <span class="k">end</span>
+            <span class="n">context</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">SMTP</span><span class="o">.</span><span class="n">default_ssl_context</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">verify_mode</span> <span class="o">=</span> <span class="n">openssl_verify_mode</span>
+            <span class="n">smtp</span><span class="o">.</span><span class="n">enable_starttls_auto</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+      
+      <span class="n">response</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="n">smtp</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">settings</span><span class="o">[</span><span class="ss">:domain</span><span class="o">]</span><span class="p">,</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:user_name</span><span class="o">]</span><span class="p">,</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:password</span><span class="o">]</span><span class="p">,</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:authentication</span><span class="o">]</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">smtp_obj</span><span class="o">|</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">smtp_obj</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">envelope_from</span><span class="p">,</span> <span class="n">destinations</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="k">return</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:return_response</span><span class="o">]</span> <span class="p">?</span> <span class="n">response</span> <span class="p">:</span> <span class="nb">self</span>
+    <span class="k">end</span>
+    
+    
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

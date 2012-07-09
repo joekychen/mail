@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › content_disposition_field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>content_disposition_field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span> <span class="k">do</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;initialization&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should initialize&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;attachment; filename=File&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string with the field name&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: attachment; filename=File&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Content-Disposition&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;attachment; filename=File&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string without the field name&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;attachment; filename=File&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Content-Disposition&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;attachment; filename=File&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a nil value and generate a disposition type&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Content-Disposition&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_nil</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render encoded&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: attachment; filename=File&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Content-Disposition: attachment;</span><span class="se">\r\n\s</span><span class="s2">filename=File</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render encoded for inline&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: inline&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Content-Disposition: inline</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render decoded&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: attachment; filename=File&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;attachment; filename=File&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render decoded inline&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: inline&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;inline&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle upper and mixed case INLINE and AttachMent&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: INLINE&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;inline&#39;</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: AttachMent&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;attachment&#39;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;instance methods&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should give it&#39;s disposition type&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: attachment; filename=File&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">disposition_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;attachment&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;filename&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;File&#39;</span><span class="p">})</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>see spec/fixtures/trec<em>2005</em>corpus/missing<em>content</em>disposition.eml</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should accept a blank disposition type&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentDispositionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: &#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">disposition_type</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_nil</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

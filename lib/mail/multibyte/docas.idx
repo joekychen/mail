@@ -1,0 +1,4 @@
+f | chars.rb | s | 17K | 428 | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | utils.rb | s | 1.6K | 56 | Jonas Pfenniger | jonas@pfenniger.name | 1310125791 |  | Fix Encoding constant conflict in 1.8  Don't rely on the Encoding constant as it can be defined in 1.8 by something else.
+f | unicode.rb | s | 14K | 356 | Mikel Lindsaar | mikel@rubyx.com | 1303803602 |  | Pulling Active Support multibyte requirements over for Ruby 1.8.7
+f | exceptions.rb | s | 179B | 7 | Mikel Lindsaar | mikel@rubyx.com | 1303803602 |  | Pulling Active Support multibyte requirements over for Ruby 1.8.7

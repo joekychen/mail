@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › body_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>body_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span> <span class="k">do</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>3.5 Overall message syntax</p>
+
+<p>A message consists of header fields, optionally followed by a message
+body.  Lines in a message MUST be a maximum of 998 characters
+excluding the CRLF, but it is RECOMMENDED that lines be limited to 78
+characters excluding the CRLF.  (See section 2.1.1 for explanation.)
+In a message body, though all of the characters listed in the text
+rule MAY be used, the use of US-ASCII control characters (values 1
+through 8, 11, 12, and 14 through 31) is discouraged since their
+interpretation by receivers for display is not guaranteed.</p>
+
+<p>message         =       (fields / obs-fields)
+                         [CRLF body]</p>
+
+<p>body            =       <em>(</em>998text CRLF) *998text</p>
+
+<p>The header fields carry most of the semantic information and are
+defined in section 3.6.  The body is simply a series of lines of text
+which are uninterpreted for the purposes of this standard.</p></td><td class="code"><div class="highlight"><pre>  <span class="n">describe</span> <span class="s2">&quot;initialization&quot;</span> <span class="k">do</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should be instantiated&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should initialize on a nil value&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should accept text as raw source data&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;this is some text&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;this is some text&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should accept nil as a value and return an empty body&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept an array as the body and join it&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">[</span><span class="s2">&quot;line one</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;line two</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">]</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept an array as the body and join it&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">[</span><span class="s2">&quot;line one</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;line two</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">]</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;line one</span><span class="se">\r\n</span><span class="s2">line two</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;encoding&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept text as raw source data&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;this is some text&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;this is some text&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should set it&#39;s own encoding to us_ascii if it is ascii only body&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;This is some text&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">charset</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;US-ASCII&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow you to set it&#39;s encoding&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;UTF-8&#39;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">charset</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;UTF-8&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to specify an encoding&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;base64&#39;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoding</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;base64&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should convert all new lines to crlf&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;This has </span><span class="se">\n</span><span class="s2"> various </span><span class="se">\r</span><span class="s2"> new </span><span class="se">\r\n</span><span class="s2"> lines&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;This has </span><span class="se">\r\n</span><span class="s2"> various </span><span class="se">\r\n</span><span class="s2"> new </span><span class="se">\r\n</span><span class="s2"> lines&quot;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;decoding&quot;</span> <span class="k">do</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should convert all new lines to crlf&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;This has </span><span class="se">\n</span><span class="s2"> various </span><span class="se">\r</span><span class="s2"> new </span><span class="se">\r\n</span><span class="s2"> lines&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;This has </span><span class="se">\n</span><span class="s2"> various </span><span class="se">\n</span><span class="s2"> new </span><span class="se">\n</span><span class="s2"> lines&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should not change a body on decode if not given an encoding type to decode&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;The=3Dbody&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;The=3Dbody&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should change return the raw text if it does not recognise the encoding&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;The=3Dbody&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;7bit&#39;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;The=3Dbody&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should change a body on decode if given an encoding type to decode&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;The=3Dbody&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;quoted-printable&#39;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;The=body&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should change a body on decode if given an encoding type to decode&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;VGhlIGJvZHk=</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;base64&#39;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;The body&quot;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;splitting up a multipart document&quot;</span> <span class="k">do</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should store the boundary passed in&quot;</span> <span class="k">do</span>
+      <span class="n">multipart_body</span> <span class="o">=</span> <span class="s2">&quot;this is some text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/plain; charset=ISO-8859-1</span><span class="se">\r\n\r\n</span><span class="s2">This is a plain text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/html</span><span class="se">\r\n\r\n</span><span class="s2">&lt;p&gt;This is HTML&lt;/p&gt;</span><span class="se">\r\n</span><span class="s2">n------=_Part_2192_32400445--</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">multipart_body</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;----=_Part_2192_32400445&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;----=_Part_2192_32400445&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should split at the boundry string given returning two message bodies&quot;</span> <span class="k">do</span>
+      <span class="n">multipart_body</span> <span class="o">=</span> <span class="s2">&quot;this is some text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/plain; charset=ISO-8859-1</span><span class="se">\r\n\r\n</span><span class="s2">This is a plain text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/html</span><span class="se">\r\n\r\n</span><span class="s2">&lt;p&gt;This is HTML&lt;/p&gt;</span><span class="se">\r\n</span><span class="s2">n------=_Part_2192_32400445--</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">multipart_body</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;----=_Part_2192_32400445&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should keep the preamble text as it&#39;s own preamble&quot;</span> <span class="k">do</span>
+      <span class="n">multipart_body</span> <span class="o">=</span> <span class="s2">&quot;this is some text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/plain; charset=ISO-8859-1</span><span class="se">\r\n\r\n</span><span class="s2">This is a plain text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/html</span><span class="se">\r\n\r\n</span><span class="s2">&lt;p&gt;This is HTML&lt;/p&gt;</span><span class="se">\r\n</span><span class="s2">n------=_Part_2192_32400445--</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">multipart_body</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;----=_Part_2192_32400445&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">preamble</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;this is some text&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should return the parts as their own messages&quot;</span> <span class="k">do</span>
+      <span class="n">multipart_body</span> <span class="o">=</span> <span class="s2">&quot;this is some text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/plain; charset=ISO-8859-1</span><span class="se">\r\n\r\n</span><span class="s2">This is a plain text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/html</span><span class="se">\r\n\r\n</span><span class="s2">&lt;p&gt;This is HTML&lt;/p&gt;</span><span class="se">\r\n</span><span class="s2">n------=_Part_2192_32400445--</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">multipart_body</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;----=_Part_2192_32400445&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should return the first part as it&#39;s own message&quot;</span> <span class="k">do</span>
+      <span class="n">multipart_body</span> <span class="o">=</span> <span class="s2">&quot;this is some text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/plain; charset=ISO-8859-1</span><span class="se">\r\n\r\n</span><span class="s2">This is a plain text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/html</span><span class="se">\r\n\r\n</span><span class="s2">&lt;p&gt;This is HTML&lt;/p&gt;</span><span class="se">\r\n</span><span class="s2">n------=_Part_2192_32400445--</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">multipart_body</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;----=_Part_2192_32400445&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/plain; charset=ISO-8859-1&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should return the first part as it&#39;s own message&quot;</span> <span class="k">do</span>
+      <span class="n">multipart_body</span> <span class="o">=</span> <span class="s2">&quot;this is some text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/plain; charset=ISO-8859-1</span><span class="se">\r\n\r\n</span><span class="s2">This is a plain text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/html</span><span class="se">\r\n\r\n</span><span class="s2">&lt;p&gt;This is HTML&lt;/p&gt;</span><span class="se">\r\n</span><span class="s2">n------=_Part_2192_32400445--</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">multipart_body</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;----=_Part_2192_32400445&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/html&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should separate out it&#39;s parts&quot;</span> <span class="k">do</span>
+      <span class="n">multipart_body</span> <span class="o">=</span> <span class="s2">&quot;this is some text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/plain; charset=ISO-8859-1</span><span class="se">\r\n\r\n</span><span class="s2">This is a plain text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/html</span><span class="se">\r\n\r\n</span><span class="s2">&lt;p&gt;This is HTML&lt;/p&gt;</span><span class="se">\r\n</span><span class="s2">n------=_Part_2192_32400445--</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">multipart_body</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;----=_Part_2192_32400445&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">be_multipart</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should keep track of it&#39;s parts&quot;</span> <span class="k">do</span>
+      <span class="n">multipart_body</span> <span class="o">=</span> <span class="s2">&quot;this is some text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/plain; charset=ISO-8859-1</span><span class="se">\r\n\r\n</span><span class="s2">This is a plain text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/html</span><span class="se">\r\n\r\n</span><span class="s2">&lt;p&gt;This is HTML&lt;/p&gt;</span><span class="se">\r\n</span><span class="s2">n------=_Part_2192_32400445--</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">multipart_body</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;----=_Part_2192_32400445&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should round trip it&#39;s parts&quot;</span> <span class="k">do</span>
+      <span class="n">multipart_body</span> <span class="o">=</span> <span class="s2">&quot;this is some text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/plain; charset=ISO-8859-1</span><span class="se">\r\n\r\n</span><span class="s2">This is a plain text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/html</span><span class="se">\r\n\r\n</span><span class="s2">&lt;p&gt;This is HTML&lt;/p&gt;</span><span class="se">\r\n</span><span class="s2">n------=_Part_2192_32400445--</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">multipart_body</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;----=_Part_2192_32400445&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">preamble</span> <span class="o">=</span> <span class="s2">&quot;Really! this is some text&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">epilogue</span> <span class="o">=</span> <span class="s2">&quot;And this is the end&quot;</span>
+      <span class="n">new_body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">encoded</span><span class="p">)</span>
+      <span class="n">new_body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;----=_Part_2192_32400445&#39;</span><span class="p">)</span>
+      <span class="n">new_body</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+      <span class="n">new_body</span><span class="o">.</span><span class="n">preamble</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Really! this is some text&quot;</span>
+      <span class="n">new_body</span><span class="o">.</span><span class="n">epilogue</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;And this is the end&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to change the boundary&quot;</span> <span class="k">do</span>
+      <span class="n">multipart_body</span> <span class="o">=</span> <span class="s2">&quot;this is some text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/plain; charset=ISO-8859-1</span><span class="se">\r\n\r\n</span><span class="s2">This is a plain text</span><span class="se">\r\n\r\n</span><span class="s2">------=_Part_2192_32400445</span><span class="se">\r\n</span><span class="s2">Content-Type: text/html</span><span class="se">\r\n\r\n</span><span class="s2">&lt;p&gt;This is HTML&lt;/p&gt;</span><span class="se">\r\n</span><span class="s2">n------=_Part_2192_32400445--</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">multipart_body</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;----=_Part_2192_32400445&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">boundary</span> <span class="o">=</span> <span class="s1">&#39;------=_MIMEPART&#39;</span>
+      <span class="n">new_body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">encoded</span><span class="p">)</span>
+      <span class="n">new_body</span><span class="o">.</span><span class="n">split!</span><span class="p">(</span><span class="s1">&#39;------=_MIMEPART&#39;</span><span class="p">)</span>
+      <span class="n">new_body</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+      <span class="n">new_body</span><span class="o">.</span><span class="n">preamble</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;this is some text&quot;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;detecting non ascii&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should say an empty string is all ascii&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">be_only_us_ascii</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should say if a body is ascii&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;This is ASCII&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">be_only_us_ascii</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should say if a body is not ascii&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;This is NOT plain text ASCII　− かきくけこ&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_only_us_ascii</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;adding parts&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should allow you to add a part&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">1</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">be_multipart</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to sort the parts&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/html</span><span class="se">\r\n</span><span class="s2">subject: HTML&quot;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/plain</span><span class="se">\r\n</span><span class="s2">subject: Plain Text&quot;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/enriched</span><span class="se">\r\n</span><span class="s2">subject: Enriched&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">3</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">be_multipart</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">sort_parts!</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/plain&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/enriched&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/html&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow you to sort the parts with an arbitrary sort order&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">set_sort_order</span><span class="p">(</span><span class="o">[</span> <span class="s2">&quot;text/plain&quot;</span><span class="p">,</span> <span class="s2">&quot;text/html&quot;</span><span class="p">,</span> <span class="s2">&quot;text/enriched&quot;</span> <span class="o">]</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/html</span><span class="se">\r\n</span><span class="s2">subject: HTML&quot;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/plain</span><span class="se">\r\n</span><span class="s2">subject: Plain Text&quot;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/enriched</span><span class="se">\r\n</span><span class="s2">subject: Enriched&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">3</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">be_multipart</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">sort_parts!</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/plain&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/html&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/enriched&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow you to sort the parts with an arbitrary sort order&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">set_sort_order</span><span class="p">(</span><span class="o">[</span><span class="s2">&quot;application/x-yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;text/plain&quot;</span><span class="o">]</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/plain</span><span class="se">\r\n</span><span class="s2">subject: HTML&quot;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/html</span><span class="se">\r\n</span><span class="s2">subject: Plain Text&quot;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: application/x-yaml</span><span class="se">\r\n</span><span class="s2">subject: Enriched&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">3</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">be_multipart</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">sort_parts!</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;application/x-yaml&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/plain&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/html&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should sort the parts on encode&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/html</span><span class="se">\r\n</span><span class="s2">subject: HTML&quot;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/plain</span><span class="se">\r\n</span><span class="s2">subject: Plain Text&quot;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/enriched</span><span class="se">\r\n</span><span class="s2">subject: Enriched&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">3</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">be_multipart</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoded</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/plain&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/enriched&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/html&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should put the part types it doesn&#39;t know about at the end&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/html</span><span class="se">\r\n</span><span class="s2">subject: HTML&quot;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/plain</span><span class="se">\r\n</span><span class="s2">subject: Plain Text&quot;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: image/jpeg</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">3</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">be_multipart</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoded</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/plain&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/html&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;image/jpeg&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow you to sort the parts recursively&quot;</span> <span class="k">do</span>
+      <span class="n">part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Type: multipart/alternate&#39;</span><span class="p">)</span>
+      <span class="n">part</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/plain</span><span class="se">\r\n</span><span class="s2">subject: Plain Text&quot;</span><span class="p">))</span>
+      <span class="n">part</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/html</span><span class="se">\r\n</span><span class="s2">subject: HTML&quot;</span><span class="p">))</span>
+      <span class="n">part</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/enriched</span><span class="se">\r\n</span><span class="s2">subject: Enriched&quot;</span><span class="p">))</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="n">part</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: image/jpeg</span><span class="se">\r\n</span><span class="s2">subject: JPGEG</span><span class="se">\r\n\r\n</span><span class="s2">sdkjskjdksjdkjsd&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">be_multipart</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">sort_parts!</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">match</span> <span class="sr">%r{\Amultipart/alternate(;|\Z)}</span> 
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;image/jpeg&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/plain&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/enriched&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">parts</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/html&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow you to sort the parts recursively&quot;</span> <span class="k">do</span>
+      <span class="n">part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Type: multipart/alternate&#39;</span><span class="p">)</span>
+      <span class="n">part</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/enriched</span><span class="se">\r\n</span><span class="s2">subject: Enriched&quot;</span><span class="p">))</span>
+      <span class="n">part</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/plain</span><span class="se">\r\n</span><span class="s2">subject: Plain Text&quot;</span><span class="p">))</span>
+      <span class="n">part</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: text/html</span><span class="se">\r\n</span><span class="s2">subject: HTML&quot;</span><span class="p">))</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="n">part</span>
+      <span class="n">body</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;content-type: image/jpeg</span><span class="se">\r\n</span><span class="s2">subject: JPGEG</span><span class="se">\r\n\r\n</span><span class="s2">sdkjskjdksjdkjsd&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">be_multipart</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">sort_parts!</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">match</span> <span class="sr">%r{\Amultipart/alternate(;|\Z)}</span> 
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;image/jpeg&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/plain&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/enriched&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">parts</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;text/html&quot;</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;matching&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should still equal itself&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;The body&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">body</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should match on the body part decoded if given a string to ==&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;The body&#39;</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">body</span> <span class="o">==</span> <span class="s1">&#39;The body&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should match on the body part decoded if given a string to ==&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;VGhlIGJvZHk=</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;base64&#39;</span>
+      <span class="p">(</span><span class="n">body</span> <span class="o">==</span> <span class="s2">&quot;The body&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should match on the body part decoded if given a string to =~&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;The body&#39;</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">body</span> <span class="o">=~</span> <span class="sr">/The/</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">0</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should match on the body part decoded if given a string to ==&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;VGhlIGJvZHk=</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;base64&#39;</span>
+      <span class="p">(</span><span class="n">body</span> <span class="o">=~</span> <span class="sr">/The/</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">0</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should match on the body part decoded if given a string to match&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;The body&#39;</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sr">/The/</span><span class="p">))</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;The&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should match on the body part decoded if given a string to match&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;VGhlIGJvZHk=</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;base64&#39;</span>
+      <span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sr">/The/</span><span class="p">))</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;The&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should match on the body part decoded if given a string to include?&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;The Body&#39;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="kp">include</span><span class="p">(</span><span class="s1">&#39;The&#39;</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should match on the body part decoded if given a string to include?&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;VGhlIGJvZHk=</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;base64&#39;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="kp">include</span><span class="p">(</span><span class="s1">&#39;The&#39;</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;non US-ASCII charset&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should encoded&quot;</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Body</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;あいうえお</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;iso-2022-jp&#39;</span>
+      <span class="n">expect</span> <span class="o">=</span> <span class="p">(</span><span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span><span class="p">)</span> <span class="p">?</span> <span class="s2">&quot;あいうえお</span><span class="se">\r\n</span><span class="s2">&quot;</span> <span class="p">:</span> <span class="s2">&quot;</span><span class="se">\e</span><span class="s2">$B$</span><span class="se">\&quot;</span><span class="s2">$$$&amp;$($*</span><span class="se">\e</span><span class="s2">(B</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="n">body</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">expect</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

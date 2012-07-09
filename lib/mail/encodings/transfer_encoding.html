@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › encodings › transfer_encoding.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>transfer_encoding.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">module</span> <span class="nn">Encodings</span>
+    <span class="k">class</span> <span class="nc">TransferEncoding</span>
+      <span class="no">NAME</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+      <span class="no">PRIORITY</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">can_transport?</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span>
+        <span class="n">enc</span> <span class="o">=</span> <span class="no">Encodings</span><span class="o">.</span><span class="n">get_name</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="no">Encodings</span><span class="o">.</span><span class="n">defined?</span> <span class="n">enc</span>
+          <span class="no">Encodings</span><span class="o">.</span><span class="n">get_encoding</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">is_a?</span> <span class="nb">self</span>
+        <span class="k">else</span>
+          <span class="kp">false</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">can_encode?</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span>
+        <span class="n">can_transport?</span> <span class="n">enc</span> 
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">cost</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="s2">&quot;Unimplemented&quot;</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">to_s</span>
+        <span class="nb">self</span><span class="o">::</span><span class="no">NAME</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">get_best_compatible</span><span class="p">(</span><span class="n">source_encoding</span><span class="p">,</span> <span class="n">str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">self</span><span class="o">.</span><span class="n">can_transport?</span> <span class="n">source_encoding</span> <span class="k">then</span>
+            <span class="n">source_encoding</span> 
+        <span class="k">else</span>
+            <span class="n">choices</span> <span class="o">=</span> <span class="o">[]</span>
+            <span class="no">Encodings</span><span class="o">.</span><span class="n">get_all</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">enc</span><span class="o">|</span>
+                <span class="n">choices</span> <span class="o">&lt;&lt;</span> <span class="n">enc</span> <span class="k">if</span> <span class="nb">self</span><span class="o">.</span><span class="n">can_transport?</span> <span class="n">enc</span> <span class="ow">and</span> <span class="n">enc</span><span class="o">.</span><span class="n">can_encode?</span> <span class="n">source_encoding</span>
+            <span class="k">end</span>
+            <span class="n">best</span> <span class="o">=</span> <span class="kp">nil</span> 
+            <span class="n">best_cost</span> <span class="o">=</span> <span class="mi">100</span>
+            <span class="n">choices</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">enc</span><span class="o">|</span>
+                <span class="n">this_cost</span> <span class="o">=</span> <span class="n">enc</span><span class="o">.</span><span class="n">cost</span> <span class="n">str</span>
+                <span class="k">if</span> <span class="n">this_cost</span> <span class="o">&lt;</span> <span class="n">best_cost</span> <span class="k">then</span>
+                    <span class="n">best_cost</span> <span class="o">=</span> <span class="n">this_cost</span>
+                    <span class="n">best</span> <span class="o">=</span> <span class="n">enc</span>
+                <span class="k">elsif</span> <span class="n">this_cost</span> <span class="o">==</span> <span class="n">best_cost</span> <span class="k">then</span> 
+                    <span class="n">best</span> <span class="o">=</span> <span class="n">enc</span> <span class="k">if</span> <span class="n">enc</span><span class="o">::</span><span class="no">PRIORITY</span> <span class="o">&lt;</span> <span class="n">best</span><span class="o">::</span><span class="no">PRIORITY</span>
+                <span class="k">end</span>
+            <span class="k">end</span>
+            <span class="n">best</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">to_s</span>
+        <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">to_s</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

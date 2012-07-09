@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › version_specific › escape_paren_1_8_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>escape_paren_1_8_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="s2">&quot;Ruby 1.8 Extensions&quot;</span> <span class="k">do</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;string ascii detection&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should say it is US-ASCII only if it is&quot;</span> <span class="k">do</span>
+      <span class="s2">&quot;abc&quot;</span><span class="o">.</span><span class="n">should</span> <span class="n">be_ascii_only</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should not say it is US-ASCII only if it isn&#39;t&quot;</span> <span class="k">do</span>
+      <span class="s2">&quot;かきくけこ&quot;</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_ascii_only</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should not say it is US-ASCII only if it is a mix&quot;</span> <span class="k">do</span>
+      <span class="s2">&quot;abcかきくけこ123&quot;</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_ascii_only</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should handle edge cases&quot;</span> <span class="k">do</span>
+      <span class="o">[</span><span class="s2">&quot;</span><span class="se">\x00</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\x40</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\x7f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\x73</span><span class="s2">&quot;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">str</span><span class="o">|</span>
+        <span class="n">str</span><span class="o">.</span><span class="n">should</span> <span class="n">be_ascii_only</span>
+      <span class="k">end</span>
+
+      <span class="o">[</span><span class="s2">&quot;</span><span class="se">\x81</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\x99</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\xFF</span><span class="s2">&quot;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">str</span><span class="o">|</span>
+        <span class="n">str</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_ascii_only</span>
+      <span class="k">end</span>
+
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › round_tripping_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>round_tripping_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="s2">&quot;Round Tripping&quot;</span> <span class="k">do</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should round trip a basic email&quot;</span> <span class="k">do</span>
+    <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Subject: FooBar&#39;</span><span class="p">)</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">body</span> <span class="s2">&quot;This is Text&quot;</span>
+    <span class="n">parsed_mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">mail</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span>
+    <span class="n">parsed_mail</span><span class="o">.</span><span class="n">subject</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;FooBar&quot;</span>
+    <span class="n">parsed_mail</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;This is Text&quot;</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should round trip a html multipart email&quot;</span> <span class="k">do</span>
+    <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Subject: FooBar&#39;</span><span class="p">)</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+      <span class="n">body</span> <span class="s2">&quot;This is Text&quot;</span>
+    <span class="k">end</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">html_part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+      <span class="n">content_type</span> <span class="s2">&quot;text/html; charset=US-ASCII&quot;</span>
+      <span class="n">body</span> <span class="s2">&quot;&lt;b&gt;This is HTML&lt;/b&gt;&quot;</span>
+    <span class="k">end</span>
+    <span class="n">parsed_mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">mail</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span>
+    <span class="n">parsed_mail</span><span class="o">.</span><span class="n">mime_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/alternative&#39;</span>
+    <span class="n">parsed_mail</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">mail</span><span class="o">.</span><span class="n">boundary</span>
+    <span class="n">parsed_mail</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+    <span class="n">parsed_mail</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">body</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;This is Text&quot;</span>
+    <span class="n">parsed_mail</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">body</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;&lt;b&gt;This is HTML&lt;/b&gt;&quot;</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should round trip an email&quot;</span> <span class="k">do</span>
+    <span class="n">initial</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+      <span class="n">to</span>        <span class="s2">&quot;mikel@test.lindsaar.net&quot;</span>
+      <span class="n">subject</span>   <span class="s2">&quot;testing round tripping&quot;</span>
+      <span class="n">body</span>      <span class="s2">&quot;Really testing round tripping.&quot;</span>
+      <span class="n">from</span>      <span class="s2">&quot;system@test.lindsaar.net&quot;</span>
+      <span class="n">cc</span>        <span class="s2">&quot;nobody@test.lindsaar.net&quot;</span>
+      <span class="n">bcc</span>       <span class="s2">&quot;bob@test.lindsaar.net&quot;</span>
+      <span class="n">date</span>      <span class="no">Time</span><span class="o">.</span><span class="n">local</span><span class="p">(</span><span class="mi">2009</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">initial</span><span class="o">.</span><span class="n">encoded</span><span class="p">)</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">initial</span><span class="o">.</span><span class="n">encoded</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

@@ -1,0 +1,2 @@
+f | treetop.rake | g | 249B |  | Jeremy Kemper | jeremy@bitsweat.net | 1269844621 |  | Switch from vendored 1.4.3 fork to gem dep on 1.4.5
+f | corpus.rake | g | 3.2K |  | Jeremy Kemper | jeremy@bitsweat.net | 1268001584 |  | corpus:load_mail should use bundled environment

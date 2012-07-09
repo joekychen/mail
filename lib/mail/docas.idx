@@ -1,0 +1,29 @@
+d | core_extensions |  | 6 items |  | Mikel Lindsaar | mikel@rubyx.com | 1332572334 |  | Remove duplicated line feed from regexp
+d | encodings |  | 6 items |  | Mikel Lindsaar | raasdnil@gmail.com | 1270294668 |  | Changing to QP for default encoding and decoding, one failing spec
+f | body.rb | s | 8.4K | 258 | Mickey Reiss | mreiss@andrew.cmu.edu | 1335244077 |  | Fixed typo in documentation
+f | multibyte.rb | s | 1.7K | 38 | Mikel Lindsaar | mikel@rubyx.com | 1303803602 |  | Pulling Active Support multibyte requirements over for Ruby 1.8.7
+f | network.rb | s | 640B | 12 | Mikel Lindsaar | mikel@rubyx.com | 1326503309 |  | Adding Exim as it's own delivery manager for Issue 70
+f | part.rb | s | 2.9K | 93 | glongman | glongman@infonium.ca | 1300719432 |  | fix issue 208 "mail.body after mail.add_file truncates message body"
+f | message.rb | s | 63K | 1854 | Mikel Lindsaar | mikel@rubyx.com | 1327366672 |  | Change Mail#deliver! to also inform the interceptors
+d | network |  | 2 items |  | Rob Di Marco | rob@innovationontherun.com | 1331925366 |  | Updated IMAP documentation to fix typo and have all options documented
+f | encodings.rb | s | 8.8K | 246 | Jan Varwig | jan@varwig.org | 1327759423 |  | Encodings.value_decode(str): Treat lines with mixed encoding correctly when the line ends with a plain text part.  Fixes mikel/mail#338
+d | version_specific |  | 2 items |  | okkez | okkez000@gmail.com | 1326514739 |  | add suffix "BE" to UTF-16 and UTF-32.  Ruby1.9.2 doesn't know UTF-16 and UTF-32 but knows UTF-16BE and UTF-32BE. Ruby1.9.3 knows UTF-16 and UTF-32 but they are dummy encoding. see http://www.ietf.org/rfc/rfc2781.txt
+f | version.rb | s | 529B | 19 | Mikel Lindsaar | raasdnil@gmail.com | 1284170064 |  | Changing version loading to not depend on rubygems
+f | field_list.rb | s | 767B | 29 | Mikel Lindsaar | raasdnil@gmail.com | 1284179424 |  | Closed Issue #65 found (incredibly) by quetz - major Kudos for bug hunting
+f | field.rb | s | 7.4K | 206 | Bogdan Gusiev | agresso@gmail.com | 1327059326 |  | Normalize parse error
+f | attachments_list.rb | s | 3.2K | 87 | Mikel Lindsaar | mikel@rubyx.com | 1326503987 |  | Adding update to allow this to still run on 1.8.7 rubies
+f | parts_list.rb | s | 1.2K | 45 | Mikel Lindsaar | mikel@rubyx.com | 1326496284 |  | In 1.9.3 Array uses clone so returns an Array instead of a PartsList
+f | patterns.rb | s | 1.1K | 30 | Mikel Lindsaar | mikel@rubyx.com | 1332572561 |  | Removing unused variable
+f | header.rb | s | 8.5K | 232 | Steve Smith | github@scsworld.co.uk | 1297869497 |  | Only use the a maximum of 1000 lines when parsing the headers. It's likely there was an error and causes severe performance degradation
+d | elements |  | 12 items |  | Bogdan Gusiev | agresso@gmail.com | 1327059326 |  | Normalize parse error
+f | elements.rb | s | 822B | 14 | Jeremy Kemper | jeremy@bitsweat.net | 1269766834 |  | Remove dupe autoload
+f | envelope.rb | s | 760B | 29 | Mikel Lindsaar | raasdnil@gmail.com | 1249989352 |  | Updating documentation
+f | indifferent_hash.rb | s | 3.8K | 121 | Mikel Lindsaar | mikel@rubyx.com | 1303810229 |  | Making further changes for active support removal
+f | utilities.rb | s | 5.6K | 187 | Derek Prior | derekprior@gmail.com | 1306185759 |  | Fixed URI.escape and URI.unescape warnings in 1.9.2
+d | fields |  | 33 items |  | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+d | parsers |  | 28 items |  | Mikel Lindsaar | mikel@rubyx.com | 1326504211 |  | Merge branch 'master' of https://github.com/liufengyun/mail into liufengyun-master
+d | matchers |  | 1 items |  | Phil Darnowsky | phil@darnowsky.com | 1309467519 |  | small bugfix in rspec messages
+f | configuration.rb | s | 1.6K | 65 | Mikel Lindsaar | mikel@rubyx.com | 1326503309 |  | Adding Exim as it's own delivery manager for Issue 70
+d | multibyte |  | 4 items |  | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | fields.rb | s | 1.9K | 34 | Jeremy Kemper | jeremy@bitsweat.net | 1268072783 |  | Autoload fields. Move requires to where they're used rather than all at toplevel.
+f | mail.rb | s | 8.1K | 229 | Sergii Boiko | cris.kiev@gmail.com | 1295275894 |  | Fix mistakes in examples. Now they works

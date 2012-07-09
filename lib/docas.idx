@@ -1,0 +1,4 @@
+d | mail |  | 29 items |  | Mickey Reiss | mreiss@andrew.cmu.edu | 1335244077 |  | Fixed typo in documentation
+f | VERSION | g | 31B |  | Mikel Lindsaar | mikel@rubyx.com | 1331725523 |  | Fix security vulnerability allowing command line exploit when using file delivery method
+f | mail.rb | s | 2.4K | 75 | Mikel Lindsaar | mikel@rubyx.com | 1331020778 |  | Fix security vulnerability allowing command line exploit when using exim or sendmail from the command line
+d | tasks |  | 2 items |  | Jeremy Kemper | jeremy@bitsweat.net | 1269844621 |  | Switch from vendored 1.4.3 fork to gem dep on 1.4.5

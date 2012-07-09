@@ -1,0 +1,50 @@
+<h1>Contributing to Mail</h1>
+
+<p>Hi there, I welcome pull requests!  Here are some thoughts on how to get your
+pull request merged quickly:</p>
+
+<ol>
+<li>Check the Reference RFCs, they are in the References directory, so no excuses.</li>
+<li>Check for a ticket on GitHub, maybe someone else has the problem too</li>
+<li>Make a fork of my GitHub repository</li>
+<li>Run the specs. We only take pull requests with passing tests, and it's great
+to know that you have a clean slate: <code>bundle &amp;&amp; bundle exec rake</code></li>
+<li>Add a spec for your change. Only refactoring and documentation changes
+require no new specs. If you are adding functionality or fixing a bug, we need
+a spec!</li>
+<li>Test the spec <em>at</em> <em>least</em> against MRI-1.9.2 and MRI-1.8.7</li>
+<li>Update the README if needed to reflect your change / addition</li>
+<li>With all specs passing push your changes back to your fork</li>
+<li>Send me a pull request</li>
+</ol>
+
+<p>Note, specs that break MRI 1.8.7 will not be accepted.</p>
+
+<p>At this point you're waiting on us. We like to at least comment on, if not
+accept, pull requests within three business days (and, typically, one business
+day). We may suggest some changes or improvements or alternatives.</p>
+
+<p>Some things that will increase the chance that your pull request is accepted,
+taken straight from the Ruby on Rails guide:</p>
+
+<ul>
+<li>Tell me you have tested it against more than one version of Ruby, RVM is great for
+this. I test against 7 rubies before I push into master.</li>
+<li>Use good, idiomatic, strcutred and modular code</li>
+<li>Include tests that fail without your code, and pass with it</li>
+<li>Update the documentation, the surrounding one, examples elsewhere, guides,
+whatever is affected by your contribution</li>
+</ul>
+
+<p>Syntax:</p>
+
+<ul>
+<li>Two spaces, no tabs.</li>
+<li>No trailing whitespace. Blank lines should not have any space.</li>
+<li>Prefer &amp;&amp;/|| over and/or.</li>
+<li>MyClass.my<em>method(my</em>arg) not my<em>method( my</em>arg ) or my<em>method my</em>arg.</li>
+<li>a = b and not a=b.</li>
+<li>Follow the conventions you see used in the source already.</li>
+</ul>
+
+<p>And in case we didn't emphasize it enough: we love specs!</p>

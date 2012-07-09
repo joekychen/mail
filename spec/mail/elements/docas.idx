@@ -1,0 +1,7 @@
+f | address_list_spec.rb | s | 5.1K | 112 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | address_spec.rb | s | 32K | 558 | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | received_element_spec.rb | s | 1.5K | 27 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | phrase_list_spec.rb | s | 619B | 18 | Jeremy Kemper | jeremy@bitsweat.net | 1269763953 |  | Use LOAD_PATH for spec_helper instead of relative requires
+f | envelope_from_element_spec.rb | s | 1.1K | 24 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | date_time_element_spec.rb | s | 548B | 15 | Jeremy Kemper | jeremy@bitsweat.net | 1269763953 |  | Use LOAD_PATH for spec_helper instead of relative requires
+f | message_ids_element_spec.rb | s | 1.5K | 34 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"

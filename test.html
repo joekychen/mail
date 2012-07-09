@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » test.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="index.html"></a><h1>test.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;mail&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;ruby-debug&#39;</span>
+
+<span class="n">smtp</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">:address</span> <span class="o">=&gt;</span> <span class="s1">&#39;mail.fiendz.org&#39;</span><span class="p">,</span> <span class="ss">:port</span> <span class="o">=&gt;</span> <span class="mi">587</span><span class="p">,</span> <span class="ss">:domain</span> <span class="o">=&gt;</span> <span class="s1">&#39;fiendz.org&#39;</span><span class="p">,</span> <span class="ss">:user_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;test@fiendz.org&#39;</span><span class="p">,</span> <span class="ss">:password</span> <span class="o">=&gt;</span> <span class="s1">&#39;foobar&#39;</span><span class="p">,</span> <span class="ss">:enable_starttls_auto</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span> <span class="ss">:openssl_verify_mode</span> <span class="o">=&gt;</span> <span class="s1">&#39;none&#39;</span> <span class="p">}</span>
+<span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="p">{</span> <span class="n">delivery_method</span> <span class="ss">:smtp</span><span class="p">,</span> <span class="n">smtp</span> <span class="p">}</span>
+<span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+  <span class="n">from</span> <span class="s1">&#39;test@fiendz.org&#39;</span>
+  <span class="n">to</span> <span class="s1">&#39;donald.ball@gmail.com&#39;</span>
+  <span class="n">subject</span> <span class="s1">&#39;subject&#39;</span>
+  <span class="n">body</span> <span class="s1">&#39;body&#39;</span>
+<span class="k">end</span>
+<span class="n">mail</span><span class="o">.</span><span class="n">deliver!</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:0}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="javascript/docco.min.js"></script>
+</html>

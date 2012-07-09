@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › network › retriever_methods › base.rb
+| encoding: utf-8
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>base.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+
+  <span class="k">class</span> <span class="nc">Retriever</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Get the oldest received email(s)</p>
+
+<p>Possible options:
+  count: number of emails to retrieve. The default value is 1.
+  order: order of emails returned. Possible values are :asc or :desc. Default value is :asc.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">first</span><span class="p">(</span><span class="n">options</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="n">options</span> <span class="o">||=</span> <span class="p">{}</span>
+      <span class="n">options</span><span class="o">[</span><span class="ss">:what</span><span class="o">]</span> <span class="o">=</span> <span class="ss">:first</span>
+      <span class="n">options</span><span class="o">[</span><span class="ss">:count</span><span class="o">]</span> <span class="o">||=</span> <span class="mi">1</span>
+      <span class="n">find</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Get the most recent received email(s)</p>
+
+<p>Possible options:
+  count: number of emails to retrieve. The default value is 1.
+  order: order of emails returned. Possible values are :asc or :desc. Default value is :asc.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">last</span><span class="p">(</span><span class="n">options</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="n">options</span> <span class="o">||=</span> <span class="p">{}</span>
+      <span class="n">options</span><span class="o">[</span><span class="ss">:what</span><span class="o">]</span> <span class="o">=</span> <span class="ss">:last</span>
+      <span class="n">options</span><span class="o">[</span><span class="ss">:count</span><span class="o">]</span> <span class="o">||=</span> <span class="mi">1</span>
+      <span class="n">find</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Get all emails.</p>
+
+<p>Possible options:
+  order: order of emails returned. Possible values are :asc or :desc. Default value is :asc.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="n">options</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="n">options</span> <span class="o">||=</span> <span class="p">{}</span>
+      <span class="n">options</span><span class="o">[</span><span class="ss">:count</span><span class="o">]</span> <span class="o">=</span> <span class="ss">:all</span>
+      <span class="n">find</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Find emails in the mailbox, and then deletes them. Without any options, the 
+five last received emails are returned.</p>
+
+<p>Possible options:
+  what:  last or first emails. The default is :first.
+  order: order of emails returned. Possible values are :asc or :desc. Default value is :asc.
+  count: number of emails to retrieve. The default value is 10. A value of 1 returns an
+         instance of Message, not an array of Message instances.
+  delete<em>after</em>find: flag for whether to delete each retreived email after find. Default
+          is true. Call #find if you would like this to default to false.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">find_and_delete</span><span class="p">(</span><span class="n">options</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="n">options</span> <span class="o">||=</span> <span class="p">{}</span>
+      <span class="n">options</span><span class="o">[</span><span class="ss">:delete_after_find</span><span class="o">]</span> <span class="o">||=</span> <span class="kp">true</span>
+      <span class="n">find</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>      
+    <span class="k">end</span> 
+
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

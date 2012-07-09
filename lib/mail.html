@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../index.html"></a><h1>mail.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span> <span class="c1"># :doc:</span>
+
+  <span class="nb">require</span> <span class="s1">&#39;date&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;shellwords&#39;</span>
+
+  <span class="nb">require</span> <span class="s1">&#39;uri&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;net/smtp&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mime/types&#39;</span>
+
+  <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;=</span> <span class="s1">&#39;1.8.6&#39;</span>
+    <span class="k">begin</span>
+      <span class="nb">require</span> <span class="s1">&#39;tlsmail&#39;</span>
+    <span class="k">rescue</span> <span class="no">LoadError</span>
+      <span class="k">raise</span> <span class="s2">&quot;You need to install tlsmail if you are using ruby &lt;= 1.8.6&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&gt;=</span> <span class="s2">&quot;1.9.0&quot;</span>
+    <span class="nb">require</span> <span class="s1">&#39;mail/version_specific/ruby_1_9&#39;</span>
+    <span class="no">RubyVer</span> <span class="o">=</span> <span class="no">Ruby19</span>
+  <span class="k">else</span>
+    <span class="nb">require</span> <span class="s1">&#39;mail/version_specific/ruby_1_8&#39;</span>
+    <span class="no">RubyVer</span> <span class="o">=</span> <span class="no">Ruby18</span>
+  <span class="k">end</span>
+
+  <span class="nb">require</span> <span class="s1">&#39;mail/version&#39;</span>
+
+  <span class="nb">require</span> <span class="s1">&#39;mail/core_extensions/nil&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/core_extensions/object&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/core_extensions/string&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/core_extensions/shell_escape&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/core_extensions/smtp&#39;</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9.3&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/indifferent_hash&#39;</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Only load our multibyte extensions if AS is not already loaded</p></td><td class="code"><div class="highlight"><pre>  <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">ActiveSupport</span><span class="p">)</span>
+    <span class="nb">require</span> <span class="s1">&#39;active_support/inflector&#39;</span>
+  <span class="k">else</span>
+    <span class="nb">require</span> <span class="s1">&#39;mail/core_extensions/string/access&#39;</span>
+    <span class="nb">require</span> <span class="s1">&#39;mail/core_extensions/string/multibyte&#39;</span>
+    <span class="nb">require</span> <span class="s1">&#39;mail/multibyte&#39;</span>
+  <span class="k">end</span>
+
+  <span class="nb">require</span> <span class="s1">&#39;mail/patterns&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/utilities&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/configuration&#39;</span></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Autoload mail send and receive classes.</p></td><td class="code"><div class="highlight"><pre>  <span class="nb">require</span> <span class="s1">&#39;mail/network&#39;</span>
+
+  <span class="nb">require</span> <span class="s1">&#39;mail/message&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/part&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/header&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/parts_list&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/attachments_list&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/body&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/field&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/field_list&#39;</span>
+
+  <span class="nb">require</span> <span class="s1">&#39;mail/envelope&#39;</span>
+
+  <span class="n">parsers</span> <span class="o">=</span> <span class="sx">%w[ rfc2822_obsolete rfc2822 address_lists phrase_lists</span>
+<span class="sx">                date_time received message_ids envelope_from rfc2045</span>
+<span class="sx">                mime_version content_type content_disposition</span>
+<span class="sx">                content_transfer_encoding content_location ]</span>
+
+  <span class="n">parsers</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">parser</span><span class="o">|</span>
+    <span class="k">begin</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Try requiring the pre-compiled ruby version first</p></td><td class="code"><div class="highlight"><pre>      <span class="nb">require</span> <span class="s1">&#39;treetop/runtime&#39;</span>
+      <span class="nb">require</span> <span class="s2">&quot;mail/parsers/</span><span class="si">#{</span><span class="n">parser</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">rescue</span> <span class="no">LoadError</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Otherwise, get treetop to compile and load it</p></td><td class="code"><div class="highlight"><pre>      <span class="nb">require</span> <span class="s1">&#39;treetop/runtime&#39;</span>
+      <span class="nb">require</span> <span class="s1">&#39;treetop/compiler&#39;</span>
+      <span class="no">Treetop</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/mail/parsers/</span><span class="si">#{</span><span class="n">parser</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>Autoload header field elements and transfer encodings.</p></td><td class="code"><div class="highlight"><pre>  <span class="nb">require</span> <span class="s1">&#39;mail/elements&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/encodings&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/encodings/base64&#39;</span>
+  <span class="nb">require</span> <span class="s1">&#39;mail/encodings/quoted_printable&#39;</span>
+
+  <span class="nb">require</span> <span class="s1">&#39;mail/matchers/has_sent_mail&#39;</span></pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>Finally... require all the Mail.methods</p></td><td class="code"><div class="highlight"><pre>  <span class="nb">require</span> <span class="s1">&#39;mail/mail&#39;</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:1}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../javascript/docco.min.js"></script>
+</html>

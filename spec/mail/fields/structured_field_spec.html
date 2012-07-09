@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › structured_field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>structured_field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">StructuredField</span> <span class="k">do</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;initialization&quot;</span> <span class="k">do</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should be instantiated&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span><span class="no">Mail</span><span class="o">::</span><span class="no">StructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;From&quot;</span><span class="p">,</span> <span class="s2">&quot;bob@me.com&quot;</span><span class="p">)}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;manipulation&quot;</span> <span class="k">do</span>
+    
+    <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">StructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;From&quot;</span><span class="p">,</span> <span class="s2">&quot;bob@me.com&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow us to set a text value at initialization&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span><span class="p">{</span><span class="no">Mail</span><span class="o">::</span><span class="no">StructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;From&quot;</span><span class="p">,</span> <span class="s2">&quot;bob@me.com&quot;</span><span class="p">)}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should provide access to the text of the field once set&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;bob@me.com&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should provide a means to change the value&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;bob@you.com&quot;</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;bob@you.com&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;displaying encoded field and decoded value&quot;</span> <span class="k">do</span>
+    
+    <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">FromField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;bob@me.com&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should provide a to_s function that returns the decoded string&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;bob@me.com&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should return &#39;&#39; on to_s if there is no value&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should give an encoded value ready to insert into an email&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;From: bob@me.com</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should return an empty string on encoded if it has no value&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should return the field name and value in proper format when called to_s&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;From: bob@me.com</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;structured field template methods&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should raise an error if attempting to call :encoded or :decoded on the parent StructuredField class&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">StructuredField</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="n">field</span><span class="o">.</span><span class="n">encoded</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">NoMethodError</span><span class="p">)</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="n">field</span><span class="o">.</span><span class="n">decoded</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">NoMethodError</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

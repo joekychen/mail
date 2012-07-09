@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › parts_list.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>parts_list.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">class</span> <span class="nc">PartsList</span> <span class="o">&lt;</span> <span class="nb">Array</span>
+
+    <span class="k">def</span> <span class="nf">attachments</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">AttachmentsList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">collect</span>
+      <span class="k">if</span> <span class="nb">block_given?</span>
+        <span class="n">ary</span> <span class="o">=</span> <span class="no">PartsList</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">o</span><span class="o">|</span> <span class="n">ary</span> <span class="o">&lt;&lt;</span> <span class="k">yield</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="p">}</span>
+        <span class="n">ary</span>
+      <span class="k">else</span>
+        <span class="nb">to_a</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">undef</span> <span class="ss">:map</span>
+    <span class="n">alias_method</span> <span class="ss">:map</span><span class="p">,</span> <span class="ss">:collect</span>
+
+    <span class="k">def</span> <span class="nf">map!</span>
+      <span class="k">raise</span> <span class="no">NoMethodError</span><span class="p">,</span> <span class="s2">&quot;#map! is not defined, please call #collect and create a new PartsList&quot;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">collect!</span>
+      <span class="k">raise</span> <span class="no">NoMethodError</span><span class="p">,</span> <span class="s2">&quot;#collect! is not defined, please call #collect and create a new PartsList&quot;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">sort</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="k">super</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">sort!</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+      <span class="n">sorted</span> <span class="o">=</span> <span class="nb">self</span><span class="o">.</span><span class="n">sort</span> <span class="k">do</span> <span class="o">|</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">|</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>OK, 10000 is arbitrary... if anyone actually wants to explicitly sort 10000 parts of a
+single email message... please show me a use case and I'll put more work into this method,
+in the meantime, it works :)</p></td><td class="code"><div class="highlight"><pre>        <span class="n">get_order_value</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span> <span class="o">&lt;=&gt;</span> <span class="n">get_order_value</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">clear</span>
+      <span class="n">sorted</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="nb">p</span><span class="o">|</span> <span class="nb">self</span> <span class="o">&lt;&lt;</span> <span class="nb">p</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+    <span class="k">def</span> <span class="nf">get_order_value</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:content_type</span><span class="p">)</span>
+        <span class="n">order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">part</span><span class="o">[</span><span class="ss">:content_type</span><span class="o">].</span><span class="n">string</span><span class="o">.</span><span class="n">downcase</span><span class="p">)</span> <span class="o">||</span> <span class="mi">10000</span>
+      <span class="k">else</span>
+        <span class="mi">10000</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › common › common_address_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>common_address_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="s2">&quot;Mail::CommonAddress&quot;</span> <span class="k">do</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;address handling&quot;</span> <span class="k">do</span>
+  
+    <span class="n">it</span> <span class="s2">&quot;should give the addresses it is going to&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: test1@lindsaar.net&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;test1@lindsaar.net&quot;</span>
+    <span class="k">end</span>
+  
+    <span class="n">it</span> <span class="s2">&quot;should split up the address list into individual addresses&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: test1@lindsaar.net, test2@lindsaar.net&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;test1@lindsaar.net&quot;</span><span class="p">,</span> <span class="s2">&quot;test2@lindsaar.net&quot;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give the formatted addresses&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: Mikel &lt;test1@lindsaar.net&gt;, Bob &lt;test2@lindsaar.net&gt;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">formatted</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;Mikel &lt;test1@lindsaar.net&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;Bob &lt;test2@lindsaar.net&gt;&quot;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give the display names&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: Mikel &lt;test1@lindsaar.net&gt;, Bob &lt;test2@lindsaar.net&gt;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">display_names</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;Mikel&quot;</span><span class="p">,</span> <span class="s2">&quot;Bob&quot;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give the actual address objects&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: Mikel &lt;test1@lindsaar.net&gt;, Bob &lt;test2@lindsaar.net&gt;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">addrs</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">addr</span><span class="o">|</span>
+        <span class="n">addr</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle groups as well&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: test1@lindsaar.net, group: test2@lindsaar.net, me@lindsaar.net;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;test1@lindsaar.net&quot;</span><span class="p">,</span> <span class="s2">&quot;test2@lindsaar.net&quot;</span><span class="p">,</span> <span class="s2">&quot;me@lindsaar.net&quot;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should provide a list of groups&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: test1@lindsaar.net, My Group: test2@lindsaar.net, me@lindsaar.net;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">group_names</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;My Group&quot;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should provide a list of addresses per group&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: test1@lindsaar.net, My Group: test2@lindsaar.net, me@lindsaar.net;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">groups</span><span class="o">[</span><span class="s2">&quot;My Group&quot;</span><span class="o">].</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">groups</span><span class="o">[</span><span class="s2">&quot;My Group&quot;</span><span class="o">].</span><span class="n">first</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;test2@lindsaar.net&#39;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">groups</span><span class="o">[</span><span class="s2">&quot;My Group&quot;</span><span class="o">].</span><span class="n">last</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;me@lindsaar.net&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should provide a list of addresses that are just in the groups&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: test1@lindsaar.net, My Group: test2@lindsaar.net, me@lindsaar.net;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">group_addresses</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;test2@lindsaar.net&#39;</span><span class="p">,</span> <span class="s1">&#39;me@lindsaar.net&#39;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle initializing as an empty string&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[]</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;mikel@test.lindsaar.net&#39;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should encode to an empty string if it has no addresses or groups&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&#39;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;To: mikel@test.lindsaar.net</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to append an address&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+      <span class="n">field</span> <span class="o">&lt;&lt;</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;mikel@test.lindsaar.net&quot;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should preserve the display name&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&quot;Mikel Lindsaar&quot; &lt;mikel@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">display_names</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;Mikel Lindsaar&quot;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle multiple addresses&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">[</span><span class="s1">&#39;test1@lindsaar.net&#39;</span><span class="p">,</span> <span class="s1">&#39;Mikel &lt;test2@lindsaar.net&gt;&#39;</span><span class="o">]</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;test1@lindsaar.net&#39;</span><span class="p">,</span> <span class="s1">&#39;test2@lindsaar.net&#39;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;encoding and decoding fields&quot;</span> <span class="k">do</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow us to encode an address field&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;test1@lindsaar.net, My Group: test2@lindsaar.net, me@lindsaar.net;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;To: test1@lindsaar.net, </span><span class="se">\r\n\s</span><span class="s2">My Group: test2@lindsaar.net, </span><span class="se">\r\n\s</span><span class="s2">me@lindsaar.net;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow us to encode a simple address field&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;test1@lindsaar.net&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;To: test1@lindsaar.net</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow us to encode an address field&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">CcField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;test1@lindsaar.net, My Group: test2@lindsaar.net, me@lindsaar.net;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Cc: test1@lindsaar.net, </span><span class="se">\r\n\s</span><span class="s2">My Group: test2@lindsaar.net, </span><span class="se">\r\n\s</span><span class="s2">me@lindsaar.net;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow us to decode an address field&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;test1@lindsaar.net, My Group: test2@lindsaar.net, me@lindsaar.net;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;test1@lindsaar.net, My Group: test2@lindsaar.net, me@lindsaar.net;&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow us to decode a non ascii address field&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;=?UTF-8?B?44G/44GR44KL?= &lt;raasdnil@text.lindsaar.net&gt;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&quot;みける&quot; &lt;raasdnil@text.lindsaar.net&gt;&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow us to decode a non ascii address field&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;=?UTF-8?B?44G/44GR44KL?= &lt;raasdnil@text.lindsaar.net&gt;, =?UTF-8?B?44G/44GR44KL?= &lt;mikel@text.lindsaar.net&gt;&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&quot;みける&quot; &lt;raasdnil@text.lindsaar.net&gt;, &quot;みける&quot; &lt;mikel@text.lindsaar.net&gt;&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+  
+  <span class="n">it</span> <span class="s2">&quot;should yield each address object in turn&quot;</span> <span class="k">do</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ToField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;test1@lindsaar.net, test2@lindsaar.net, me@lindsaar.net&quot;</span><span class="p">)</span>
+    <span class="n">addresses</span> <span class="o">=</span> <span class="o">[]</span>
+    <span class="n">field</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">address</span><span class="o">|</span>
+      <span class="n">addresses</span> <span class="o">&lt;&lt;</span> <span class="n">address</span><span class="o">.</span><span class="n">address</span>
+    <span class="k">end</span>
+    <span class="n">addresses</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;test1@lindsaar.net&quot;</span><span class="p">,</span> <span class="s2">&quot;test2@lindsaar.net&quot;</span><span class="p">,</span> <span class="s2">&quot;me@lindsaar.net&quot;</span><span class="o">]</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

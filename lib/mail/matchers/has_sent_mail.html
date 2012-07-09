@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › matchers › has_sent_mail.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>has_sent_mail.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">module</span> <span class="nn">Matchers</span>
+    <span class="k">def</span> <span class="nf">have_sent_email</span>
+      <span class="no">HasSentEmailMatcher</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">class</span> <span class="nc">HasSentEmailMatcher</span>
+      <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">_context</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">matches?</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+        <span class="n">matching_deliveries</span> <span class="o">=</span> <span class="n">filter_matched_deliveries</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">TestMailer</span><span class="o">.</span><span class="n">deliveries</span><span class="p">)</span>
+        <span class="o">!</span><span class="p">(</span><span class="n">matching_deliveries</span><span class="o">.</span><span class="n">empty?</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">from</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
+        <span class="vi">@sender</span> <span class="o">=</span> <span class="n">sender</span>
+        <span class="nb">self</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="n">recipient_or_list</span><span class="p">)</span>
+        <span class="vi">@recipients</span> <span class="o">||=</span> <span class="o">[]</span>
+
+        <span class="k">if</span> <span class="n">recipient_or_list</span><span class="o">.</span><span class="n">kind_of?</span><span class="p">(</span><span class="nb">Array</span><span class="p">)</span>
+          <span class="vi">@recipients</span> <span class="o">+=</span> <span class="n">recipient_or_list</span>
+        <span class="k">else</span>
+          <span class="vi">@recipients</span> <span class="o">&lt;&lt;</span> <span class="n">recipient_or_list</span>
+        <span class="k">end</span>
+        <span class="nb">self</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">with_subject</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+        <span class="vi">@subject</span> <span class="o">=</span> <span class="n">subject</span>
+        <span class="nb">self</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">matching_subject</span><span class="p">(</span><span class="n">subject_matcher</span><span class="p">)</span>
+        <span class="vi">@subject_matcher</span> <span class="o">=</span> <span class="n">subject_matcher</span>
+        <span class="nb">self</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">with_body</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+        <span class="vi">@body</span> <span class="o">=</span> <span class="n">body</span>
+        <span class="nb">self</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">matching_body</span><span class="p">(</span><span class="n">body_matcher</span><span class="p">)</span>
+        <span class="vi">@body_matcher</span> <span class="o">=</span> <span class="n">body_matcher</span>
+        <span class="nb">self</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">description</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;send a matching email&quot;</span>
+        <span class="n">result</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">failure_message</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Expected email to be sent &quot;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">explain_expectations</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">dump_deliveries</span>
+        <span class="n">result</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">negative_failure_message</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Expected no email to be sent &quot;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">explain_expectations</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">dump_deliveries</span>
+        <span class="n">result</span>
+      <span class="k">end</span>
+
+      <span class="kp">protected</span>
+      
+      <span class="k">def</span> <span class="nf">filter_matched_deliveries</span><span class="p">(</span><span class="n">deliveries</span><span class="p">)</span>
+        <span class="n">candidate_deliveries</span> <span class="o">=</span> <span class="n">deliveries</span>
+
+        <span class="sx">%w(sender recipients subject subject_matcher body body_matcher)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">modifier_name</span><span class="o">|</span>
+          <span class="k">next</span> <span class="k">unless</span> <span class="n">instance_variable_defined?</span><span class="p">(</span><span class="s2">&quot;@</span><span class="si">#{</span><span class="n">modifier_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+          <span class="n">candidate_deliveries</span> <span class="o">=</span> <span class="n">candidate_deliveries</span><span class="o">.</span><span class="n">select</span><span class="p">{</span><span class="o">|</span><span class="n">matching_delivery</span><span class="o">|</span> <span class="nb">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;matches_on_</span><span class="si">#{</span><span class="n">modifier_name</span><span class="si">}</span><span class="s2">?&quot;</span><span class="p">,</span> <span class="n">matching_delivery</span><span class="p">)}</span>
+        <span class="k">end</span>
+
+        <span class="n">candidate_deliveries</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">matches_on_sender?</span><span class="p">(</span><span class="n">delivery</span><span class="p">)</span>
+        <span class="n">delivery</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="vi">@sender</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">matches_on_recipients?</span><span class="p">(</span><span class="n">delivery</span><span class="p">)</span>
+        <span class="vi">@recipients</span><span class="o">.</span><span class="n">all?</span> <span class="p">{</span><span class="o">|</span><span class="n">recipient</span><span class="o">|</span> <span class="n">delivery</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">recipient</span><span class="p">)</span> <span class="p">}</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">matches_on_subject?</span><span class="p">(</span><span class="n">delivery</span><span class="p">)</span>
+        <span class="n">delivery</span><span class="o">.</span><span class="n">subject</span> <span class="o">==</span> <span class="vi">@subject</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">matches_on_subject_matcher?</span><span class="p">(</span><span class="n">delivery</span><span class="p">)</span>
+        <span class="vi">@subject_matcher</span><span class="o">.</span><span class="n">match</span> <span class="n">delivery</span><span class="o">.</span><span class="n">subject</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">matches_on_body?</span><span class="p">(</span><span class="n">delivery</span><span class="p">)</span>
+        <span class="n">delivery</span><span class="o">.</span><span class="n">body</span> <span class="o">==</span> <span class="vi">@body</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">matches_on_body_matcher?</span><span class="p">(</span><span class="n">delivery</span><span class="p">)</span>
+        <span class="vi">@body_matcher</span><span class="o">.</span><span class="n">match</span> <span class="n">delivery</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">raw_source</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">explain_expectations</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;from </span><span class="si">#{</span><span class="vi">@sender</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="k">if</span> <span class="n">instance_variable_defined?</span><span class="p">(</span><span class="s1">&#39;@sender&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;to </span><span class="si">#{</span><span class="vi">@recipients</span><span class="o">.</span><span class="n">inspect</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="k">if</span> <span class="n">instance_variable_defined?</span><span class="p">(</span><span class="s1">&#39;@recipients&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;with subject </span><span class="se">\&quot;</span><span class="si">#{</span><span class="vi">@subject</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> &quot;</span> <span class="k">if</span> <span class="n">instance_variable_defined?</span><span class="p">(</span><span class="s1">&#39;@subject&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;with subject matching </span><span class="se">\&quot;</span><span class="si">#{</span><span class="vi">@subject_matcher</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> &quot;</span> <span class="k">if</span> <span class="n">instance_variable_defined?</span><span class="p">(</span><span class="s1">&#39;@subject_matcher&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;with body </span><span class="se">\&quot;</span><span class="si">#{</span><span class="vi">@body</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> &quot;</span> <span class="k">if</span> <span class="n">instance_variable_defined?</span><span class="p">(</span><span class="s1">&#39;@body&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;with body matching </span><span class="se">\&quot;</span><span class="si">#{</span><span class="vi">@body_matcher</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> &quot;</span> <span class="k">if</span> <span class="n">instance_variable_defined?</span><span class="p">(</span><span class="s1">&#39;@body_matcher&#39;</span><span class="p">)</span>
+        <span class="n">result</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">dump_deliveries</span>
+        <span class="s2">&quot;(actual deliveries: &quot;</span> <span class="o">+</span> <span class="no">Mail</span><span class="o">::</span><span class="no">TestMailer</span><span class="o">.</span><span class="n">deliveries</span><span class="o">.</span><span class="n">inspect</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

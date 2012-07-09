@@ -1,0 +1,24 @@
+f | must_supply_encoding.eml | g | 755B |  | Karl | karl.baum@weshop.us | 1292865449 |  | made supplying an encoding optional as it was blowing up on an email with a funny subject
+f | content_transfer_encoding_spam.eml | g | 1.9K |  | Mikel Lindsaar | raasdnil@gmail.com | 1269744902 |  | Adding message.errors and also other wild content type handlings found from enron and corpus database run, changing Peter's body auto encode to only try decoding when asked to
+f | content_transfer_encoding_empty.eml | g | 2.2K |  | Mikel Lindsaar | raasdnil@gmail.com | 1269744902 |  | Adding message.errors and also other wild content type handlings found from enron and corpus database run, changing Peter's body auto encode to only try decoding when asked to
+f | bad_date_header2.eml | g | 1.1K |  | Karl | karl.baum@weshop.us | 1292473304 |  | added rescue block for badly formatted date
+f | missing_content_disposition.eml | g | 2.2K |  | Mikel Lindsaar | raasdnil@gmail.com | 1262821058 |  | Moving error emails into one directory
+f | content_transfer_encoding_with_semi_colon.eml | g | 7.9K |  | Mikel Lindsaar | raasdnil@gmail.com | 1269739609 |  | Adding fixes to parser and specs to handle '8bits' in content-transfer-encoding
+f | empty_in_reply_to.eml | g | 2.3K |  | Mikel Lindsaar | raasdnil@gmail.com | 1284182052 |  | Fixed parsing an email with an empty In-Reply-To header (Reported by Eugene Pimenov)
+f | content_transfer_encoding_with_8bits.eml | g | 34K |  | Mikel Lindsaar | raasdnil@gmail.com | 1269739609 |  | Adding fixes to parser and specs to handle '8bits' in content-transfer-encoding
+f | cant_parse_from.eml | g | 1.1K |  | Mikel Lindsaar | raasdnil@gmail.com | 1265356570 |  | Fixed error where mail was matching '\r\nFrom string' in the email body as an evelope header... oops
+f | bad_subject.eml | g | 2.7K |  | Karl | karl.baum@weshop.us | 1292531391 |  | addressed issue where null str was being passed into decode_base64 with funky subject
+f | multiple_content_types.eml | g | 561B |  | Mikel Lindsaar | raasdnil@gmail.com | 1262821058 |  | Moving error emails into one directory
+f | new_line_in_to_header.eml | g | 1.4K |  | Mikel Lindsaar | mikel@rubyx.com | 1290571803 |  | Adding error emails to debug
+f | empty_group_lists.eml | g | 10K |  | Mikel Lindsaar | raasdnil@gmail.com | 1263463308 |  | Updated handling of empty group lists so it didn't crash
+f | content_transfer_encoding_qp_with_space.eml | g | 1.8K |  | Mikel Lindsaar | raasdnil@gmail.com | 1269744902 |  | Adding message.errors and also other wild content type handlings found from enron and corpus database run, changing Peter's body auto encode to only try decoding when asked to
+f | bad_date_header.eml | g | 2.4K |  | Karl | karl.baum@weshop.us | 1292473304 |  | added rescue block for badly formatted date
+f | trademark_character_in_subject.eml | g | 1.8K |  | Mikel Lindsaar | mikel@rubyx.com | 1290571919 |  | Renaming email
+f | content_transfer_encoding_7-bit.eml | g | 17K |  | Mikel Lindsaar | raasdnil@gmail.com | 1269744902 |  | Adding message.errors and also other wild content type handlings found from enron and corpus database run, changing Peter's body auto encode to only try decoding when asked to
+f | content_transfer_encoding_x_uuencode.eml | g | 3.9K |  | Mikel Lindsaar | raasdnil@gmail.com | 1269744902 |  | Adding message.errors and also other wild content type handlings found from enron and corpus database run, changing Peter's body auto encode to only try decoding when asked to
+f | content_transfer_encoding_plain.eml | g | 6.1K |  | Mikel Lindsaar | raasdnil@gmail.com | 1269744902 |  | Adding message.errors and also other wild content type handlings found from enron and corpus database run, changing Peter's body auto encode to only try decoding when asked to
+f | missing_body.eml | g | 483B |  | Mikel Lindsaar | raasdnil@gmail.com | 1262821058 |  | Moving error emails into one directory
+f | encoding_madness.eml | g | 1.7K |  | Mikel Lindsaar | mikel@rubyx.com | 1290571803 |  | Adding error emails to debug
+f | header_fields_with_empty_values.eml | g | 1.3K |  | Mikel Lindsaar | raasdnil@gmail.com | 1257342583 |  | Ripped out and replaced the entire encoding / decoding suite of tools.  :encoded anything gets you the item ready to put into an email. :decoded anything gets you the items value decoded and ready to view... there.. that's simple isn't it?.  All specs passing, warnings in 1.9.1 on regexp encoding problems...
+f | content_transfer_encoding_text-html.eml | g | 1.8K |  | Mikel Lindsaar | raasdnil@gmail.com | 1269744902 |  | Adding message.errors and also other wild content type handlings found from enron and corpus database run, changing Peter's body auto encode to only try decoding when asked to
+f | weird_to_header.eml | g | 1.1K |  | Mikel Lindsaar | mikel@rubyx.com | 1290571803 |  | Adding error emails to debug

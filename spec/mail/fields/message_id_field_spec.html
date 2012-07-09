@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › message_id_field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>message_id_field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>3.6.4. Identification fields</p>
+
+<p>Though optional, every message SHOULD have a "Message-ID:" field.
+  Furthermore, reply messages SHOULD have "In-Reply-To:" and
+  "References:" fields as appropriate, as described below.</p>
+
+<p>The "Message-ID:" field contains a single unique message identifier.
+  The "References:" and "In-Reply-To:" field each contain one or more
+  unique message identifiers, optionally separated by CFWS.</p>
+
+<p>The message identifier (msg-id) is similar in syntax to an angle-addr
+  construct without the internal CFWS.</p>
+
+<p>message-id      =       "Message-ID:" msg-id CRLF</p>
+
+<p>in-reply-to     =       "In-Reply-To:" 1*msg-id CRLF</p>
+
+<p>references      =       "References:" 1*msg-id CRLF</p>
+
+<p>msg-id          =       [CFWS] "&lt;" id-left "@" id-right ">" [CFWS]</p>
+
+<p>id-left         =       dot-atom-text / no-fold-quote / obs-id-left</p>
+
+<p>id-right        =       dot-atom-text / no-fold-literal / obs-id-right</p>
+
+<p>no-fold-quote   =       DQUOTE *(qtext / quoted-pair) DQUOTE</p>
+
+<p>no-fold-literal =       "[" *(dtext / quoted-pair) "]"</p>
+
+<p>The "Message-ID:" field provides a unique message identifier that
+   refers to a particular version of a particular message.  The
+   uniqueness of the message identifier is guaranteed by the host that
+   generates it (see below).  This message identifier is intended to be
+   machine readable and not necessarily meaningful to humans.  A message
+   identifier pertains to exactly one instantiation of a particular
+   message; subsequent revisions to the message each receive new message
+   identifiers.</p>
+
+<p>Note: There are many instances when messages are "changed", but those
+   changes do not constitute a new instantiation of that message, and
+   therefore the message would not get a new message identifier.  For
+   example, when messages are introduced into the transport system, they
+   are often prepended with additional header fields such as trace
+   fields (described in section 3.6.7) and resent fields (described in
+   section 3.6.6).  The addition of such header fields does not change
+   the identity of the message and therefore the original "Message-ID:"
+   field is retained.  In all cases, it is the meaning that the sender
+   of the message wishes to convey (i.e., whether this is the same
+   message or a different message) that determines whether or not the
+   "Message-ID:" field changes, not any particular syntactic difference
+   that appears (or does not appear) in the message.</p></td><td class="code"><div class="highlight"><pre><span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span> <span class="k">do</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;initialization&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should initialize&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;&lt;1234@test.lindsaar.net&gt;&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string with the field name&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Message-ID: &lt;1234@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Message-ID&#39;</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@test.lindsaar.net&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string without the field name&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Message-ID&#39;</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@test.lindsaar.net&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a nil value and generate a message_id&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Message-ID&#39;</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_nil</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;ensuring only one message ID&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should not accept a string with multiple message IDs but only return the first&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&lt;1234@test.lindsaar.net&gt; &lt;4567@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Message-ID&#39;</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@test.lindsaar.net&#39;</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">message_ids</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;1234@test.lindsaar.net&#39;</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should change the message id if given a new message id&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&lt;4567@test.lindsaar.net&gt;&#39;</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&lt;4567@test.lindsaar.net&gt;&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;instance methods&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should provide to_s&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@test.lindsaar.net&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should provide encoded&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Message-ID: &lt;1234@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should provide decoded&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;&lt;1234@test.lindsaar.net&gt;&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should respond to :responsible_for?&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&lt;1234@test.lindsaar.net&gt;&#39;</span><span class="p">)</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">should</span> <span class="n">respond_to</span><span class="p">(</span><span class="ss">:responsible_for?</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;generating a message id&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should generate a message ID if it has no value&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_blank</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should generate a random message ID&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span>
+      <span class="mi">1</span><span class="o">.</span><span class="n">upto</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="k">do</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should_not</span> <span class="o">==</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">message_id</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;weird message IDs&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should be able to parse &lt;000701c874a6$3df7eaf0$b9e7c0d0$@geille@fiscon.com&gt;&quot;</span> <span class="k">do</span>
+      <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MessageIdField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&lt;000701c874a6$3df7eaf0$b9e7c0d0$@geille@fiscon.com&gt;&#39;</span><span class="p">)</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;000701c874a6$3df7eaf0$b9e7c0d0$@geille@fiscon.com&#39;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

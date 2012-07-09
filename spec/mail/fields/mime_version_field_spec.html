@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › mime_version_field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>mime_version_field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span> <span class="k">do</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>MIME-Version Header Field</p>
+
+<p>Since RFC 822 was published in 1982, there has really been only one
+format standard for Internet messages, and there has been little
+perceived need to declare the format standard in use.  This document
+is an independent specification that complements RFC 822.  Although
+the extensions in this document have been defined in such a way as to
+be compatible with RFC 822, there are still circumstances in which it
+might be desirable for a mail-processing agent to know whether a
+message was composed with the new standard in mind.</p>
+
+<p>Therefore, this document defines a new header field, "MIME-Version",
+which is to be used to declare the version of the Internet message
+body format standard in use.</p>
+
+<p>Messages composed in aMimeVersionordance with this document MUST include such
+a header field, with the following verbatim text:</p>
+
+<p>MIME-Version: 1.0</p>
+
+<p>The presence of this header field is an assertion that the message
+has been composed in compliance with this document.</p>
+
+<p>Since it is possible that a future document might extend the message
+format standard again, a formal BNF is given for the content of the
+MIME-Version field:</p>
+
+<p>version := "MIME-Version" ":" 1<em>DIGIT "." 1</em>DIGIT</p>
+
+<p>Thus, future format specifiers, which might replace or extend "1.0",
+are constrained to be two integer fields, separated by a period.  If
+a message is received with a MIME-version value other than "1.0", it
+cannot be assumed to conform with this document.</p>
+
+<p>Note that the MIME-Version header field is required at the top level
+of a message.  It is not required for each body part of a multipart
+entity.  It is required for the embedded headers of a body of type
+"message/rfc822" or "message/partial" if and only if the embedded
+message is itself claimed to be MIME-conformant.</p>
+
+<p>It is not possible to fully specify how a mail reader that conforms
+with MIME as defined in this document should treat a message that
+might arrive in the future with some value of MIME-Version other than
+"1.0".</p>
+
+<p>It is also worth noting that version control for specific media types
+is not aMimeVersionomplished using the MIME-Version mechanism.  In particular,
+some formats (such as application/postscript) have version numbering
+conventions that are internal to the media format.  Where such
+conventions exist, MIME does nothing to supersede them.  Where no
+such conventions exist, a MIME media type might use a "version"
+parameter in the content-type field if necessary.</p>
+
+<p>NOTE TO IMPLEMENTORS:  When checking MIME-Version values any RFC 822
+comment strings that are present must be ignored.  In particular, the
+following four MIME-Version fields are equivalent:</p>
+
+<p>MIME-Version: 1.0</p>
+
+<p>MIME-Version: 1.0 (produced by MetaSend Vx.x)</p>
+
+<p>MIME-Version: (produced by MetaSend Vx.x) 1.0</p>
+
+<p>MIME-Version: 1.(produced by MetaSend Vx.x)0</p>
+
+<p>In the absence of a MIME-Version field, a receiving mail user agent
+(whether conforming to MIME requirements or not) may optionally
+choose to interpret the body of the message aMimeVersionording to local
+conventions.  Many such conventions are currently in use and it
+should be noted that in practice non-MIME messages can contain just
+about anything.</p>
+
+<p>It is impossible to be certain that a non-MIME mail message is
+actually plain text in the US-ASCII character set since it might well
+be a message that, using some set of nonstandard local conventions
+that predate MIME, includes text in another character set or non-
+textual data presented in a manner that cannot be automatically
+recognized (e.g., a uuencoded compressed UNIX tar file).</p></td><td class="code"><div class="highlight"><pre>  <span class="n">describe</span> <span class="s2">&quot;initialization&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should initialize&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;1.0&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string with the field name&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Mime-Version: 1.0&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Mime-Version&#39;</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1.0&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string without the field name&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Mime-Version&#39;</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1.0&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;parsing a version string&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should get a major value&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">major</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">1</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should get a minor value&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">minor</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">0</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should get a version string&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1.0&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should handle comments before the major version&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;(This is a comment) 1.0&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1.0&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle comments before the major version without space&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;(This is a comment)1.0&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1.0&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle comments after the major version without space&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;1(This is a comment).0&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1.0&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle comments before the minor version without space&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;1.(This is a comment)0&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1.0&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle comments after the minor version without space&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;1.0(This is a comment)&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1.0&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle comments after the minor version&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;1.0 (This is a comment)&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1.0&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should accept nil as a value&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_nil</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should provide an encoded value&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;1.0 (This is a comment)&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Mime-Version: 1.0</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should provide an decoded value&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">MimeVersionField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;1.0 (This is a comment)&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1.0&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

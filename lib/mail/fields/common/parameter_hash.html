@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › fields › common › parameter_hash.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>parameter_hash.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>ParameterHash is an intelligent Hash that allows you to add
+parameter values including the MIME extension paramaters that
+have the name<em>0="blah", name</em>1="bleh" keys, and will just return
+a single key called name="blahbleh" and do any required un-encoding
+to make that happen
+Parameters are defined in RFC2045, split keys are in RFC2231</p></td><td class="code"><div class="highlight"><pre>  <span class="k">class</span> <span class="nc">ParameterHash</span> <span class="o">&lt;</span> <span class="no">IndifferentHash</span>
+
+    <span class="kp">include</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Utilities</span>
+
+    <span class="k">def</span> <span class="nf">[]</span><span class="p">(</span><span class="n">key_name</span><span class="p">)</span>
+      <span class="n">key_pattern</span> <span class="o">=</span> <span class="no">Regexp</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">key_name</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span>
+      <span class="n">pairs</span> <span class="o">=</span> <span class="o">[]</span>
+      <span class="n">exact</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">=~</span> <span class="sr">/^</span><span class="si">#{</span><span class="n">key_pattern</span><span class="si">}</span><span class="sr">(\*|$)/i</span>
+          <span class="k">if</span> <span class="vg">$1</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span>
+            <span class="n">pairs</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">]</span>
+          <span class="k">else</span>
+            <span class="n">exact</span> <span class="o">=</span> <span class="n">k</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+      <span class="k">if</span> <span class="n">pairs</span><span class="o">.</span><span class="n">empty?</span> <span class="c1"># Just dealing with a single value pair</span>
+        <span class="k">super</span><span class="p">(</span><span class="n">exact</span> <span class="o">||</span> <span class="n">key_name</span><span class="p">)</span>
+      <span class="k">else</span> <span class="c1"># Dealing with a multiple value pair or a single encoded value pair</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">pairs</span><span class="o">.</span><span class="n">sort</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">to_s</span> <span class="o">&lt;=&gt;</span> <span class="n">b</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">to_s</span> <span class="p">}</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">v</span><span class="o">|</span> <span class="n">v</span><span class="o">.</span><span class="n">last</span> <span class="p">}</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mt</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sr">/([\w\-]+)&#39;(\w\w)&#39;(.*)/</span><span class="p">)</span>
+          <span class="n">string</span> <span class="o">=</span> <span class="n">mt</span><span class="o">[</span><span class="mi">3</span><span class="o">]</span>
+          <span class="n">encoding</span> <span class="o">=</span> <span class="n">mt</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
+        <span class="k">else</span>
+          <span class="n">encoding</span> <span class="o">=</span> <span class="kp">nil</span>
+        <span class="k">end</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">Encodings</span><span class="o">.</span><span class="n">param_decode</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">encoded</span>
+      <span class="n">map</span><span class="o">.</span><span class="n">sort</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">to_s</span> <span class="o">&lt;=&gt;</span> <span class="n">b</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">to_s</span> <span class="p">}</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">key_name</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+        <span class="k">unless</span> <span class="n">value</span><span class="o">.</span><span class="n">ascii_only?</span>
+          <span class="n">value</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Encodings</span><span class="o">.</span><span class="n">param_encode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+          <span class="n">key_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">key_name</span><span class="si">}</span><span class="s2">*&quot;</span>
+        <span class="k">end</span>
+        <span class="sx">%Q{</span><span class="si">#{</span><span class="n">key_name</span><span class="si">}</span><span class="sx">=</span><span class="si">#{</span><span class="n">quote_token</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="sx">}</span>
+      <span class="k">end</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;;</span><span class="se">\r\n\s</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">decoded</span>
+      <span class="n">map</span><span class="o">.</span><span class="n">sort</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">to_s</span> <span class="o">&lt;=&gt;</span> <span class="n">b</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">to_s</span> <span class="p">}</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">key_name</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+        <span class="sx">%Q{</span><span class="si">#{</span><span class="n">key_name</span><span class="si">}</span><span class="sx">=</span><span class="si">#{</span><span class="n">quote_token</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="sx">}</span>
+      <span class="k">end</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;; &quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

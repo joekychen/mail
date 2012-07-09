@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › date_field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>date_field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">DateField</span> <span class="k">do</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>The origination date field consists of the field name "Date" followed
+   by a date-time specification.</p>
+
+<p>orig-date       =       "Date:" date-time CRLF</p>
+
+<p>The origination date specifies the date and time at which the creator
+   of the message indicated that the message was complete and ready to
+   enter the mail delivery system.  For instance, this might be the time
+   that a user pushes the "send" or "submit" button in an application
+   program.  In any case, it is specifically not intended to convey the
+   time that the message is actually transported, but rather the time at
+   which the human or other creator of the message has put the message
+   into its final form, ready for transport.  (For example, a portable
+   computer user who is not connected to a network might queue a message
+   for delivery.  The origination date is intended to contain the date
+   and time that the user queued the message, not the time when the user
+   connected to the network to send the message.)</p></td><td class="code"><div class="highlight"><pre>  <span class="n">describe</span> <span class="s2">&quot;initialization&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should initialize&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">DateField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;12 Aug 2009 00:00:02 GMT&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should be able to tell the time&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">DateField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;12 Aug 2009 00:00:02 GMT&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date_time</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">DateTime</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should mix in the CommonAddress module&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">DateField</span><span class="o">.</span><span class="n">included_modules</span><span class="o">.</span><span class="n">should</span> <span class="kp">include</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">CommonDate</span><span class="p">)</span> 
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string with the field name&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">DateField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Date: 12 Aug 2009 00:00:02 GMT&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Date&#39;</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Wed, 12 Aug 2009 00:00:02 +0000&#39;</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">date_time</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;12 Aug 2009 00:00:02 GMT&#39;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string without the field name&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">DateField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;12 Aug 2009 00:00:02 GMT&#39;</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Date&#39;</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Wed, 12 Aug 2009 00:00:02 +0000&#39;</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">date_time</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;12 Aug 2009 00:00:02 GMT&#39;</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should accept nil as a value&quot;</span> <span class="k">do</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">DateField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">date_time</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_nil</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow us to encode an date field&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">DateField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;12 Aug 2009 00:00:02 GMT&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Date: Wed, 12 Aug 2009 00:00:02 +0000</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow us to decode an address field&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">DateField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;12 Aug 2009 00:00:02 GMT&#39;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Wed, 12 Aug 2009 00:00:02 +0000&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should be able to parse a really bad spacing example&quot;</span> <span class="k">do</span>
+      <span class="n">field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">DateField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Fri, 21 Nov 1997 09(comment):   55  :  06 -0600&quot;</span><span class="p">)</span>
+      <span class="n">field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Fri, 21 Nov 1997 09:55:06 -0600&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give today&#39;s date if no date is specified&quot;</span> <span class="k">do</span>
+      <span class="n">now</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">now</span>
+      <span class="no">Time</span><span class="o">.</span><span class="n">stub!</span><span class="p">(</span><span class="ss">:now</span><span class="p">)</span><span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">DateField</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">date_time</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

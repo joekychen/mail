@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › fields › unstructured_field.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>unstructured_field.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;mail/fields/common/common_field&#39;</span>
+
+<span class="k">module</span> <span class="nn">Mail</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Provides access to an unstructured header field</p>
+
+<p>===Per RFC 2822:
+ 2.2.1. Unstructured Header Field Bodies</p>
+
+<pre><code>Some field bodies in this standard are defined simply as
+"unstructured" (which is specified below as any US-ASCII characters,
+except for CR and LF) with no further restrictions.  These are
+referred to as unstructured field bodies.  Semantically, unstructured
+field bodies are simply to be treated as a single line of characters
+with no further processing (except for header "folding" and
+"unfolding" as described in section 2.2.3).
+</code></pre></td><td class="code"><div class="highlight"><pre>  <span class="k">class</span> <span class="nc">UnstructuredField</span>
+    
+    <span class="kp">include</span> <span class="no">Mail</span><span class="o">::</span><span class="no">CommonField</span>
+    <span class="kp">include</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Utilities</span>
+   
+    <span class="kp">attr_accessor</span> <span class="ss">:charset</span>
+    <span class="kp">attr_reader</span> <span class="ss">:errors</span>
+ 
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">charset</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="vi">@errors</span> <span class="o">=</span> <span class="o">[]</span>
+      <span class="k">if</span> <span class="n">charset</span>
+        <span class="nb">self</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="n">charset</span>
+      <span class="k">else</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:encoding</span><span class="p">)</span>
+          <span class="nb">self</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">encoding</span>
+        <span class="k">else</span>
+          <span class="nb">self</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="vg">$KCODE</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="nb">name</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+      <span class="nb">self</span>
+    <span class="k">end</span>
+   
+    <span class="k">def</span> <span class="nf">encoded</span>
+      <span class="n">do_encode</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">decoded</span>
+      <span class="n">do_decode</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">default</span>
+      <span class="n">decoded</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">parse</span> <span class="c1"># An unstructured field does not parse</span>
+      <span class="nb">self</span>
+    <span class="k">end</span>
+
+    <span class="kp">private</span>
+    
+    <span class="k">def</span> <span class="nf">do_encode</span>
+      <span class="n">value</span><span class="o">.</span><span class="n">nil?</span> <span class="p">?</span> <span class="s1">&#39;&#39;</span> <span class="p">:</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">wrapped_value</span><span class="si">}</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">do_decode</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">blank?</span> <span class="p">?</span> <span class="kp">nil</span> <span class="p">:</span> <span class="no">Encodings</span><span class="o">.</span><span class="n">decode_encode</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="ss">:decode</span><span class="p">)</span>
+      <span class="n">result</span><span class="o">.</span><span class="n">encode!</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">encoding</span> <span class="o">||</span> <span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&gt;=</span> <span class="s1">&#39;1.9&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">result</span><span class="o">.</span><span class="n">blank?</span>
+      <span class="n">result</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>2.2.3. Long Header Fields</p>
+
+<p>Each header field is logically a single line of characters comprising
+ the field name, the colon, and the field body.  For convenience
+ however, and to deal with the 998/78 character limitations per line,
+ the field body portion of a header field can be split into a multiple
+ line representation; this is called "folding".  The general rule is
+ that wherever this standard allows for folding white space (not
+ simply WSP characters), a CRLF may be inserted before any WSP.  For
+ example, the header field:</p>
+
+<pre><code>     Subject: This is a test
+</code></pre>
+
+<p>can be represented as:</p>
+
+<pre><code>     Subject: This
+      is a test
+</code></pre>
+
+<p>Note: Though structured field bodies are defined in such a way that
+ folding can take place between many of the lexical tokens (and even
+ within some of the lexical tokens), folding SHOULD be limited to
+ placing the CRLF at higher-level syntactic breaks.  For instance, if
+ a field body is defined as comma-separated values, it is recommended
+ that folding occur after the comma separating the structured items in
+ preference to other places where the field could be folded, even if
+ it is allowed elsewhere.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">wrapped_value</span> <span class="c1"># :nodoc:</span>
+      <span class="n">wrap_lines</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">fold</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">: &quot;</span><span class="o">.</span><span class="n">length</span><span class="p">))</span>
+    <span class="k">end</span>
+   </pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>6.2. Display of 'encoded-word's</p>
+
+<p>When displaying a particular header field that contains multiple
+ 'encoded-word's, any 'linear-white-space' that separates a pair of
+ adjacent 'encoded-word's is ignored.  (This is to allow the use of
+ multiple 'encoded-word's to represent long strings of unencoded text,
+ without having to separate 'encoded-word's where spaces occur in the
+ unencoded text.)</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">wrap_lines</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">folded_lines</span><span class="p">)</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">folded_lines</span><span class="o">.</span><span class="n">shift</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">]</span>
+      <span class="n">result</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">folded_lines</span><span class="p">)</span>
+      <span class="n">result</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n\s</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">fold</span><span class="p">(</span><span class="n">prepend</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># :nodoc:</span>
+      <span class="n">encoding</span>       <span class="o">=</span> <span class="n">normalized_encoding</span>
+      <span class="n">decoded_string</span> <span class="o">=</span> <span class="n">decoded</span><span class="o">.</span><span class="n">to_s</span>
+      <span class="n">should_encode</span>  <span class="o">=</span> <span class="n">decoded_string</span><span class="o">.</span><span class="n">not_ascii_only?</span>
+      <span class="k">if</span> <span class="n">should_encode</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="kp">true</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">decoded_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sr">/[ \t]/</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">word</span><span class="o">|</span>
+          <span class="k">if</span> <span class="n">first</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="o">!</span><span class="n">first</span>
+          <span class="k">else</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">word</span>
+          <span class="k">end</span>
+          <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">not_ascii_only?</span>
+            <span class="n">word</span>
+          <span class="k">else</span>
+            <span class="n">word</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="sr">/.{7}|.+$/</span><span class="p">)</span>
+          <span class="k">end</span>
+        <span class="k">end</span><span class="o">.</span><span class="n">flatten</span>
+      <span class="k">else</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">decoded_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sr">/[ \t]/</span><span class="p">)</span>
+      <span class="k">end</span>
+      
+      <span class="n">folded_lines</span>   <span class="o">=</span> <span class="o">[]</span>
+      <span class="k">while</span> <span class="o">!</span><span class="n">words</span><span class="o">.</span><span class="n">empty?</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="mi">78</span> <span class="o">-</span> <span class="n">prepend</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span> <span class="o">-</span> <span class="mi">7</span> <span class="o">-</span> <span class="n">encoding</span><span class="o">.</span><span class="n">length</span> <span class="k">if</span> <span class="n">should_encode</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">while</span> <span class="o">!</span><span class="n">words</span><span class="o">.</span><span class="n">empty?</span>
+          <span class="k">break</span> <span class="k">unless</span> <span class="n">word</span> <span class="o">=</span> <span class="n">words</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">dup</span>
+          <span class="n">word</span><span class="o">.</span><span class="n">encode!</span><span class="p">(</span><span class="n">charset</span><span class="p">)</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Encoding</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">charset</span>
+          <span class="n">word</span> <span class="o">=</span> <span class="n">encode</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">if</span> <span class="n">should_encode</span>
+          <span class="n">word</span> <span class="o">=</span> <span class="n">encode_crlf</span><span class="p">(</span><span class="n">word</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Skip to next line if we're going to go past the limit
+Unless this is the first word, in which case we're going to add it anyway
+Note: This means that a word that's longer than 998 characters is going to break the spec. Please fix if this is a problem for you.
+(The fix, it seems, would be to use encoded-word encoding on it, because that way you can break it across multiple lines and 
+the linebreak will be ignored)</p></td><td class="code"><div class="highlight"><pre>          <span class="k">break</span> <span class="k">if</span> <span class="o">!</span><span class="n">line</span><span class="o">.</span><span class="n">empty?</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="n">word</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>Remove the word from the queue ...</p></td><td class="code"><div class="highlight"><pre>          <span class="n">words</span><span class="o">.</span><span class="n">shift</span></pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>Add word separator</p></td><td class="code"><div class="highlight"><pre>          <span class="n">line</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot; &quot;</span> <span class="k">unless</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">empty?</span> <span class="o">||</span> <span class="n">should_encode</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>... add it in encoded form to the current line</p></td><td class="code"><div class="highlight"><pre>          <span class="n">line</span> <span class="o">&lt;&lt;</span> <span class="n">word</span>          
+        <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-9"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-9">&#182;</a></div><p>Encode the line if necessary</p></td><td class="code"><div class="highlight"><pre>        <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;=?</span><span class="si">#{</span><span class="n">encoding</span><span class="si">}</span><span class="s2">?Q?</span><span class="si">#{</span><span class="n">line</span><span class="si">}</span><span class="s2">?=&quot;</span> <span class="k">if</span> <span class="n">should_encode</span></pre></div></td></tr>
+
+
+<tr id="section-10"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-10">&#182;</a></div><p>Add the line to the output and reset the prepend</p></td><td class="code"><div class="highlight"><pre>        <span class="n">folded_lines</span> <span class="o">&lt;&lt;</span> <span class="n">line</span>
+        <span class="n">prepend</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="k">end</span>
+      <span class="n">folded_lines</span>
+    <span class="k">end</span>
+ 
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="o">[</span><span class="n">value</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;M&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;=</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/&quot;/</span><span class="p">,</span>  <span class="s1">&#39;=22&#39;</span><span class="p">)</span>
+      <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/\(/</span><span class="p">,</span> <span class="s1">&#39;=28&#39;</span><span class="p">)</span>
+      <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/\)/</span><span class="p">,</span> <span class="s1">&#39;=29&#39;</span><span class="p">)</span>
+      <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/\?/</span><span class="p">,</span> <span class="s1">&#39;=3F&#39;</span><span class="p">)</span>
+      <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/_/</span><span class="p">,</span>  <span class="s1">&#39;=5F&#39;</span><span class="p">)</span>
+      <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/ /</span><span class="p">,</span>  <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+      <span class="n">value</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">encode_crlf</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;=0D&#39;</span><span class="p">)</span>
+      <span class="n">value</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;=0A&#39;</span><span class="p">)</span>
+      <span class="n">value</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">normalized_encoding</span>
+      <span class="n">encoding</span> <span class="o">=</span> <span class="n">charset</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">upcase</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+      <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;UTF-8&#39;</span> <span class="k">if</span> <span class="n">encoding</span> <span class="o">==</span> <span class="s1">&#39;UTF8&#39;</span> <span class="c1"># Ruby 1.8.x and $KCODE == &#39;u&#39;</span>
+      <span class="n">encoding</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

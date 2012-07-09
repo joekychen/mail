@@ -1,0 +1,2 @@
+f | ruby_1_9.rb | s | 3.6K | 96 | okkez | okkez000@gmail.com | 1326514739 |  | add suffix "BE" to UTF-16 and UTF-32.  Ruby1.9.2 doesn't know UTF-16 and UTF-32 but knows UTF-16BE and UTF-32BE. Ruby1.9.3 knows UTF-16 and UTF-32 but they are dummy encoding. see http://www.ietf.org/rfc/rfc2781.txt
+f | ruby_1_8.rb | s | 2.6K | 83 | Alex Tsibulya | alex.tsibulya@ccloop-inc.com | 1306881773 |  | Moved underscore-to-space decoding inside RubyVer#q_value_decode to correctly decode underscores

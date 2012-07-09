@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › network › delivery_methods › file_delivery.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>file_delivery.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  </pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>FileDelivery class delivers emails into multiple files based on the destination
+address.  Each file is appended to if it already exists.</p>
+
+<p>So if you have an email going to fred@test, bob@test, joe@anothertest, and you
+set your location path to /path/to/mails then FileDelivery will create the directory
+if it does not exist, and put one copy of the email in three files, called
+by their message id</p>
+
+<p>Make sure the path you specify with :location is writable by the Ruby process
+running Mail.</p></td><td class="code"><div class="highlight"><pre>  <span class="k">class</span> <span class="nc">FileDelivery</span>
+
+    <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&gt;=</span> <span class="s1">&#39;1.9.1&#39;</span>
+      <span class="nb">require</span> <span class="s1">&#39;fileutils&#39;</span>
+    <span class="k">else</span>
+      <span class="nb">require</span> <span class="s1">&#39;ftools&#39;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">:location</span> <span class="o">=&gt;</span> <span class="s1">&#39;./mails&#39;</span> <span class="p">}</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="kp">attr_accessor</span> <span class="ss">:settings</span>
+    
+    <span class="k">def</span> <span class="nf">deliver!</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span>
+      <span class="k">if</span> <span class="o">::</span><span class="no">File</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:makedirs</span><span class="p">)</span>
+        <span class="o">::</span><span class="no">File</span><span class="o">.</span><span class="n">makedirs</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:location</span><span class="o">]</span>
+      <span class="k">else</span>
+        <span class="o">::</span><span class="no">FileUtils</span><span class="o">.</span><span class="n">mkdir_p</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:location</span><span class="o">]</span>
+      <span class="k">end</span>
+
+      <span class="n">mail</span><span class="o">.</span><span class="n">destinations</span><span class="o">.</span><span class="n">uniq</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">to</span><span class="o">|</span>
+        <span class="o">::</span><span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="o">::</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">settings</span><span class="o">[</span><span class="ss">:location</span><span class="o">]</span><span class="p">,</span> <span class="no">File</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">to_s</span><span class="p">)),</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">mail</span><span class="o">.</span><span class="n">encoded</span><span class="p">)</span><span class="si">}</span><span class="se">\r\n\r\n</span><span class="s2">&quot;</span> <span class="p">}</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

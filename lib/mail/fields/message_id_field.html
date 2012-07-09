@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › fields › message_id_field.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>message_id_field.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p>
+
+<p>= Message-ID Field</p>
+
+<p>The Message-ID field inherits from StructuredField and handles the 
+Message-ID: header field in the email.</p>
+
+<p>Sending message_id to a mail message will instantiate a Mail::Field object that
+has a MessageIdField as it's field type.  This includes all Mail::CommonMessageId
+module instance metods.</p>
+
+<p>Only one MessageId field can appear in a header, and syntactically it can only have
+one Message ID.  The message_ids method call has been left in however as it will only
+return the one message id, ie, an array of length 1.</p>
+
+<p>Note that, the #message_ids method will return an array of message IDs without the
+enclosing angle brackets which per RFC are not syntactically part of the message id.</p>
+
+<p>== Examples:</p>
+
+<p>mail = Mail.new
+ mail.message<em>id = '<a href="&#x6D;&#97;&#x69;&#x6C;&#116;&#111;:&#x46;&#54;E&#50;&#x44;&#x30;&#x42;&#52;&#45;&#67;C&#51;&#x35;&#45;&#52;&#65;&#x39;&#49;&#x2D;&#x42;&#65;&#52;&#67;&#x2D;&#x43;7&#67;&#55;&#49;2&#66;&#49;0&#67;&#x31;&#51;&#64;&#x74;&#101;&#115;&#x74;&#x2E;m&#x65;&#x2E;&#100;&#x6F;&#109;">&#x46;&#54;E&#50;&#x44;&#x30;&#x42;&#52;&#45;&#67;C&#51;&#x35;&#45;&#52;&#65;&#x39;&#49;&#x2D;&#x42;&#65;&#52;&#67;&#x2D;&#x43;7&#67;&#55;&#49;2&#66;&#49;0&#67;&#x31;&#51;&#64;&#x74;&#101;&#115;&#x74;&#x2E;m&#x65;&#x2E;&#100;&#x6F;&#109;</a>'
+ mail.message</em>id    #=> '<a href="&#x6D;&#x61;&#105;&#x6C;&#116;&#x6F;:&#x46;&#54;&#x45;&#50;&#x44;&#x30;&#66;&#52;&#x2D;&#67;&#x43;&#51;5&#45;&#52;&#x41;&#x39;&#49;&#x2D;&#x42;&#65;&#52;&#67;&#45;&#x43;&#55;&#67;&#55;&#49;2&#x42;&#x31;&#48;&#x43;&#x31;3&#x40;&#x74;&#x65;&#x73;&#x74;&#x2E;&#109;&#101;&#46;&#x64;&#x6F;&#x6D;">&#x46;&#54;&#x45;&#50;&#x44;&#x30;&#66;&#52;&#x2D;&#67;&#x43;&#51;5&#45;&#52;&#x41;&#x39;&#49;&#x2D;&#x42;&#65;&#52;&#67;&#45;&#x43;&#55;&#67;&#55;&#49;2&#x42;&#x31;&#48;&#x43;&#x31;3&#x40;&#x74;&#x65;&#x73;&#x74;&#x2E;&#109;&#101;&#46;&#x64;&#x6F;&#x6D;</a>'
+ mail[:message_id]  #=> '#<Mail::Field:0x180e5e8 @field=#<Mail::MessageIdField:0x180e1c4
+ mail['message_id'] #=> '#<Mail::Field:0x180e5e8 @field=#<Mail::MessageIdField:0x180e1c4
+ mail['Message-ID'] #=> '#<Mail::Field:0x180e5e8 @field=#<Mail::MessageIdField:0x180e1c4</p>
+
+<p>mail[:message<em>id].message</em>id   #=> 'F6E2D0B4-CC35-4A91-BA4C-C7C712B10C13@test.me.dom'
+ mail[:message<em>id].message</em>ids  #=> ['F6E2D0B4-CC35-4A91-BA4C-C7C712B10C13@test.me.dom']</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;mail/fields/common/common_message_id&#39;</span>
+
+<span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">class</span> <span class="nc">MessageIdField</span> <span class="o">&lt;</span> <span class="no">StructuredField</span>
+    
+    <span class="kp">include</span> <span class="no">Mail</span><span class="o">::</span><span class="no">CommonMessageId</span>
+    
+    <span class="no">FIELD_NAME</span> <span class="o">=</span> <span class="s1">&#39;message-id&#39;</span>
+    <span class="no">CAPITALIZED_FIELD</span> <span class="o">=</span> <span class="s1">&#39;Message-ID&#39;</span>
+    
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">,</span> <span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="n">charset</span>
+      <span class="vi">@uniq</span> <span class="o">=</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="nb">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="no">CAPITALIZED_FIELD</span>
+        <span class="nb">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">generate_message_id</span>
+      <span class="k">else</span>
+        <span class="k">super</span><span class="p">(</span><span class="no">CAPITALIZED_FIELD</span><span class="p">,</span> <span class="n">strip_field</span><span class="p">(</span><span class="no">FIELD_NAME</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">charset</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">parse</span>
+      <span class="nb">self</span>
+
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">name</span>
+      <span class="s1">&#39;Message-ID&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">message_ids</span>
+      <span class="o">[</span><span class="n">message_id</span><span class="o">]</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">to_s</span>
+      <span class="s2">&quot;&lt;</span><span class="si">#{</span><span class="n">message_id</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">encoded</span>
+      <span class="n">do_encode</span><span class="p">(</span><span class="no">CAPITALIZED_FIELD</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">decoded</span>
+      <span class="n">do_decode</span>
+    <span class="k">end</span>
+    
+    <span class="kp">private</span>
+    
+    <span class="k">def</span> <span class="nf">generate_message_id</span>
+      <span class="n">fqdn</span> <span class="o">=</span> <span class="o">::</span><span class="no">Socket</span><span class="o">.</span><span class="n">gethostname</span>
+      <span class="s2">&quot;&lt;</span><span class="si">#{</span><span class="no">Mail</span><span class="o">.</span><span class="n">random_tag</span><span class="si">}</span><span class="s2">@</span><span class="si">#{</span><span class="n">fqdn</span><span class="si">}</span><span class="s2">.mail&gt;&quot;</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

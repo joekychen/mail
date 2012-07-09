@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › utilities_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>utilities_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="s2">&quot;Utilities Module&quot;</span> <span class="k">do</span>
+
+  <span class="kp">include</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Utilities</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;token safe&quot;</span> <span class="k">do</span>
+    
+    <span class="n">describe</span> <span class="s2">&quot;checking&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should return true if a string is token safe&quot;</span> <span class="k">do</span>
+        <span class="n">token_safe?</span><span class="p">(</span><span class="s1">&#39;.abc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return false if a string is token safe&quot;</span> <span class="k">do</span>
+        <span class="n">token_safe?</span><span class="p">(</span><span class="s1">&#39;?=abc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_false</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should work with mb_chars&quot;</span> <span class="k">do</span>
+        <span class="n">token_safe?</span><span class="p">(</span><span class="s1">&#39;.abc&#39;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+        <span class="n">token_safe?</span><span class="p">(</span><span class="s1">&#39;?=abc&#39;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_false</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;quoting&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should return true if a string is token safe&quot;</span> <span class="k">do</span>
+        <span class="n">quote_token</span><span class="p">(</span><span class="s1">&#39;.abc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;.abc&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return false if a string is token safe&quot;</span> <span class="k">do</span>
+        <span class="n">quote_token</span><span class="p">(</span><span class="s1">&#39;?=abc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&quot;?=abc&quot;&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should work with mb_chars&quot;</span> <span class="k">do</span>
+        <span class="n">quote_token</span><span class="p">(</span><span class="s1">&#39;.abc&#39;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;.abc&#39;</span>
+        <span class="n">quote_token</span><span class="p">(</span><span class="s1">&#39;?=abc&#39;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&quot;?=abc&quot;&#39;</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;atom safe&quot;</span> <span class="k">do</span>
+    
+    <span class="n">describe</span> <span class="s2">&quot;checking&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should return true if a string is token safe&quot;</span> <span class="k">do</span>
+        <span class="n">atom_safe?</span><span class="p">(</span><span class="s1">&#39;?=abc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return false if a string is token safe&quot;</span> <span class="k">do</span>
+        <span class="n">atom_safe?</span><span class="p">(</span><span class="s1">&#39;.abc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_false</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should work with mb_chars&quot;</span> <span class="k">do</span>
+        <span class="n">atom_safe?</span><span class="p">(</span><span class="s1">&#39;?=abc&#39;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+        <span class="n">atom_safe?</span><span class="p">(</span><span class="s1">&#39;.abc&#39;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_false</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;quoting&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should return true if a string is token safe&quot;</span> <span class="k">do</span>
+        <span class="n">quote_atom</span><span class="p">(</span><span class="s1">&#39;?=abc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;?=abc&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return false if a string is token safe&quot;</span> <span class="k">do</span>
+        <span class="n">quote_atom</span><span class="p">(</span><span class="s1">&#39;.abc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&quot;.abc&quot;&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should work with mb_chars&quot;</span> <span class="k">do</span>
+        <span class="n">quote_atom</span><span class="p">(</span><span class="s1">&#39;?=abc&#39;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;?=abc&#39;</span>
+        <span class="n">quote_atom</span><span class="p">(</span><span class="s1">&#39;.abc&#39;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&quot;.abc&quot;&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should work with mb_chars&quot;</span> <span class="k">do</span>
+        <span class="n">quote_atom</span><span class="p">(</span><span class="s1">&#39;?=abc&#39;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;?=abc&#39;</span>
+        <span class="n">quote_atom</span><span class="p">(</span><span class="s1">&#39;.abc&#39;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&quot;.abc&quot;&#39;</span>
+      <span class="k">end</span>
+      
+      <span class="n">it</span> <span class="s2">&quot;should quote white space&quot;</span> <span class="k">do</span>
+        <span class="n">quote_atom</span><span class="p">(</span><span class="s1">&#39;ab abc&#39;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&quot;ab abc&quot;&#39;</span>
+        <span class="n">quote_atom</span><span class="p">(</span><span class="s2">&quot;a</span><span class="se">\s</span><span class="s2">b</span><span class="se">\t</span><span class="s2">a</span><span class="se">\r\n</span><span class="s2">bc&quot;</span><span class="o">.</span><span class="n">mb_chars</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="sx">%{&quot;a</span><span class="se">\s</span><span class="sx">b</span><span class="se">\t</span><span class="sx">a</span><span class="se">\r\n</span><span class="sx">bc&quot;}</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;escaping parenthesies&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should escape parens&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;This is not (escaped)&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;This is not \(escaped\)&#39;</span>
+      <span class="n">escape_paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should not double escape parens&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;This is not \(escaped\)&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;This is not \(escaped\)&#39;</span>
+      <span class="n">escape_paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should escape all parens&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;This is not \()escaped(\)&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;This is not \(\)escaped\(\)&#39;</span>
+      <span class="n">escape_paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;unescaping parenthesis&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should work&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;(This is a string)&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span>
+      <span class="n">unparen</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should work without parens&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span>
+      <span class="n">unparen</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should work using ActiveSupport mb_chars&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;(This is a string)&#39;</span><span class="o">.</span><span class="n">mb_chars</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span>
+      <span class="n">unparen</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should work without parens using ActiveSupport mb_chars&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span><span class="o">.</span><span class="n">mb_chars</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span>
+      <span class="n">unparen</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;unescaping brackets&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should work&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;&lt;This is a string&gt;&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span>
+      <span class="n">unbracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should work without brackets&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span>
+      <span class="n">unbracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should work using ActiveSupport mb_chars&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;&lt;This is a string&gt;&#39;</span><span class="o">.</span><span class="n">mb_chars</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span>
+      <span class="n">unbracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should work without parens using ActiveSupport mb_chars&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span><span class="o">.</span><span class="n">mb_chars</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;This is a string&#39;</span>
+      <span class="n">unbracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;quoting phrases&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should quote a phrase if it is unsafe&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this.needs quoting&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&quot;this.needs quoting&quot;&#39;</span>
+      <span class="n">dquote</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should properly quote a string, even if quoted but not escaped properly&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;&quot;this needs &quot;escaping&quot;&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&quot;this needs \&quot;escaping&quot;&#39;</span>
+      <span class="n">dquote</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should quote correctly a phrase with an escaped quote in it&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs \&quot;quoting&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&quot;this needs \&quot;quoting&quot;&#39;</span>
+      <span class="n">dquote</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should quote correctly a phrase with an escaped backslash followed by an escaped quote in it&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs \\\&quot;quoting&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&quot;this needs \\\&quot;quoting&quot;&#39;</span>
+      <span class="n">dquote</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+  
+  <span class="n">describe</span> <span class="s2">&quot;parenthesizing phrases&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should parenthesize a phrase&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this.needs parenthesizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(this.needs parenthesizing)&#39;</span>
+      <span class="n">paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should properly parenthesize a string, and escape properly&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs (escaping&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(this needs \(escaping)&#39;</span>
+      <span class="n">paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should properly parenthesize a string, and escape properly (other way)&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs )escaping&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(this needs \)escaping)&#39;</span>
+      <span class="n">paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should properly parenthesize a string, even if parenthesized but not escaped properly&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;(this needs (escaping)&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(this needs \(escaping)&#39;</span>
+      <span class="n">paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should properly parenthesize a string, even if parenthesized but not escaped properly (other way)&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;(this needs )escaping)&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(this needs \)escaping)&#39;</span>
+      <span class="n">paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should parenthesize correctly a phrase with an escaped parentheses in it&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs \(parenthesizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(this needs \(parenthesizing)&#39;</span>
+      <span class="n">paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should parenthesize correctly a phrase with an escaped parentheses in it (other way)&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs \)parenthesizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(this needs \)parenthesizing)&#39;</span>
+      <span class="n">paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should parenthesize correctly a phrase with an escaped backslash followed by an escaped parentheses in it&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs \\\(parenthesizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(this needs \\\(parenthesizing)&#39;</span>
+      <span class="n">paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should parenthesize correctly a phrase with an escaped backslash followed by an escaped parentheses in it (other way)&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs \\\)parenthesizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(this needs \\\)parenthesizing)&#39;</span>
+      <span class="n">paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should parenthesize correctly a phrase with a set of parentheses&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this (needs) parenthesizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;(this \(needs\) parenthesizing)&#39;</span>
+      <span class="n">paren</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+  
+  
+  <span class="n">describe</span> <span class="s2">&quot;bracketizing phrases&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should bracketize a phrase&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this.needs bracketizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&lt;this.needs bracketizing&gt;&#39;</span>
+      <span class="n">bracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should properly bracketize a string, and escape properly&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs &lt;escaping&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&lt;this needs \&lt;escaping&gt;&#39;</span>
+      <span class="n">bracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should properly bracketize a string, and escape properly (other way)&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs &gt;escaping&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&lt;this needs \&gt;escaping&gt;&#39;</span>
+      <span class="n">bracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should properly bracketize a string, even if bracketized but not escaped properly&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;&lt;this needs &lt;escaping&gt;&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&lt;this needs \&lt;escaping&gt;&#39;</span>
+      <span class="n">bracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should properly bracketize a string, even if bracketized but not escaped properly (other way)&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;&lt;this needs &gt;escaping&gt;&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&lt;this needs \&gt;escaping&gt;&#39;</span>
+      <span class="n">bracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should bracketize correctly a phrase with an escaped brackets in it&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs \&lt;bracketizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&lt;this needs \&lt;bracketizing&gt;&#39;</span>
+      <span class="n">bracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should bracketize correctly a phrase with an escaped brackets in it (other way)&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs \&gt;bracketizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&lt;this needs \&gt;bracketizing&gt;&#39;</span>
+      <span class="n">bracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should bracketize correctly a phrase with an escaped backslash followed by an escaped brackets in it&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs \\\&lt;bracketizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&lt;this needs \\\&lt;bracketizing&gt;&#39;</span>
+      <span class="n">bracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should bracketize correctly a phrase with an escaped backslash followed by an escaped brackets in it (other way)&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this needs \\\&gt;bracketizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&lt;this needs \\\&gt;bracketizing&gt;&#39;</span>
+      <span class="n">bracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should bracketize correctly a phrase with a set of brackets&quot;</span> <span class="k">do</span>
+      <span class="nb">test</span> <span class="o">=</span> <span class="s1">&#39;this &lt;needs&gt; bracketizing&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&lt;this \&lt;needs\&gt; bracketizing&gt;&#39;</span>
+      <span class="n">bracket</span><span class="p">(</span><span class="nb">test</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;url escaping&quot;</span> <span class="k">do</span>
+    <span class="n">uri_parser</span> <span class="o">=</span> <span class="no">URI</span><span class="o">.</span><span class="n">const_defined?</span><span class="p">(</span><span class="ss">:Parser</span><span class="p">)</span> <span class="p">?</span> <span class="no">URI</span><span class="o">::</span><span class="no">Parser</span><span class="o">.</span><span class="n">new</span> <span class="p">:</span> <span class="no">URI</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should have a wrapper on URI.escape&quot;</span> <span class="k">do</span>
+      <span class="n">uri_escape</span><span class="p">(</span><span class="s2">&quot;@?@!&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">uri_parser</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="s2">&quot;@?@!&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should have a wrapper on URI.unescape&quot;</span> <span class="k">do</span>
+      <span class="n">uri_unescape</span><span class="p">(</span><span class="s2">&quot;@?@!&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">uri_parser</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="s2">&quot;@?@!&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

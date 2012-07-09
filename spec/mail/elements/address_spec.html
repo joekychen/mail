@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › elements › address_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>address_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span> <span class="k">do</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;functionality&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow us to instantiate an empty address object and call inspect&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">inspect</span>
+      <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow us to instantiate an empty address object and call to_s&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow us to instantiate an empty address object and call format&quot;</span> <span class="k">do</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow us to instantiate an empty address object and call address&quot;</span> <span class="k">do</span>
+      <span class="o">[</span><span class="kp">nil</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">input</span><span class="o">|</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">input</span><span class="p">)</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow us to instantiate an empty address object and call local&quot;</span> <span class="k">do</span>
+      <span class="o">[</span><span class="kp">nil</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">input</span><span class="o">|</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">input</span><span class="p">)</span><span class="o">.</span><span class="n">local</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow us to instantiate an empty address object and call domain&quot;</span> <span class="k">do</span>
+      <span class="o">[</span><span class="kp">nil</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">input</span><span class="o">|</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">input</span><span class="p">)</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="o">[</span><span class="s1">&#39;&quot;-Earnings...Notification-&quot; &lt;vodacom.co.rs&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;56253817&gt;&#39;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">spammy_address</span><span class="o">|</span>
+      <span class="n">it</span> <span class="s2">&quot;should allow for funky spammy address </span><span class="si">#{</span><span class="n">spammy_address</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+        <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">spammy_address</span><span class="p">)</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+
+    <span class="n">it</span> <span class="s2">&quot;should give it&#39;s address back on :to_s if there is no display name&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s1">&#39;test@lindsaar.net&#39;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="s1">&#39;test@lindsaar.net&#39;</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give it&#39;s format back on :to_s if there is a display name&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar &lt;test@lindsaar.net&gt;&#39;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar &lt;test@lindsaar.net&gt;&#39;</span>
+      <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give back the display name&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar &lt;test@lindsaar.net&gt;&#39;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar&#39;</span>
+      <span class="n">a</span>          <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">display_name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should preserve the display name passed in&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s1">&#39;&quot;Mikel Lindsaar&quot; &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar&#39;</span>
+      <span class="n">a</span>          <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">display_name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should preserve the display name passed in with token unsafe chars&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s1">&#39;&quot;Mikel@@@Lindsaar&quot; &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="s1">&#39;Mikel@@@Lindsaar&#39;</span>
+      <span class="n">a</span>          <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">display_name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give back the local part&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar &lt;test@lindsaar.net&gt;&#39;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="s1">&#39;test&#39;</span>
+      <span class="n">a</span>          <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">local</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give back the domain&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar &lt;test@lindsaar.net&gt;&#39;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="s1">&#39;lindsaar.net&#39;</span>
+      <span class="n">a</span>          <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give back the formated address&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar &lt;test@lindsaar.net&gt;&#39;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar &lt;test@lindsaar.net&gt;&#39;</span>
+      <span class="n">a</span>          <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle an address without a domain&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="s1">&#39;test&#39;</span>
+      <span class="n">a</span>          <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle comments&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s2">&quot;Mikel Lindsaar (author) &lt;test@lindsaar.net&gt;&quot;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;author&#39;</span><span class="o">]</span>
+      <span class="n">a</span>          <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle multiple comments&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s2">&quot;Mikel (first name) Lindsaar (author) &lt;test@lindsaar.net&gt;&quot;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;first name&#39;</span><span class="p">,</span> <span class="s1">&#39;author&#39;</span><span class="o">]</span>
+      <span class="n">a</span>          <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give back the raw value&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s2">&quot;Mikel (first name) Lindsaar (author) &lt;test@lindsaar.net&gt;&quot;</span>
+      <span class="n">result</span>     <span class="o">=</span> <span class="s2">&quot;Mikel (first name) Lindsaar (author) &lt;test@lindsaar.net&gt;&quot;</span>
+      <span class="n">a</span>          <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;assigning values directly&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should allow you to assign an address&quot;</span> <span class="k">do</span>
+      <span class="n">a</span>         <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to assign a display name&quot;</span> <span class="k">do</span>
+      <span class="n">a</span>              <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar&#39;</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">display_name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Mikel Lindsaar&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should return an empty format a display name and no address defined&quot;</span> <span class="k">do</span>
+      <span class="n">a</span>              <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar&#39;</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow you to assign an address and a display name&quot;</span> <span class="k">do</span>
+      <span class="n">a</span>              <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">address</span>      <span class="o">=</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar&#39;</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Mikel Lindsaar &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;parsing&quot;</span> <span class="k">do</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;basic email addresses&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should handle all OK local parts&quot;</span> <span class="k">do</span>
+        <span class="o">[[</span><span class="s1">&#39;aamine&#39;</span><span class="p">,</span> <span class="s1">&#39;aamine&#39;</span><span class="o">]</span><span class="p">,</span>
+         <span class="o">[</span><span class="s1">&#39;&quot;Minero Aoki&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&quot;Minero Aoki&quot;&#39;</span><span class="o">]</span><span class="p">,</span>
+         <span class="o">[</span><span class="s1">&#39;&quot;!@#$%^&amp;*()&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&quot;!@#$%^&amp;*()&quot;&#39;</span><span class="o">]</span><span class="p">,</span>
+         <span class="o">[</span><span class="s1">&#39;a.b.c&#39;</span><span class="p">,</span> <span class="s1">&#39;a.b.c&#39;</span><span class="o">]</span>
+
+        <span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="p">(</span><span class="n">words</span><span class="p">,</span> <span class="n">ok</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">a</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+          <span class="n">a</span><span class="o">.</span><span class="n">local</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">ok</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle all OK domains&quot;</span> <span class="k">do</span>
+        <span class="o">[[</span><span class="s1">&#39;loveruby.net&#39;</span><span class="p">,</span> <span class="s1">&#39;loveruby.net&#39;</span><span class="o">]</span><span class="p">,</span>
+         <span class="o">[</span><span class="s1">&#39;&quot;love ruby&quot;.net&#39;</span><span class="p">,</span> <span class="s1">&#39;&quot;love ruby&quot;.net&#39;</span><span class="o">]</span><span class="p">,</span>
+         <span class="o">[</span><span class="s1">&#39;a.&quot;love ruby&quot;.net&#39;</span><span class="p">,</span> <span class="s1">&#39;a.&quot;love ruby&quot;.net&#39;</span><span class="o">]</span><span class="p">,</span>
+         <span class="o">[</span><span class="s1">&#39;&quot;!@#$%^&amp;*()&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&quot;!@#$%^&amp;*()&quot;&#39;</span><span class="o">]</span><span class="p">,</span>
+         <span class="o">[</span><span class="s1">&#39;[192.168.1.1]&#39;</span><span class="p">,</span> <span class="s1">&#39;[192.168.1.1]&#39;</span><span class="o">]</span>
+
+        <span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="p">(</span><span class="n">words</span><span class="p">,</span> <span class="n">ok</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">a</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="sx">%Q|me@</span><span class="si">#{</span><span class="n">words</span><span class="si">}</span><span class="sx">|</span><span class="p">)</span>
+          <span class="n">a</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">ok</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;email addresses from the wild&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should handle |aamine@loveruby.net|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;aamine@loveruby.net&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;aamine@loveruby.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;aamine&#39;</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;loveruby.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;aamine@loveruby.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;aamine@loveruby.net&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |Minero Aoki &lt;aamine@loveruby.net&gt;|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Minero Aoki &lt;aamine@loveruby.net&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Minero Aoki&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;aamine@loveruby.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;aamine&#39;</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;loveruby.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;Minero Aoki &lt;aamine@loveruby.net&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;Minero Aoki &lt;aamine@loveruby.net&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |Minero Aoki&lt;aamine@loveruby.net&gt;|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Minero Aoki&lt;aamine@loveruby.net&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Minero Aoki&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;aamine@loveruby.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;aamine&#39;</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;loveruby.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;Minero Aoki &lt;aamine@loveruby.net&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;Minero Aoki&lt;aamine@loveruby.net&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s1">&#39;should handle |&quot;Minero Aoki&quot; &lt;aamine@loveruby.net&gt;|&#39;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&quot;Minero Aoki&quot; &lt;aamine@loveruby.net&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Minero Aoki&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;aamine@loveruby.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;aamine&#39;</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;loveruby.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;Minero Aoki &lt;aamine@loveruby.net&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;&quot;Minero Aoki&quot; &lt;aamine@loveruby.net&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |Minero Aoki&lt;aamine@0246.loveruby.net&gt;|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Minero Aoki&lt;aamine@0246.loveruby.net&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Minero Aoki&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;aamine@0246.loveruby.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;aamine&#39;</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;0246.loveruby.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;Minero Aoki &lt;aamine@0246.loveruby.net&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;Minero Aoki&lt;aamine@0246.loveruby.net&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should reject multiple dots&quot;</span> <span class="k">do</span>
+        <span class="mi">2</span><span class="o">.</span><span class="n">upto</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">times</span><span class="o">|</span>
+          <span class="n">dots</span>    <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">*</span> <span class="n">times</span>
+          <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;hoge</span><span class="si">#{</span><span class="n">dots</span><span class="si">}</span><span class="s2">test@docomo.ne.jp&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">raise_error</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s1">&#39;should handle |&quot;Joe &amp; J. Harvey&quot; &lt;ddd @Org&gt;|&#39;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&quot;Joe &amp; J. Harvey&quot; &lt;ddd @Org&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;Joe &amp; J. Harvey&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Joe &amp; J. Harvey&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;ddd@Org&#39;</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;Org&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;ddd&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;&quot;Joe &amp; J. Harvey&quot; &lt;ddd@Org&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;&quot;Joe &amp; J. Harvey&quot; &lt;ddd @Org&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s1">&#39;should handle |&quot;spickett@tiac.net&quot; &lt;Sean.Pickett@zork.tiac.net&gt;|&#39;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&quot;spickett@tiac.net&quot; &lt;Sean.Pickett@zork.tiac.net&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;spickett@tiac.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;spickett@tiac.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;Sean.Pickett@zork.tiac.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;zork.tiac.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;Sean.Pickett&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;&quot;spickett@tiac.net&quot; &lt;Sean.Pickett@zork.tiac.net&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;&quot;spickett@tiac.net&quot; &lt;Sean.Pickett@zork.tiac.net&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |rls@intgp8.ih.att.com (-Schieve,R.L.)|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;rls@intgp8.ih.att.com (-Schieve,R.L.)&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;-Schieve,R.L.&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;rls@intgp8.ih.att.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">&#39;-Schieve,R.L.&#39;</span><span class="o">]</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;intgp8.ih.att.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;rls&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;rls@intgp8.ih.att.com (-Schieve,R.L.)&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;rls@intgp8.ih.att.com (-Schieve,R.L.)&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |jrh%cup.portal.com@portal.unix.portal.com|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;jrh%cup.portal.com@portal.unix.portal.com&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;jrh%cup.portal.com@portal.unix.portal.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;portal.unix.portal.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;jrh%cup.portal.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;jrh%cup.portal.com@portal.unix.portal.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;jrh%cup.portal.com@portal.unix.portal.com&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |astrachan@austlcm.sps.mot.com (&#39;paul astrachan/xvt3&#39;)|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;astrachan@austlcm.sps.mot.com (&#39;paul astrachan/xvt3&#39;)&quot;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s2">&quot;&#39;paul astrachan/xvt3&#39;&quot;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;astrachan@austlcm.sps.mot.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;&#39;paul astrachan/xvt3&#39;&quot;</span><span class="o">]</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;austlcm.sps.mot.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;astrachan&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s2">&quot;astrachan@austlcm.sps.mot.com (&#39;paul astrachan/xvt3&#39;)&quot;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s2">&quot;astrachan@austlcm.sps.mot.com (&#39;paul astrachan/xvt3&#39;)&quot;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle &#39;TWINE57%SDELVB.decnet@SNYBUF.CS.SNYBUF.EDU (JAMES R. TWINE - THE NERD)&#39;&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;TWINE57%SDELVB.decnet@SNYBUF.CS.SNYBUF.EDU (JAMES R. TWINE - THE NERD)&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;JAMES R. TWINE - THE NERD&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;TWINE57%SDELVB.decnet@SNYBUF.CS.SNYBUF.EDU&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">&#39;JAMES R. TWINE - THE NERD&#39;</span><span class="o">]</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;SNYBUF.CS.SNYBUF.EDU&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;TWINE57%SDELVB.decnet&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;TWINE57%SDELVB.decnet@SNYBUF.CS.SNYBUF.EDU (JAMES R. TWINE - THE NERD)&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;TWINE57%SDELVB.decnet@SNYBUF.CS.SNYBUF.EDU (JAMES R. TWINE - THE NERD)&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should be able to handle &#39;David Apfelbaum &lt;da0g+@andrew.cmu.edu&gt;&#39;&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;David Apfelbaum &lt;da0g+@andrew.cmu.edu&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;David Apfelbaum&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;David Apfelbaum&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;da0g+@andrew.cmu.edu&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;andrew.cmu.edu&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;da0g+&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;David Apfelbaum &lt;da0g+@andrew.cmu.edu&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;David Apfelbaum &lt;da0g+@andrew.cmu.edu&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s1">&#39;should handle |&quot;JAMES R. TWINE - THE NERD&quot; &lt;TWINE57%SDELVB%SNYDELVA.bitnet@CUNYVM.CUNY.EDU&gt;|&#39;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&quot;JAMES R. TWINE - THE NERD&quot; &lt;TWINE57%SDELVB%SNYDELVA.bitnet@CUNYVM.CUNY.EDU&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;JAMES R. TWINE - THE NERD&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;JAMES R. TWINE - THE NERD&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;TWINE57%SDELVB%SNYDELVA.bitnet@CUNYVM.CUNY.EDU&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;CUNYVM.CUNY.EDU&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;TWINE57%SDELVB%SNYDELVA.bitnet&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;&quot;JAMES R. TWINE - THE NERD&quot; &lt;TWINE57%SDELVB%SNYDELVA.bitnet@CUNYVM.CUNY.EDU&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;&quot;JAMES R. TWINE - THE NERD&quot; &lt;TWINE57%SDELVB%SNYDELVA.bitnet@CUNYVM.CUNY.EDU&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle &#39;/G=Owen/S=Smith/O=SJ-Research/ADMD=INTERSPAN/C=GB/@mhs-relay.ac.uk&#39;&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;/G=Owen/S=Smith/O=SJ-Research/ADMD=INTERSPAN/C=GB/@mhs-relay.ac.uk&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;/G=Owen/S=Smith/O=SJ-Research/ADMD=INTERSPAN/C=GB/@mhs-relay.ac.uk&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;mhs-relay.ac.uk&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;/G=Owen/S=Smith/O=SJ-Research/ADMD=INTERSPAN/C=GB/&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;/G=Owen/S=Smith/O=SJ-Research/ADMD=INTERSPAN/C=GB/@mhs-relay.ac.uk&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;/G=Owen/S=Smith/O=SJ-Research/ADMD=INTERSPAN/C=GB/@mhs-relay.ac.uk&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s1">&#39;should handle |&quot;Stephen Burke, Liverpool&quot; &lt;BURKE@vxdsya.desy.de&gt;|&#39;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&quot;Stephen Burke, Liverpool&quot; &lt;BURKE@vxdsya.desy.de&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;Stephen Burke, Liverpool&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Stephen Burke, Liverpool&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;BURKE@vxdsya.desy.de&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;vxdsya.desy.de&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;BURKE&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;&quot;Stephen Burke, Liverpool&quot; &lt;BURKE@vxdsya.desy.de&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;&quot;Stephen Burke, Liverpool&quot; &lt;BURKE@vxdsya.desy.de&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle &#39;The Newcastle Info-Server &lt;info-admin@newcastle.ac.uk&gt;&#39;&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;The Newcastle Info-Server &lt;info-admin@newcastle.ac.uk&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;The Newcastle Info-Server&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;The Newcastle Info-Server&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;info-admin@newcastle.ac.uk&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;newcastle.ac.uk&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;info-admin&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;The Newcastle Info-Server &lt;info-admin@newcastle.ac.uk&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;The Newcastle Info-Server &lt;info-admin@newcastle.ac.uk&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle &#39;Suba.Peddada@eng.sun.com (Suba Peddada [CONTRACTOR])&#39;&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Suba.Peddada@eng.sun.com (Suba Peddada [CONTRACTOR])&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;Suba Peddada [CONTRACTOR]&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;Suba.Peddada@eng.sun.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">&#39;Suba Peddada [CONTRACTOR]&#39;</span><span class="o">]</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;eng.sun.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;Suba.Peddada&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;Suba.Peddada@eng.sun.com (Suba Peddada [CONTRACTOR])&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;Suba.Peddada@eng.sun.com (Suba Peddada [CONTRACTOR])&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle &#39;Paul Manser (0032 memo) &lt;a906187@tiuk.ti.com&gt;&#39;&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Paul Manser (0032 memo) &lt;a906187@tiuk.ti.com&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;Paul Manser&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Paul Manser&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;a906187@tiuk.ti.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">&#39;0032 memo&#39;</span><span class="o">]</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;tiuk.ti.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;a906187&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;Paul Manser &lt;a906187@tiuk.ti.com&gt; (0032 memo)&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;Paul Manser (0032 memo) &lt;a906187@tiuk.ti.com&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s1">&#39;should handle |&quot;gregg (g.) woodcock&quot; &lt;woodcock@bnr.ca&gt;|&#39;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&quot;gregg (g.) woodcock&quot; &lt;woodcock@bnr.ca&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;gregg (g.) woodcock&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;gregg (g.) woodcock&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;woodcock@bnr.ca&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;bnr.ca&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;woodcock&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;&quot;gregg (g.) woodcock&quot; &lt;woodcock@bnr.ca&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;&quot;gregg (g.) woodcock&quot; &lt;woodcock@bnr.ca&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s1">&#39;should handle |Graham.Barr@tiuk.ti.com|&#39;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Graham.Barr@tiuk.ti.com&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;Graham.Barr@tiuk.ti.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;tiuk.ti.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;Graham.Barr&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;Graham.Barr@tiuk.ti.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;Graham.Barr@tiuk.ti.com&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |a909937 (Graham Barr          (0004 bodg))|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;a909937 (Graham Barr          (0004 bodg))&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;Graham Barr (0004 bodg)&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;a909937&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">&#39;Graham Barr (0004 bodg)&#39;</span><span class="o">]</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;a909937&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;a909937 (Graham Barr \(0004 bodg\))&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;a909937 (Graham Barr          (0004 bodg))&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |david d `zoo&#39; zuhn &lt;zoo@aggregate.com&gt;|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;david d `zoo&#39; zuhn &lt;zoo@aggregate.com&gt;&quot;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s2">&quot;david d `zoo&#39; zuhn&quot;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s2">&quot;david d `zoo&#39; zuhn&quot;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;zoo@aggregate.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;aggregate.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;zoo&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s2">&quot;david d `zoo&#39; zuhn &lt;zoo@aggregate.com&gt;&quot;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s2">&quot;david d `zoo&#39; zuhn &lt;zoo@aggregate.com&gt;&quot;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |(foo@bar.com (foobar), ned@foo.com (nedfoo) ) &lt;kevin@goess.org&gt;|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;(foo@bar.com (foobar), ned@foo.com (nedfoo) ) &lt;kevin@goess.org&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;foo@bar.com \(foobar\), ned@foo.com \(nedfoo\) &#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;(foo@bar.com \(foobar\), ned@foo.com \(nedfoo\) )&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;kevin@goess.org&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">&#39;foo@bar.com (foobar), ned@foo.com (nedfoo) &#39;</span><span class="o">]</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;goess.org&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;kevin&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;&quot;(foo@bar.com \\(foobar\\), ned@foo.com \(nedfoo\) )&quot; &lt;kevin@goess.org&gt; (foo@bar.com \(foobar\), ned@foo.com \(nedfoo\) )&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;(foo@bar.com (foobar), ned@foo.com (nedfoo) ) &lt;kevin@goess.org&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |Pete(A wonderful ) chap) &lt;pete(his account)@silly.test(his host)&gt;|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Pete(A wonderful \) chap) &lt;pete(his account)@silly.test(his host)&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;Pete&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Pete&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;pete(his account)@silly.test&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">&#39;A wonderful \\) chap&#39;</span><span class="p">,</span> <span class="s1">&#39;his account&#39;</span><span class="p">,</span> <span class="s1">&#39;his host&#39;</span><span class="o">]</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;silly.test&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;pete(his account)&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;Pete &lt;pete(his account)@silly.test&gt; (A wonderful \\) chap his account his host)&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;Pete(A wonderful \\) chap) &lt;pete(his account)@silly.test(his host)&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |Joe Q. Public &lt;john.q.public@example.com&gt;|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Joe Q. Public &lt;john.q.public@example.com&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;Joe Q. Public&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Joe Q. Public&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;john.q.public@example.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;example.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;john.q.public&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;&quot;Joe Q. Public&quot; &lt;john.q.public@example.com&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;Joe Q. Public &lt;john.q.public@example.com&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |Mary Smith &lt;@machine.tld:mary@example.net&gt;|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Mary Smith &lt;@machine.tld:mary@example.net&gt;&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;Mary Smith&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Mary Smith&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;@machine.tld:mary@example.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;example.net&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;@machine.tld:mary&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;Mary Smith &lt;@machine.tld:mary@example.net&gt;&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;Mary Smith &lt;@machine.tld:mary@example.net&gt;&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |jdoe@test   . example|&quot;</span> <span class="k">do</span>
+        <span class="n">pending</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;jdoe@test   . example&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="s1">&#39;jdoe@test.example&#39;</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;jdoe@test.example&#39;</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;jdoe@test.example&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;test.example&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;jdoe&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;jdoe@test.example&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;jdoe@test.example&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should handle |groupname+domain.com@example.com|&quot;</span> <span class="k">do</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;groupname+domain.com@example.com&#39;</span><span class="p">)</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span>
+                                         <span class="ss">:name</span>         <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:display_name</span> <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:address</span>      <span class="o">=&gt;</span> <span class="s1">&#39;groupname+domain.com@example.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:comments</span>     <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                                         <span class="ss">:domain</span>       <span class="o">=&gt;</span> <span class="s1">&#39;example.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:local</span>        <span class="o">=&gt;</span> <span class="s1">&#39;groupname+domain.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:format</span>       <span class="o">=&gt;</span> <span class="s1">&#39;groupname+domain.com@example.com&#39;</span><span class="p">,</span>
+                                         <span class="ss">:raw</span>          <span class="o">=&gt;</span> <span class="s1">&#39;groupname+domain.com@example.com&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;creating&quot;</span> <span class="k">do</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;parts of an address&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should add an address&quot;</span> <span class="k">do</span>
+        <span class="n">address</span>         <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="s2">&quot;mikel@test.lindsaar.net&quot;</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span><span class="ss">:address</span> <span class="o">=&gt;</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should add a display name&quot;</span> <span class="k">do</span>
+        <span class="n">address</span>              <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Mikel Lindsaar&quot;</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">display_name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Mikel Lindsaar&#39;</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;modifying an address&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should add an address&quot;</span> <span class="k">do</span>
+      <span class="n">address</span>         <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="s2">&quot;mikel@test.lindsaar.net&quot;</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">break_down_to</span><span class="p">({</span><span class="ss">:address</span> <span class="o">=&gt;</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should add a display name&quot;</span> <span class="k">do</span>
+      <span class="n">address</span>              <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Mikel Lindsaar&quot;</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">display_name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Mikel Lindsaar&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should take an address and a display name and join them&quot;</span> <span class="k">do</span>
+      <span class="n">address</span>              <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">address</span>      <span class="o">=</span> <span class="s2">&quot;mikel@test.lindsaar.net&quot;</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Mikel Lindsaar&quot;</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Mikel Lindsaar &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should take a display name and an address and join them&quot;</span> <span class="k">do</span>
+      <span class="n">address</span>              <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Mikel Lindsaar&quot;</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">address</span>      <span class="o">=</span> <span class="s2">&quot;mikel@test.lindsaar.net&quot;</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Mikel Lindsaar &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;providing encoded and decoded outputs&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should provide an encoded output&quot;</span> <span class="k">do</span>
+      <span class="n">address</span>              <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;Mikel Lindsaar&quot;</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">address</span>      <span class="o">=</span> <span class="s2">&quot;mikel@test.lindsaar.net&quot;</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Mikel Lindsaar &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should provide an encoded output for non us-ascii&quot;</span> <span class="k">do</span>
+      <span class="n">address</span>              <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;まける&quot;</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">address</span>      <span class="o">=</span> <span class="s2">&quot;mikel@test.lindsaar.net&quot;</span>
+      <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&gt;=</span> <span class="s1">&#39;1.9&#39;</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;=?UTF-8?B?44G+44GR44KL?= &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+      <span class="k">else</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;=?UTF8?B?44G+44GR44KL?= &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should provide an encoded output for non us-ascii&quot;</span> <span class="k">do</span>
+      <span class="n">address</span>              <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span><span class="o">.</span><span class="n">new</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;まける&quot;</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">address</span>      <span class="o">=</span> <span class="s2">&quot;mikel@test.lindsaar.net&quot;</span>
+      <span class="n">address</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&quot;まける&quot; &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

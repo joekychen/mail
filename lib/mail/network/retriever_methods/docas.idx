@@ -1,0 +1,4 @@
+f | imap.rb | s | 7.3K | 150 | Rob Di Marco | rob@innovationontherun.com | 1331925366 |  | Updated IMAP documentation to fix typo and have all options documented
+f | test_retriever.rb | s | 1.1K | 39 | Mikel Lindsaar | mikel@rubyx.com | 1303800209 |  | Removing cattr_accessor calls for 1.8.7 compat
+f | pop3.rb | s | 5.1K | 123 | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | base.rb | s | 1.9K | 55 | Donald Ball | donald.ball@gmail.com | 1289921913 |  | Extract base retriever class

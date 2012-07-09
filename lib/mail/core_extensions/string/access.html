@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › core_extensions › string › access.rb
+| encoding: utf-8
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>access.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>This is not loaded if ActiveSupport is already loaded</p></td><td class="code"><div class="highlight"><pre></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>This is an almost cut and paste from ActiveSupport v3.0.6, copied in here so that Mail
+itself does not depend on ActiveSupport to avoid versioning conflicts</p></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">String</span>
+  <span class="k">unless</span> <span class="s1">&#39;1.9&#39;</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:force_encoding</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Returns the character at the +position+ treating the string as an array (where 0 is the first character).</p>
+
+<p>Examples:
+  "hello".at(0)  # => "h"
+  "hello".at(4)  # => "o"
+  "hello".at(10) # => ERROR if &lt; 1.9, nil in 1.9</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">at</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+      <span class="n">mb_chars</span><span class="o">[</span><span class="n">position</span><span class="p">,</span> <span class="mi">1</span><span class="o">].</span><span class="n">to_s</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Returns the remaining of the string from the +position+ treating the string as an array (where 0 is the first character).</p>
+
+<p>Examples:
+  "hello".from(0)  # => "hello"
+  "hello".from(2)  # => "llo"
+  "hello".from(10) # => "" if &lt; 1.9, nil in 1.9</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">from</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+      <span class="n">mb_chars</span><span class="o">[</span><span class="n">position</span><span class="o">.</span><span class="n">.</span><span class="o">-</span><span class="mi">1</span><span class="o">].</span><span class="n">to_s</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>Returns the beginning of the string up to the +position+ treating the string as an array (where 0 is the first character).</p>
+
+<p>Examples:
+  "hello".to(0)  # => "h"
+  "hello".to(2)  # => "hel"
+  "hello".to(10) # => "hello"</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+      <span class="n">mb_chars</span><span class="o">[</span><span class="mi">0</span><span class="o">.</span><span class="n">.position</span><span class="o">].</span><span class="n">to_s</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>Returns the first character of the string or the first +limit+ characters.</p>
+
+<p>Examples:
+  "hello".first     # => "h"
+  "hello".first(2)  # => "he"
+  "hello".first(10) # => "hello"</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">first</span><span class="p">(</span><span class="n">limit</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">limit</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="s1">&#39;&#39;</span>
+      <span class="k">elsif</span> <span class="n">limit</span> <span class="o">&gt;=</span> <span class="n">size</span>
+        <span class="nb">self</span>
+      <span class="k">else</span>
+        <span class="n">mb_chars</span><span class="o">[</span><span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">limit</span><span class="o">].</span><span class="n">to_s</span>
+      <span class="k">end</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>Returns the last character of the string or the last +limit+ characters.</p>
+
+<p>Examples:
+  "hello".last     # => "o"
+  "hello".last(2)  # => "lo"
+  "hello".last(10) # => "hello"</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">last</span><span class="p">(</span><span class="n">limit</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">limit</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="s1">&#39;&#39;</span>
+      <span class="k">elsif</span> <span class="n">limit</span> <span class="o">&gt;=</span> <span class="n">size</span>
+        <span class="nb">self</span>
+      <span class="k">else</span>
+        <span class="n">mb_chars</span><span class="o">[</span><span class="p">(</span><span class="o">-</span><span class="n">limit</span><span class="p">)</span><span class="o">.</span><span class="n">.</span><span class="o">-</span><span class="mi">1</span><span class="o">].</span><span class="n">to_s</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">else</span>
+    <span class="k">def</span> <span class="nf">at</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">[</span><span class="n">position</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">from</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">[</span><span class="n">position</span><span class="o">.</span><span class="n">.</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">[</span><span class="mi">0</span><span class="o">.</span><span class="n">.position</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">first</span><span class="p">(</span><span class="n">limit</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">limit</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="s1">&#39;&#39;</span>
+      <span class="k">elsif</span> <span class="n">limit</span> <span class="o">&gt;=</span> <span class="n">size</span>
+        <span class="nb">self</span>
+      <span class="k">else</span>
+        <span class="n">to</span><span class="p">(</span><span class="n">limit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">last</span><span class="p">(</span><span class="n">limit</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">limit</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="s1">&#39;&#39;</span>
+      <span class="k">elsif</span> <span class="n">limit</span> <span class="o">&gt;=</span> <span class="n">size</span>
+        <span class="nb">self</span>
+      <span class="k">else</span>
+        <span class="n">from</span><span class="p">(</span><span class="o">-</span><span class="n">limit</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">if</span> <span class="no">Module</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="ss">:const_get</span><span class="p">)</span><span class="o">.</span><span class="n">arity</span> <span class="o">==</span> <span class="mi">1</span></pre></div></td></tr>
+
+
+<tr id="section-9"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-9">&#182;</a></div><p>Tries to find a constant with the name specified in the argument string:</p>
+
+<p>"Module".constantize     # => Module
+  "Test::Unit".constantize # => Test::Unit</p>
+
+<p>The name is assumed to be the one of a top-level constant, no matter whether
+it starts with "::" or not. No lexical context is taken into account:</p>
+
+<p>C = 'outside'
+  module M
+    C = 'inside'
+    C               # => 'inside'
+    "C".constantize # => 'outside', same as ::C
+  end</p>
+
+<p>NameError is raised when the name is not in CamelCase or the constant is
+unknown.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">constantize</span>
+      <span class="n">names</span> <span class="o">=</span> <span class="nb">self</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;::&#39;</span><span class="p">)</span>
+      <span class="n">names</span><span class="o">.</span><span class="n">shift</span> <span class="k">if</span> <span class="n">names</span><span class="o">.</span><span class="n">empty?</span> <span class="o">||</span> <span class="n">names</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">empty?</span>
+
+      <span class="n">constant</span> <span class="o">=</span> <span class="no">Object</span>
+      <span class="n">names</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="n">constant</span><span class="o">.</span><span class="n">const_defined?</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span> <span class="p">?</span> <span class="n">constant</span><span class="o">.</span><span class="n">const_get</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span> <span class="p">:</span> <span class="n">constant</span><span class="o">.</span><span class="n">const_missing</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="n">constant</span>
+    <span class="k">end</span>
+  <span class="k">else</span>
+    <span class="k">def</span> <span class="nf">constantize</span> <span class="c1">#:nodoc:</span>
+      <span class="n">names</span> <span class="o">=</span> <span class="nb">self</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;::&#39;</span><span class="p">)</span>
+      <span class="n">names</span><span class="o">.</span><span class="n">shift</span> <span class="k">if</span> <span class="n">names</span><span class="o">.</span><span class="n">empty?</span> <span class="o">||</span> <span class="n">names</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">empty?</span>
+
+      <span class="n">constant</span> <span class="o">=</span> <span class="no">Object</span>
+      <span class="n">names</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="n">constant</span><span class="o">.</span><span class="n">const_defined?</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="kp">false</span><span class="p">)</span> <span class="p">?</span> <span class="n">constant</span><span class="o">.</span><span class="n">const_get</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span> <span class="p">:</span> <span class="n">constant</span><span class="o">.</span><span class="n">const_missing</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="n">constant</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

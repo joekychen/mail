@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › encodings.rb
+| encoding: utf-8
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>encodings.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Raised when attempting to decode an unknown encoding type</p></td><td class="code"><div class="highlight"><pre>  <span class="k">class</span> <span class="nc">UnknownEncodingType</span> <span class="o">&lt;</span> <span class="no">StandardError</span> <span class="c1">#:nodoc:</span>
+  <span class="k">end</span>
+
+  <span class="k">module</span> <span class="nn">Encodings</span>
+
+    <span class="kp">include</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Patterns</span>
+    <span class="kp">extend</span>  <span class="no">Mail</span><span class="o">::</span><span class="no">Utilities</span>
+
+    <span class="vi">@transfer_encodings</span> <span class="o">=</span> <span class="p">{}</span></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Register transfer encoding</p>
+
+<p>Example</p>
+
+<p>Encodings.register "base64", Mail::Encodings::Base64</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">register</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span>
+        <span class="vi">@transfer_encodings</span><span class="o">[</span><span class="n">get_name</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="n">cls</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Is the encoding we want defined?</p>
+
+<p>Example:</p>
+
+<p>Encodings.defined?(:base64) #=> true</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">defined?</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="vi">@transfer_encodings</span><span class="o">.</span><span class="n">include?</span> <span class="n">get_name</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Gets a defined encoding type, QuotedPrintable or Base64 for now.</p>
+
+<p>Each encoding needs to be defined as a Mail::Encodings::ClassName for
+this to work, allows us to add other encodings in the future.</p>
+
+<p>Example:</p>
+
+<p>Encodings.get_encoding(:base64) #=> Mail::Encodings::Base64</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">get_encoding</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="vi">@transfer_encodings</span><span class="o">[</span><span class="n">get_name</span><span class="p">(</span><span class="n">str</span><span class="p">)</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">get_all</span>
+      <span class="vi">@transfer_encodings</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">get_name</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span>
+      <span class="n">enc</span> <span class="o">=</span> <span class="n">enc</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">downcase</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>Encodes a parameter value using URI Escaping, note the language field 'en' can
+be set using Mail::Configuration, like so:</p>
+
+<p>Mail.defaults.do
+   param<em>encode</em>language 'jp'
+ end</p>
+
+<p>The character set used for encoding will either be the value of $KCODE for
+Ruby &lt; 1.9 or the encoding on the string passed in.</p>
+
+<p>Example:</p>
+
+<p>Mail::Encodings.param_encode("This is fun") #=> "us-ascii'en'This%20is%20fun"</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">param_encode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">str</span><span class="o">.</span><span class="n">ascii_only?</span> <span class="o">&amp;&amp;</span> <span class="n">str</span> <span class="o">=~</span> <span class="no">TOKEN_UNSAFE</span>
+        <span class="sx">%Q{&quot;</span><span class="si">#{</span><span class="n">str</span><span class="si">}</span><span class="sx">&quot;}</span>
+      <span class="k">when</span> <span class="n">str</span><span class="o">.</span><span class="n">ascii_only?</span>
+        <span class="n">str</span>
+      <span class="k">else</span>
+        <span class="no">RubyVer</span><span class="o">.</span><span class="n">param_encode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>Decodes a parameter value using URI Escaping.</p>
+
+<p>Example:</p>
+
+<p>Mail::Encodings.param_decode("This%20is%20fun", 'us-ascii') #=> "This is fun"</p>
+
+<p>str = Mail::Encodings.param_decode("This%20is%20fun", 'iso-8559-1')
+ str.encoding #=> 'ISO-8859-1'      ## Only on Ruby 1.9
+ str #=> "This is fun"</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">param_decode</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+      <span class="no">RubyVer</span><span class="o">.</span><span class="n">param_decode</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>Decodes or encodes a string as needed for either Base64 or QP encoding types in
+the =?<encoding>?[QB]?<string>?=" format.</p>
+
+<p>The output type needs to be :decode to decode the input string or :encode to
+encode the input string.  The character set used for encoding will either be
+the value of $KCODE for Ruby &lt; 1.9 or the encoding on the string passed in.</p>
+
+<p>On encoding, will only send out Base64 encoded strings.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">decode_encode</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">output_type</span><span class="p">)</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">output_type</span> <span class="o">==</span> <span class="ss">:decode</span>
+        <span class="no">Encodings</span><span class="o">.</span><span class="n">value_decode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="k">if</span> <span class="n">str</span><span class="o">.</span><span class="n">ascii_only?</span>
+          <span class="n">str</span>
+        <span class="k">else</span>
+          <span class="no">Encodings</span><span class="o">.</span><span class="n">b_value_encode</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">find_encoding</span><span class="p">(</span><span class="n">str</span><span class="p">))</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-9"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-9">&#182;</a></div><p>Decodes a given string as Base64 or Quoted Printable, depending on what
+type it is.</p>
+
+<p>String has to be of the format =?<encoding>?[QB]?<string>?=</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">value_decode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-10"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-10">&#182;</a></div><p>Optimization: If there's no encoded-words in the string, just return it</p></td><td class="code"><div class="highlight"><pre>      <span class="k">return</span> <span class="n">str</span> <span class="k">unless</span> <span class="n">str</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;=?&quot;</span><span class="p">)</span>
+
+      <span class="n">str</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/\?=(\s*)=\?/</span><span class="p">,</span> <span class="s1">&#39;?==?&#39;</span><span class="p">)</span> <span class="c1"># Remove whitespaces between &#39;encoded-word&#39;s</span></pre></div></td></tr>
+
+
+<tr id="section-11"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-11">&#182;</a></div><p>Split on white-space boundaries with capture, so we capture the white-space as well</p></td><td class="code"><div class="highlight"><pre>      <span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sr">/([ \t])/</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">text</span><span class="o">|</span>
+        <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;=?&#39;</span><span class="p">)</span> <span class="o">.</span><span class="n">nil?</span>
+          <span class="n">text</span>
+        <span class="k">else</span></pre></div></td></tr>
+
+
+<tr id="section-12"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-12">&#182;</a></div><p>Join QP encoded-words that are adjacent to avoid decoding partial chars</p></td><td class="code"><div class="highlight"><pre>          <span class="n">text</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/\?\=\=\?.+?\?[Qq]\?/m</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">text</span> <span class="o">=~</span> <span class="sr">/\?==\?/</span></pre></div></td></tr>
+
+
+<tr id="section-13"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-13">&#182;</a></div><p>Search for occurences of quoted strings or plain strings</p></td><td class="code"><div class="highlight"><pre>          <span class="n">text</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="sr">/(                                  # Group around entire regex to include it in matches</span>
+<span class="sr">                       \=\?[^?]+\?([QB])\?[^?]+?\?\=  # Quoted String with subgroup for encoding method</span>
+<span class="sr">                       |                                # or</span>
+<span class="sr">                       .+?(?=\=\?|$)                    # Plain String</span>
+<span class="sr">                     )/xmi</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">matches</span><span class="o">|</span>
+            <span class="n">string</span><span class="p">,</span> <span class="nb">method</span> <span class="o">=</span> <span class="o">*</span><span class="n">matches</span>
+            <span class="k">if</span>    <span class="nb">method</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span> <span class="o">||</span> <span class="nb">method</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span>
+              <span class="n">b_value_decode</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+            <span class="k">elsif</span> <span class="nb">method</span> <span class="o">==</span> <span class="s1">&#39;q&#39;</span> <span class="o">||</span> <span class="nb">method</span> <span class="o">==</span> <span class="s1">&#39;Q&#39;</span>
+              <span class="n">q_value_decode</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+            <span class="k">else</span>
+              <span class="n">string</span>
+            <span class="k">end</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+      <span class="k">end</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-14"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-14">&#182;</a></div><p>Takes an encoded string of the format =?<encoding>?[QB]?<string>?=</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">unquote_and_convert_to</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">to_encoding</span><span class="p">)</span>
+      <span class="n">original_encoding</span> <span class="o">=</span> <span class="n">split_encoding_from_string</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+
+      <span class="n">output</span> <span class="o">=</span> <span class="n">value_decode</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span><span class="o">.</span><span class="n">to_s</span>
+
+      <span class="k">if</span> <span class="n">original_encoding</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">downcase</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">to_encoding</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">downcase</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">output</span>
+      <span class="k">elsif</span> <span class="n">original_encoding</span> <span class="o">&amp;&amp;</span> <span class="n">to_encoding</span>
+        <span class="k">begin</span>
+          <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&gt;=</span> <span class="s1">&#39;1.9&#39;</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">to_encoding</span><span class="p">)</span>
+          <span class="k">else</span>
+            <span class="nb">require</span> <span class="s1">&#39;iconv&#39;</span>
+            <span class="no">Iconv</span><span class="o">.</span><span class="n">iconv</span><span class="p">(</span><span class="n">to_encoding</span><span class="p">,</span> <span class="n">original_encoding</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">first</span>
+          <span class="k">end</span>
+        <span class="k">rescue</span> <span class="no">Iconv</span><span class="o">::</span><span class="no">IllegalSequence</span><span class="p">,</span> <span class="no">Iconv</span><span class="o">::</span><span class="no">InvalidEncoding</span><span class="p">,</span> <span class="no">Errno</span><span class="o">::</span><span class="no">EINVAL</span></pre></div></td></tr>
+
+
+<tr id="section-15"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-15">&#182;</a></div><p>the 'from' parameter specifies a charset other than what the text
+actually is...not much we can do in this case but just return the
+unconverted text.</p>
+
+<p>Ditto if either parameter represents an unknown charset, like
+X-UNKNOWN.</p></td><td class="code"><div class="highlight"><pre>          <span class="n">output</span>
+        <span class="k">end</span>
+      <span class="k">else</span>
+        <span class="n">output</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">address_encode</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">address</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">Array</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-16"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-16">&#182;</a></div><p>loop back through for each element</p></td><td class="code"><div class="highlight"><pre>        <span class="n">address</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="no">Encodings</span><span class="o">.</span><span class="n">address_encode</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+      <span class="k">else</span></pre></div></td></tr>
+
+
+<tr id="section-17"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-17">&#182;</a></div><p>find any word boundary that is not ascii and encode it</p></td><td class="code"><div class="highlight"><pre>        <span class="n">encode_non_usascii</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">encode_non_usascii</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">address</span> <span class="k">if</span> <span class="n">address</span><span class="o">.</span><span class="n">ascii_only?</span> <span class="ow">or</span> <span class="n">charset</span><span class="o">.</span><span class="n">nil?</span>
+      <span class="n">us_ascii</span> <span class="o">=</span> <span class="sx">%Q{</span><span class="se">\x00</span><span class="sx">-</span><span class="se">\x7f</span><span class="sx">}</span></pre></div></td></tr>
+
+
+<tr id="section-18"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-18">&#182;</a></div><p>Encode any non usascii strings embedded inside of quotes</p></td><td class="code"><div class="highlight"><pre>      <span class="n">address</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="sr">/(&quot;.*?[^</span><span class="si">#{</span><span class="n">us_ascii</span><span class="si">}</span><span class="sr">].*?&quot;)/</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="no">Encodings</span><span class="o">.</span><span class="n">b_value_encode</span><span class="p">(</span><span class="n">unquote</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">charset</span><span class="p">)</span> <span class="p">}</span></pre></div></td></tr>
+
+
+<tr id="section-19"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-19">&#182;</a></div><p>Then loop through all remaining items and encode as needed</p></td><td class="code"><div class="highlight"><pre>      <span class="n">tokens</span> <span class="o">=</span> <span class="n">address</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sr">/\s/</span><span class="p">)</span>
+      <span class="n">map_with_index</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">word</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span>
+        <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">ascii_only?</span>
+          <span class="n">word</span>
+        <span class="k">else</span>
+          <span class="n">previous_non_ascii</span> <span class="o">=</span> <span class="n">tokens</span><span class="o">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">tokens</span><span class="o">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="o">].</span><span class="n">ascii_only?</span>
+          <span class="k">if</span> <span class="n">previous_non_ascii</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="s2">&quot; </span><span class="si">#{</span><span class="n">word</span><span class="si">}</span><span class="s2">&quot;</span>
+          <span class="k">end</span>
+          <span class="no">Encodings</span><span class="o">.</span><span class="n">b_value_encode</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="k">end</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-20"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-20">&#182;</a></div><p>Encode a string with Base64 Encoding and returns it ready to be inserted
+as a value for a field, that is, in the =?<charset>?B?<string>?= format</p>
+
+<p>Example:</p>
+
+<p>Encodings.b<em>value</em>encode('This is あ string', 'UTF-8')
+ #=> "=?UTF-8?B?VGhpcyBpcyDjgYIgc3RyaW5n?="</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">b_value_encode</span><span class="p">(</span><span class="n">encoded_str</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">encoded_str</span> <span class="k">if</span> <span class="n">encoded_str</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">ascii_only?</span>
+      <span class="n">string</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="no">RubyVer</span><span class="o">.</span><span class="n">b_value_encode</span><span class="p">(</span><span class="n">encoded_str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+      <span class="n">map_lines</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">str</span><span class="o">|</span>
+        <span class="s2">&quot;=?</span><span class="si">#{</span><span class="n">encoding</span><span class="si">}</span><span class="s2">?B?</span><span class="si">#{</span><span class="n">str</span><span class="o">.</span><span class="n">chomp</span><span class="si">}</span><span class="s2">?=&quot;</span>
+      <span class="k">end</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-21"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-21">&#182;</a></div><p>Encode a string with Quoted-Printable Encoding and returns it ready to be inserted
+as a value for a field, that is, in the =?<charset>?Q?<string>?= format</p>
+
+<p>Example:</p>
+
+<p>Encodings.q<em>value</em>encode('This is あ string', 'UTF-8')
+ #=> "=?UTF-8?Q?This<em>is</em>=E3=81=82_string?="</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">q_value_encode</span><span class="p">(</span><span class="n">encoded_str</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">encoded_str</span> <span class="k">if</span> <span class="n">encoded_str</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">ascii_only?</span>
+      <span class="n">string</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="no">RubyVer</span><span class="o">.</span><span class="n">q_value_encode</span><span class="p">(</span><span class="n">encoded_str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+      <span class="n">string</span><span class="o">.</span><span class="n">gsub!</span><span class="p">(</span><span class="s2">&quot;=</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="c1"># We already have limited the string to the length we want</span>
+      <span class="n">map_lines</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">str</span><span class="o">|</span>
+        <span class="s2">&quot;=?</span><span class="si">#{</span><span class="n">encoding</span><span class="si">}</span><span class="s2">?Q?</span><span class="si">#{</span><span class="n">str</span><span class="o">.</span><span class="n">chomp</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/ /</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">?=&quot;</span>
+      <span class="k">end</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="kp">private</span></pre></div></td></tr>
+
+
+<tr id="section-22"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-22">&#182;</a></div><p>Decodes a Base64 string from the "=?UTF-8?B?VGhpcyBpcyDjgYIgc3RyaW5n?=" format</p>
+
+<p>Example:</p>
+
+<p>Encodings.b<em>value</em>decode("=?UTF-8?B?VGhpcyBpcyDjgYIgc3RyaW5n?=")
+ #=> 'This is あ string'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">b_value_decode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="no">RubyVer</span><span class="o">.</span><span class="n">b_value_decode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-23"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-23">&#182;</a></div><p>Decodes a Quoted-Printable string from the "=?UTF-8?Q?This<em>is</em>=E3=81=82_string?=" format</p>
+
+<p>Example:</p>
+
+<p>Encodings.q<em>value</em>decode("=?UTF-8?Q?This<em>is</em>=E3=81=82_string?=")
+ #=> 'This is あ string'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">q_value_decode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="no">RubyVer</span><span class="o">.</span><span class="n">q_value_decode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">split_encoding_from_string</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="n">match</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sr">/\=\?([^?]+)?\?[QB]\?(.+)?\?\=/mi</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">match</span>
+        <span class="n">match</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
+      <span class="k">else</span>
+        <span class="kp">nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Encodings</span><span class="o">.</span><span class="nf">find_encoding</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="no">RUBY_VERSION</span> <span class="o">&gt;=</span> <span class="s1">&#39;1.9&#39;</span> <span class="p">?</span> <span class="n">str</span><span class="o">.</span><span class="n">encoding</span> <span class="p">:</span> <span class="vg">$KCODE</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

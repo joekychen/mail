@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › common › parameter_hash_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>parameter_hash_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;mail/fields/common/parameter_hash&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ParameterHash</span> <span class="k">do</span>
+  <span class="n">it</span> <span class="s2">&quot;should return the values in the hash&quot;</span> <span class="k">do</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ParameterHash</span><span class="o">.</span><span class="n">new</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">({</span><span class="s1">&#39;value1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;value2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;two&#39;</span><span class="p">})</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">should</span> <span class="kp">include</span><span class="p">(</span><span class="s2">&quot;value1&quot;</span><span class="p">)</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">should</span> <span class="kp">include</span><span class="p">(</span><span class="s2">&quot;value2&quot;</span><span class="p">)</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">should</span> <span class="kp">include</span><span class="p">(</span><span class="s1">&#39;one&#39;</span><span class="p">)</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">should</span> <span class="kp">include</span><span class="p">(</span><span class="s1">&#39;two&#39;</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should return the values in the hash regardless of symbol or string&quot;</span> <span class="k">do</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ParameterHash</span><span class="o">.</span><span class="n">new</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">({</span><span class="s1">&#39;value1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;value2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;two&#39;</span><span class="p">})</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="s1">&#39;value1&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;one&#39;</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="s1">&#39;value2&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;two&#39;</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="ss">:value1</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;one&#39;</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="ss">:value2</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;two&#39;</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should return the values in the hash using case-insensitive key matching&quot;</span> <span class="k">do</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ParameterHash</span><span class="o">.</span><span class="n">new</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">({</span><span class="s1">&#39;value1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;VALUE2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;two&#39;</span><span class="p">})</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="s1">&#39;VALUE1&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;one&#39;</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="s1">&#39;vAlUe2&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;two&#39;</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="ss">:VaLuE1</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;one&#39;</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="ss">:value2</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;two&#39;</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should return the correct value if they are not encoded&quot;</span> <span class="k">do</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ParameterHash</span><span class="o">.</span><span class="n">new</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">({</span><span class="s1">&#39;value1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;value2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;two&#39;</span><span class="p">})</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="s1">&#39;value1&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;one&#39;</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="s1">&#39;value2&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;two&#39;</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should return a name list concatenated&quot;</span> <span class="k">do</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ParameterHash</span><span class="o">.</span><span class="n">new</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">({</span><span class="s1">&#39;value*1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;value*2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;two&#39;</span><span class="p">})</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="s1">&#39;value&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;onetwo&#39;</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should return a name list concatenated and unencoded&quot;</span> <span class="k">do</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ParameterHash</span><span class="o">.</span><span class="n">new</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">({</span><span class="s1">&#39;value*0*&#39;</span> <span class="o">=&gt;</span> <span class="s2">&quot;us-ascii&#39;en&#39;This%20is%20even%20more%20&quot;</span><span class="p">,</span>
+                 <span class="s1">&#39;value*1*&#39;</span> <span class="o">=&gt;</span> <span class="s2">&quot;%2A%2A%2Afun%2A%2A%2A%20&quot;</span><span class="p">,</span>
+                 <span class="s1">&#39;value*2&#39;</span>  <span class="o">=&gt;</span> <span class="s2">&quot;isn&#39;t it&quot;</span><span class="p">})</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="s1">&#39;value&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;This is even more ***fun*** isn&#39;t it&quot;</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should allow us to add a value&quot;</span> <span class="k">do</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ParameterHash</span><span class="o">.</span><span class="n">new</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="s1">&#39;value&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;bob&#39;</span>
+    <span class="nb">hash</span><span class="o">[</span><span class="s1">&#39;value&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;bob&#39;</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should return an encoded value&quot;</span> <span class="k">do</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ParameterHash</span><span class="o">.</span><span class="n">new</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">({</span><span class="s1">&#39;value*0*&#39;</span> <span class="o">=&gt;</span> <span class="s2">&quot;us-ascii&#39;en&#39;This%20is%20even%20more%20&quot;</span><span class="p">,</span>
+                 <span class="s1">&#39;value*1*&#39;</span> <span class="o">=&gt;</span> <span class="s2">&quot;%2A%2A%2Afun%2A%2A%2A%20&quot;</span><span class="p">,</span>
+                 <span class="s1">&#39;value*2&#39;</span>  <span class="o">=&gt;</span> <span class="s2">&quot;isn&#39;t it&quot;</span><span class="p">})</span>
+    <span class="nb">hash</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="sx">%Q{value*0*=us-ascii&#39;en&#39;This%20is%20even%20more%20;</span><span class="se">\r\n\s</span><span class="sx">value*1*=%2A%2A%2Afun%2A%2A%2A%20;</span><span class="se">\r\n\s</span><span class="sx">value*2=&quot;isn&#39;t it&quot;}</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

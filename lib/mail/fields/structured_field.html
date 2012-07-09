@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › fields › structured_field.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>structured_field.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;mail/fields/common/common_field&#39;</span>
+
+<span class="k">module</span> <span class="nn">Mail</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Provides access to a structured header field</p>
+
+<p>===Per RFC 2822:
+ 2.2.2. Structured Header Field Bodies</p>
+
+<pre><code>Some field bodies in this standard have specific syntactical
+structure more restrictive than the unstructured field bodies
+described above. These are referred to as "structured" field bodies.
+Structured field bodies are sequences of specific lexical tokens as
+described in sections 3 and 4 of this standard.  Many of these tokens
+are allowed (according to their syntax) to be introduced or end with
+comments (as described in section 3.2.3) as well as the space (SP,
+ASCII value 32) and horizontal tab (HTAB, ASCII value 9) characters
+(together known as the white space characters, WSP), and those WSP
+characters are subject to header "folding" and "unfolding" as
+described in section 2.2.3.  Semantic analysis of structured field
+bodies is given along with their syntax.
+</code></pre></td><td class="code"><div class="highlight"><pre>  <span class="k">class</span> <span class="nc">StructuredField</span>
+    
+    <span class="kp">include</span> <span class="no">Mail</span><span class="o">::</span><span class="no">CommonField</span>
+    <span class="kp">include</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Utilities</span>
+    
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="nb">name</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">,</span> <span class="n">charset</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">name</span>    <span class="o">=</span> <span class="nb">name</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">value</span>   <span class="o">=</span> <span class="n">value</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="n">charset</span>
+      <span class="nb">self</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">charset</span>
+      <span class="vi">@charset</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">charset</span><span class="o">=</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+      <span class="vi">@charset</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">default</span>
+      <span class="n">decoded</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">errors</span>
+      <span class="o">[]</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › unstructured_field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>unstructured_field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span> <span class="k">do</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;initialization&quot;</span> <span class="k">do</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should be instantiated&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span><span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">)}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;manipulation&quot;</span> <span class="k">do</span>
+    
+    <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;Hello Frank&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should allow us to set a text value at initialization&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span><span class="p">{</span><span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">)}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should provide access to the text of the field once set&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Hello Frank&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should provide a means to change the value&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;Goodbye Frank&quot;</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Goodbye Frank&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;displaying encoded field and decoded value&quot;</span> <span class="k">do</span>
+    
+    <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;Hello Frank&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should provide a to_s function that returns the field name and value&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Hello Frank&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should return &#39;&#39; on to_s if there is no value&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should give an encoded value ready to insert into an email&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Subject: Hello Frank</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should return nil on encoded if it has no value&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should give an decoded value ready to insert into an email&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Hello Frank&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should return a nil on decoded if it has no value&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">nil</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should just add the CRLF at the end of the line&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject: =?utf-8?Q?testing_testing_=D6=A4?=&quot;</span><span class="p">)</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Subject: =?UTF8?Q?testing_testing_=D6=A4?=</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span> <span class="s2">&quot;UTF8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;testing testing </span><span class="se">\326\244</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should do encoded-words encoding correctly without extra equal sign&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;testing testing æøå&quot;</span><span class="p">)</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Subject: =?UTF8?Q?testing_testing_=C3=A6=C3=B8=C3=A5?=</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span> <span class="s2">&quot;UTF8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;testing testing æøå&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should encode the space between two adjacent encoded-words&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Her er æ ø å&quot;</span><span class="p">)</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Subject: =?UTF8?Q?Her_er_=C3=A6_=C3=B8_=C3=A5?=</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span> <span class="s2">&quot;UTF8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Her er æ ø å&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should encode additional special characters inside encoded-word-encoded strings&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%Q(Her er æ()&lt;&gt;@,;:\\&quot;/[]?.=)</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">SubjectField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="sx">%Q(Subject: =?UTF8?Q?Her_er_=C3=A6=28=29&lt;&gt;@,;:\\=22/[]=3F.=3D?=</span><span class="se">\r\n</span><span class="sx">)</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span> <span class="s2">&quot;UTF8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">string</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;folding&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should not fold itself if it is 78 chracters long&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;This is a subject header message that is _exactly_ 78 characters....&quot;</span><span class="p">)</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Subject: This is a subject header message that is _exactly_ 78 characters....</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should fold itself if it is 79 chracters long&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;This is a subject header message that is absolutely 79 characters long&quot;</span><span class="p">)</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Subject: This is a subject header message that is absolutely 79 characters</span><span class="se">\r\n\s</span><span class="s2">long</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should fold itself if it is 997 chracters long&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. This is a subject header message that is going to be 997 characters long. And this makes it 997....&quot;</span><span class="p">)</span>
+      <span class="n">lines</span> <span class="o">=</span> <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n\s</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">lines</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span> <span class="n">line</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="o">&lt;</span> <span class="mi">78</span> <span class="p">}</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should fold itself if it is 998 characters long&quot;</span> <span class="k">do</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. This is a subject header message that is going to be 998 characters long. And this makes it 998 long&quot;</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+      <span class="n">lines</span> <span class="o">=</span> <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n\s</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">lines</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span> <span class="n">line</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="o">&lt;</span> <span class="mi">78</span> <span class="p">}</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should fold itself if it is 999 characters long&quot;</span> <span class="k">do</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. This is a subject header message that is going to be 999 characters long. And this makes it 999 long.&quot;</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+      <span class="n">lines</span> <span class="o">=</span> <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n\s</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="n">lines</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span> <span class="n">line</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="o">&lt;</span> <span class="mi">78</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should fold itself if it is non us-ascii&quot;</span> <span class="k">do</span>
+      <span class="vi">@original</span> <span class="o">=</span> <span class="vg">$KCODE</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;This is あ really long string This is あ really long string This is あ really long string This is あ really long string This is あ really long string&quot;</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">string</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:force_encoding</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="vg">$KCODE</span> <span class="o">=</span> <span class="s1">&#39;u&#39;</span>
+      <span class="k">end</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Subject: =?UTF8?Q?This_is_=E3=81=82_really_long_string_This_is_=E3=81=82?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF8?Q?_really_long_string_This_is_=E3=81=82_really_long_string_This_is?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF8?Q?_=E3=81=82_really_long_string_This_is_=E3=81=82_really_long?=</span><span class="se">\r\n\s</span><span class="s2">=?UTF8?Q?_string?=</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span> <span class="s2">&quot;UTF8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">string</span>
+      <span class="vg">$KCODE</span> <span class="o">=</span> <span class="vi">@original</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should fold properly with my actual complicated header&quot;</span> <span class="k">do</span>
+      <span class="vi">@original</span> <span class="o">=</span> <span class="vg">$KCODE</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%|{&quot;unique_args&quot;: {&quot;mailing_id&quot;:147,&quot;account_id&quot;:2}, &quot;to&quot;: [&quot;larspind@gmail.com&quot;], &quot;category&quot;: &quot;mailing&quot;, &quot;filters&quot;: {&quot;domainkeys&quot;: {&quot;settings&quot;: {&quot;domain&quot;:1,&quot;enable&quot;:1}}}, &quot;sub&quot;: {&quot;{{open_image_url}}&quot;: [&quot;http://betaling.larspind.local/O/token/147/Mailing::FakeRecipient&quot;], &quot;{{name}}&quot;: [&quot;[FIRST NAME]&quot;], &quot;{{signup_reminder}}&quot;: [&quot;(her kommer til at stå hvornår folk har skrevet sig op ...)&quot;], &quot;{{unsubscribe_url}}&quot;: [&quot;http://betaling.larspind.local/U/token/147/Mailing::FakeRecipient&quot;], &quot;{{email}}&quot;: [&quot;larspind@gmail.com&quot;], &quot;{{link:308}}&quot;: [&quot;http://betaling.larspind.local/L/308/0/Mailing::FakeRecipient&quot;], &quot;{{confirm_url}}&quot;: [&quot;&quot;], &quot;{{ref}}&quot;: [&quot;[REF]&quot;]}}|</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;X-SMTPAPI&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">string</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:force_encoding</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="vg">$KCODE</span> <span class="o">=</span> <span class="s1">&#39;u&#39;</span>
+      <span class="k">end</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;X-SMTPAPI: =?UTF8?Q?{=22unique=5Fargs=22:_{=22mailing=5Fid=22:147,=22a?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?ccount=5Fid=22:2},_=22to=22:_[=22larspind@gmail.com=22],_=22categ?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?ory=22:_=22mailing=22,_=22filters=22:_{=22domainkeys=22:_{=22sett?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?ings=22:_{=22domain=22:1,=22enable=22:1}}},_=22sub=22:_{=22{{op?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?en=5Fimage=5Furl}}=22:_[=22http://betaling.larspind.local/O?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?/token/147/Mailing::FakeRecipient=22],_=22{{name}}=22:_[=22[FIRST?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?_NAME]=22],_=22{{signup=5Freminder}}=22:_[=22=28her_kommer_til_at?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?_st=C3=A5_hvorn=C3=A5r_folk_har_skrevet_sig_op_...=29=22],?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?_=22{{unsubscribe=5Furl}}=22:_[=22http://betaling.larspind.?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?local/U/token/147/Mailing::FakeRecipient=22],_=22{{email}}=22:?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?_[=22larspind@gmail.com=22],_=22{{link:308}}=22:_[=22http://beta?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?ling.larspind.local/L/308/0/Mailing::FakeRecipient=22],_=22{{con?=</span><span class="se">\r\n</span><span class="s2"> =?UTF8?Q?firm=5Furl}}=22:_[=22=22],_=22{{ref}}=22:_[=22[REF]=22]}}?=</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span> <span class="s2">&quot;UTF8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">string</span>
+      <span class="vg">$KCODE</span> <span class="o">=</span> <span class="vi">@original</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+    <span class="k">end</span>
+  
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;encoding non QP safe chars&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should encode an ascii string that has carriage returns if asked to&quot;</span> <span class="k">do</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Subject: =0Aasdf=0A</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">asdf</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;iso-2022-jp Subject&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should encoded with ISO-2022-JP encoding&quot;</span> <span class="k">do</span>
+      <span class="vi">@field</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">UnstructuredField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;あいうえお&quot;</span><span class="p">)</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;iso-2022-jp&#39;</span>
+      <span class="n">expect</span> <span class="o">=</span> <span class="p">(</span><span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span><span class="p">)</span> <span class="p">?</span> <span class="s2">&quot;Subject: =?ISO-2022-JP?Q?=E3=81=82=E3=81=84=E3=81=86=E3=81=88=E3=81=8A?=</span><span class="se">\r\n</span><span class="s2">&quot;</span> <span class="p">:</span> <span class="s2">&quot;Subject: =?ISO-2022-JP?Q?=1B$B$=22$$$&amp;$=28$*=1B=28B?=</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+      <span class="vi">@field</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">expect</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

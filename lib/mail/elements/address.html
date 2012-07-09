@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › elements › address.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>address.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">class</span> <span class="nc">Address</span>
+    
+    <span class="kp">include</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Utilities</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Mail::Address handles all email addresses in Mail.  It takes an email address string
+and parses it, breaking it down into it's component parts and allowing you to get the
+address, comments, display name, name, local part, domain part and fully formatted
+address.</p>
+
+<p>Mail::Address requires a correctly formatted email address per RFC2822 or RFC822.  It
+handles all obsolete versions including obsolete domain routing on the local part.</p>
+
+<p>a = Address.new('Mikel Lindsaar (My email address) <a href="&#109;&#97;&#x69;&#108;t&#111;:&#x6D;i&#107;&#x65;&#108;&#64;&#116;e&#115;&#x74;&#46;&#x6C;&#105;nd&#115;&#97;&#97;&#114;&#x2E;&#x6E;&#101;&#x74;">&#x6D;i&#107;&#x65;&#108;&#64;&#116;e&#115;&#x74;&#46;&#x6C;&#105;nd&#115;&#97;&#97;&#114;&#x2E;&#x6E;&#101;&#x74;</a>')
+ a.format       #=> 'Mikel Lindsaar <a href="m&#x61;&#x69;&#108;&#116;&#x6F;:&#x6D;&#x69;&#107;&#101;&#108;&#64;&#116;&#x65;&#x73;&#116;&#x2E;&#x6C;&#105;n&#x64;&#x73;&#97;&#97;&#x72;&#x2E;&#x6E;&#x65;&#x74;">&#x6D;&#x69;&#107;&#101;&#108;&#64;&#116;&#x65;&#x73;&#116;&#x2E;&#x6C;&#105;n&#x64;&#x73;&#97;&#97;&#x72;&#x2E;&#x6E;&#x65;&#x74;</a> (My email address)'
+ a.address      #=> 'mikel@test.lindsaar.net'
+ a.display<em>name #=> 'Mikel Lindsaar'
+ a.local        #=> 'mikel'
+ a.domain       #=> 'test.lindsaar.net'
+ a.comments     #=> ['My email address']
+ a.to</em>s         #=> 'Mikel Lindsaar <a href="&#109;&#x61;&#105;&#108;&#x74;&#111;:&#x6D;&#x69;&#x6B;e&#x6C;&#64;&#116;e&#115;&#x74;&#46;&#108;&#x69;&#x6E;&#x64;&#x73;&#97;&#x61;&#114;&#x2E;ne&#116;">&#x6D;&#x69;&#x6B;e&#x6C;&#64;&#116;e&#115;&#x74;&#46;&#108;&#x69;&#x6E;&#x64;&#x73;&#97;&#x61;&#114;&#x2E;ne&#116;</a> (My email address)'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="vi">@output_type</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="vi">@tree</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="vi">@raw_text</span> <span class="o">=</span> <span class="n">value</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">value</span><span class="o">.</span><span class="n">nil?</span>
+        <span class="vi">@parsed</span> <span class="o">=</span> <span class="kp">false</span>
+        <span class="k">return</span>
+      <span class="k">else</span>
+        <span class="n">parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Returns the raw imput of the passed in string, this is before it is passed
+by the parser.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">raw</span>
+      <span class="vi">@raw_text</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Returns a correctly formatted address for the email going out.  If given
+an incorrectly formatted address as input, Mail::Address will do it's best
+to format it correctly.  This includes quoting display names as needed and
+putting the address in angle brackets etc.</p>
+
+<p>a = Address.new('Mikel Lindsaar (My email address) <a href="m&#97;i&#108;&#116;&#111;:&#109;&#x69;&#107;&#101;&#108;&#64;&#116;&#x65;&#x73;&#x74;&#46;&#x6C;&#105;&#110;&#x64;&#115;&#x61;&#x61;r&#x2E;&#x6E;&#101;&#116;">&#109;&#x69;&#107;&#101;&#108;&#64;&#116;&#x65;&#x73;&#x74;&#46;&#x6C;&#105;&#110;&#x64;&#115;&#x61;&#x61;r&#x2E;&#x6E;&#101;&#116;</a>')
+ a.format #=> 'Mikel Lindsaar <a href="&#x6D;&#97;&#105;&#x6C;&#x74;&#x6F;:&#109;&#x69;&#107;&#101;&#x6C;&#x40;&#116;&#x65;&#x73;&#116;&#46;&#108;&#x69;&#110;&#100;&#x73;&#x61;&#x61;&#114;&#46;&#110;e&#116;">&#109;&#x69;&#107;&#101;&#x6C;&#x40;&#116;&#x65;&#x73;&#116;&#46;&#108;&#x69;&#110;&#100;&#x73;&#x61;&#x61;&#114;&#46;&#110;e&#116;</a> (My email address)'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">format</span>
+      <span class="n">parse</span> <span class="k">unless</span> <span class="vi">@parsed</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">tree</span><span class="o">.</span><span class="n">nil?</span>
+        <span class="s1">&#39;&#39;</span>
+      <span class="k">when</span> <span class="n">display_name</span>
+        <span class="o">[</span><span class="n">quote_phrase</span><span class="p">(</span><span class="n">display_name</span><span class="p">),</span> <span class="s2">&quot;&lt;</span><span class="si">#{</span><span class="n">address</span><span class="si">}</span><span class="s2">&gt;&quot;</span><span class="p">,</span> <span class="n">format_comments</span><span class="o">].</span><span class="n">compact</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="o">[</span><span class="n">address</span><span class="p">,</span> <span class="n">format_comments</span><span class="o">].</span><span class="n">compact</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Returns the address that is in the address itself.  That is, the 
+local@domain string, without any angle brackets or the like.</p>
+
+<p>a = Address.new('Mikel Lindsaar (My email address) <a href="&#x6D;&#x61;&#x69;&#x6C;to:&#109;&#x69;&#107;&#x65;&#108;&#x40;&#116;&#101;&#115;&#116;&#46;&#108;&#105;&#x6E;&#100;&#115;&#97;&#97;r&#46;&#110;&#x65;&#116;">&#109;&#x69;&#107;&#x65;&#108;&#x40;&#116;&#101;&#115;&#116;&#46;&#108;&#105;&#x6E;&#100;&#115;&#97;&#97;r&#46;&#110;&#x65;&#116;</a>')
+ a.address #=> 'mikel@test.lindsaar.net'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">address</span>
+      <span class="n">parse</span> <span class="k">unless</span> <span class="vi">@parsed</span>
+      <span class="n">domain</span> <span class="p">?</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">local</span><span class="si">}</span><span class="s2">@</span><span class="si">#{</span><span class="n">domain</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">:</span> <span class="n">local</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>Provides a way to assign an address to an already made Mail::Address object.</p>
+
+<p>a = Address.new
+ a.address = 'Mikel Lindsaar (My email address) <a href="&#109;&#97;&#105;&#x6C;&#116;&#111;:&#109;&#x69;k&#101;&#x6C;&#64;&#116;&#x65;&#115;&#116;&#46;&#x6C;i&#x6E;&#x64;&#115;&#97;&#x61;&#x72;&#46;&#x6E;&#x65;&#x74;">&#109;&#x69;k&#101;&#x6C;&#64;&#116;&#x65;&#115;&#116;&#46;&#x6C;i&#x6E;&#x64;&#115;&#97;&#x61;&#x72;&#46;&#x6E;&#x65;&#x74;</a>'
+ a.address #=> 'mikel@test.lindsaar.net'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">address</span><span class="o">=</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="n">parse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>Returns the display name of the email address passed in.</p>
+
+<p>a = Address.new('Mikel Lindsaar (My email address) <a href="&#109;&#97;&#x69;&#108;&#116;&#111;:&#x6D;&#105;&#x6B;&#101;l&#x40;&#116;&#x65;&#115;&#x74;&#x2E;&#x6C;&#105;&#x6E;&#100;&#x73;&#x61;a&#114;&#46;&#x6E;&#x65;&#116;">&#x6D;&#105;&#x6B;&#101;l&#x40;&#116;&#x65;&#115;&#x74;&#x2E;&#x6C;&#105;&#x6E;&#100;&#x73;&#x61;a&#114;&#46;&#x6E;&#x65;&#116;</a>')
+ a.display_name #=> 'Mikel Lindsaar'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">display_name</span>
+      <span class="n">parse</span> <span class="k">unless</span> <span class="vi">@parsed</span>
+      <span class="vi">@display_name</span> <span class="o">||=</span> <span class="n">get_display_name</span>
+      <span class="no">Encodings</span><span class="o">.</span><span class="n">decode_encode</span><span class="p">(</span><span class="vi">@display_name</span><span class="o">.</span><span class="n">to_s</span><span class="p">,</span> <span class="vi">@output_type</span><span class="p">)</span> <span class="k">if</span> <span class="vi">@display_name</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>Provides a way to assign a display name to an already made Mail::Address object.</p>
+
+<p>a = Address.new
+ a.address = 'mikel@test.lindsaar.net'
+ a.display_name = 'Mikel Lindsaar'
+ a.format #=> 'Mikel Lindsaar <a href="&#109;&#97;i&#x6C;&#x74;&#x6F;:&#x6D;&#x69;&#107;&#x65;&#108;&#64;&#116;e&#115;&#116;&#46;&#x6C;&#x69;&#110;&#100;&#x73;&#x61;&#97;&#x72;&#x2E;&#110;&#x65;&#116;">&#x6D;&#x69;&#107;&#x65;&#108;&#64;&#116;e&#115;&#116;&#46;&#x6C;&#x69;&#110;&#100;&#x73;&#x61;&#97;&#x72;&#x2E;&#110;&#x65;&#116;</a>'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">display_name</span><span class="o">=</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="vi">@display_name</span> <span class="o">=</span> <span class="n">str</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-9"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-9">&#182;</a></div><p>Returns the local part (the left hand side of the @ sign in the email address) of
+the address</p>
+
+<p>a = Address.new('Mikel Lindsaar (My email address) <a href="&#x6D;&#97;&#105;&#x6C;t&#111;:&#109;&#x69;&#x6B;e&#108;&#x40;&#116;&#x65;&#x73;&#116;&#x2E;&#x6C;&#105;&#110;&#x64;&#x73;&#x61;&#x61;r&#46;&#x6E;&#x65;&#116;">&#109;&#x69;&#x6B;e&#108;&#x40;&#116;&#x65;&#x73;&#116;&#x2E;&#x6C;&#105;&#110;&#x64;&#x73;&#x61;&#x61;r&#46;&#x6E;&#x65;&#116;</a>')
+ a.local #=> 'mikel'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">local</span>
+      <span class="n">parse</span> <span class="k">unless</span> <span class="vi">@parsed</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">obs_domain_list</span><span class="si">}#{</span><span class="n">get_local</span><span class="o">.</span><span class="n">strip</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">get_local</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-10"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-10">&#182;</a></div><p>Returns the domain part (the right hand side of the @ sign in the email address) of
+the address</p>
+
+<p>a = Address.new('Mikel Lindsaar (My email address) <a href="&#109;&#97;&#105;&#x6C;&#x74;&#x6F;:&#x6D;&#x69;k&#x65;&#108;&#64;&#x74;&#x65;&#115;t&#x2E;&#108;&#105;n&#x64;&#x73;&#x61;&#x61;&#114;&#x2E;&#110;&#101;&#x74;">&#x6D;&#x69;k&#x65;&#108;&#64;&#x74;&#x65;&#115;t&#x2E;&#108;&#105;n&#x64;&#x73;&#x61;&#x61;&#114;&#x2E;&#110;&#101;&#x74;</a>')
+ a.domain #=> 'test.lindsaar.net'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">domain</span>
+      <span class="n">parse</span> <span class="k">unless</span> <span class="vi">@parsed</span>
+      <span class="n">strip_all_comments</span><span class="p">(</span><span class="n">get_domain</span><span class="p">)</span> <span class="k">if</span> <span class="n">get_domain</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-11"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-11">&#182;</a></div><p>Returns an array of comments that are in the email, or an empty array if there
+are no comments</p>
+
+<p>a = Address.new('Mikel Lindsaar (My email address) <a href="&#x6D;a&#105;&#108;&#116;&#x6F;:&#109;&#x69;&#x6B;e&#108;&#x40;&#116;&#101;&#x73;&#116;&#46;&#x6C;&#x69;&#x6E;&#x64;&#x73;&#97;&#x61;&#x72;&#46;&#110;&#x65;&#x74;">&#109;&#x69;&#x6B;e&#108;&#x40;&#116;&#101;&#x73;&#116;&#46;&#x6C;&#x69;&#x6E;&#x64;&#x73;&#97;&#x61;&#x72;&#46;&#110;&#x65;&#x74;</a>')
+ a.comments #=> ['My email address']</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">comments</span>
+      <span class="n">parse</span> <span class="k">unless</span> <span class="vi">@parsed</span>
+      <span class="k">if</span> <span class="n">get_comments</span><span class="o">.</span><span class="n">empty?</span>
+        <span class="kp">nil</span>
+      <span class="k">else</span>
+        <span class="n">get_comments</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="p">}</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-12"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-12">&#182;</a></div><p>Sometimes an address will not have a display name, but might have the name
+as a comment field after the address.  This returns that name if it exists.</p>
+
+<p>a = Address.new('mikel@test.lindsaar.net (Mikel Lindsaar)')
+ a.name #=> 'Mikel Lindsaar'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">name</span>
+      <span class="n">parse</span> <span class="k">unless</span> <span class="vi">@parsed</span>
+      <span class="n">get_name</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-13"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-13">&#182;</a></div><p>Returns the format of the address, or returns nothing</p>
+
+<p>a = Address.new('Mikel Lindsaar (My email address) <a href="ma&#105;&#x6C;&#x74;&#x6F;:&#x6D;&#105;&#x6B;&#x65;&#108;&#64;&#x74;&#101;&#x73;&#x74;&#x2E;&#108;&#105;&#110;&#100;&#x73;&#x61;&#97;&#x72;&#x2E;&#x6E;e&#x74;">&#x6D;&#105;&#x6B;&#x65;&#108;&#64;&#x74;&#101;&#x73;&#x74;&#x2E;&#108;&#105;&#110;&#100;&#x73;&#x61;&#97;&#x72;&#x2E;&#x6E;e&#x74;</a>')
+ a.format #=> 'Mikel Lindsaar <a href="&#109;&#x61;i&#108;&#x74;&#x6F;:&#109;&#105;&#107;&#101;&#108;&#x40;&#x74;&#x65;s&#x74;&#x2E;&#108;&#x69;&#110;&#100;&#115;&#x61;&#97;&#114;&#x2E;&#110;&#101;&#x74;">&#109;&#105;&#107;&#101;&#108;&#x40;&#x74;&#x65;s&#x74;&#x2E;&#108;&#x69;&#110;&#100;&#115;&#x61;&#97;&#114;&#x2E;&#110;&#101;&#x74;</a> (My email address)'</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">to_s</span>
+      <span class="n">parse</span> <span class="k">unless</span> <span class="vi">@parsed</span>
+      <span class="nb">format</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-14"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-14">&#182;</a></div><p>Shows the Address object basic details, including the Address
+ a = Address.new('Mikel (My email) <a href="&#x6D;&#x61;&#105;&#x6C;&#116;&#x6F;:&#x6D;i&#x6B;&#x65;&#x6C;&#64;&#116;&#101;&#x73;&#116;&#x2E;&#108;&#x69;&#x6E;&#x64;&#115;&#x61;&#x61;&#x72;&#46;n&#101;&#116;">&#x6D;i&#x6B;&#x65;&#x6C;&#64;&#116;&#101;&#x73;&#116;&#x2E;&#108;&#x69;&#x6E;&#x64;&#115;&#x61;&#x61;&#x72;&#46;n&#101;&#116;</a>')
+ a.inspect #=> "#<Mail::Address:14184910 Address: |Mikel <a href="&#x6D;&#97;&#105;&#x6C;&#116;&#111;:&#x6D;&#105;&#107;&#x65;&#x6C;&#x40;&#x74;&#101;&#x73;&#116;&#x2E;&#x6C;&#x69;&#110;&#100;&#115;&#97;&#x61;&#x72;&#x2E;&#110;&#101;&#116;">&#x6D;&#105;&#107;&#x65;&#x6C;&#x40;&#x74;&#101;&#x73;&#116;&#x2E;&#x6C;&#x69;&#110;&#100;&#115;&#97;&#x61;&#x72;&#x2E;&#110;&#101;&#116;</a> (My email)| >"</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">inspect</span>
+      <span class="n">parse</span> <span class="k">unless</span> <span class="vi">@parsed</span>
+      <span class="s2">&quot;#&lt;</span><span class="si">#{</span><span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="si">}</span><span class="s2">:</span><span class="si">#{</span><span class="nb">self</span><span class="o">.</span><span class="n">object_id</span><span class="si">}</span><span class="s2"> Address: |</span><span class="si">#{</span><span class="nb">to_s</span><span class="si">}</span><span class="s2">| &gt;&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">encoded</span>
+      <span class="vi">@output_type</span> <span class="o">=</span> <span class="ss">:encode</span>
+      <span class="nb">format</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">decoded</span>
+      <span class="vi">@output_type</span> <span class="o">=</span> <span class="ss">:decode</span>
+      <span class="nb">format</span>
+    <span class="k">end</span>
+
+    <span class="kp">private</span>
+    
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="vi">@parsed</span> <span class="o">=</span> <span class="kp">true</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">value</span><span class="o">.</span><span class="n">nil?</span>
+        <span class="kp">nil</span>
+      <span class="k">when</span> <span class="n">value</span><span class="o">.</span><span class="n">class</span> <span class="o">==</span> <span class="nb">String</span>
+        <span class="nb">self</span><span class="o">.</span><span class="n">tree</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">address_nodes</span><span class="o">.</span><span class="n">first</span>
+      <span class="k">else</span>
+        <span class="nb">self</span><span class="o">.</span><span class="n">tree</span> <span class="o">=</span> <span class="n">value</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    
+    <span class="k">def</span> <span class="nf">get_domain</span>
+      <span class="k">if</span> <span class="n">tree</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:angle_addr</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">tree</span><span class="o">.</span><span class="n">angle_addr</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:addr_spec</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">tree</span><span class="o">.</span><span class="n">angle_addr</span><span class="o">.</span><span class="n">addr_spec</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:domain</span><span class="p">)</span>
+        <span class="vi">@domain_text</span> <span class="o">||=</span> <span class="n">tree</span><span class="o">.</span><span class="n">angle_addr</span><span class="o">.</span><span class="n">addr_spec</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">text_value</span><span class="o">.</span><span class="n">strip</span>
+      <span class="k">elsif</span> <span class="n">tree</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:domain</span><span class="p">)</span>
+        <span class="vi">@domain_text</span> <span class="o">||=</span> <span class="n">tree</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">text_value</span><span class="o">.</span><span class="n">strip</span>
+      <span class="k">elsif</span> <span class="n">tree</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:addr_spec</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">tree</span><span class="o">.</span><span class="n">addr_spec</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:domain</span><span class="p">)</span>
+        <span class="n">tree</span><span class="o">.</span><span class="n">addr_spec</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">text_value</span><span class="o">.</span><span class="n">strip</span>
+      <span class="k">else</span>
+        <span class="kp">nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">strip_all_comments</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="k">unless</span> <span class="n">comments</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="n">comments</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">comment</span><span class="o">|</span>
+          <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;(</span><span class="si">#{</span><span class="n">comment</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+      <span class="n">string</span><span class="o">.</span><span class="n">strip</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">strip_domain_comments</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="k">unless</span> <span class="n">comments</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="n">comments</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">comment</span><span class="o">|</span>
+          <span class="k">if</span> <span class="n">get_domain</span> <span class="o">&amp;&amp;</span> <span class="n">get_domain</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;(</span><span class="si">#{</span><span class="n">comment</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;(</span><span class="si">#{</span><span class="n">comment</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+      <span class="n">value</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">strip</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">get_comments</span>
+      <span class="k">if</span> <span class="n">tree</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:comments</span><span class="p">)</span>
+        <span class="vi">@comments</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">unparen</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">text_value</span><span class="o">.</span><span class="n">to_str</span><span class="p">)</span> <span class="p">}</span> 
+      <span class="k">else</span>
+        <span class="vi">@comments</span> <span class="o">=</span> <span class="o">[]</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">get_display_name</span>
+      <span class="k">if</span> <span class="n">tree</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:display_name</span><span class="p">)</span>
+        <span class="nb">name</span> <span class="o">=</span> <span class="n">unquote</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">display_name</span><span class="o">.</span><span class="n">text_value</span><span class="o">.</span><span class="n">strip</span><span class="p">)</span>
+        <span class="n">str</span> <span class="o">=</span> <span class="n">strip_all_comments</span><span class="p">(</span><span class="nb">name</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span>
+      <span class="k">elsif</span> <span class="n">comments</span>
+        <span class="k">if</span> <span class="n">domain</span>
+          <span class="n">str</span> <span class="o">=</span> <span class="n">strip_domain_comments</span><span class="p">(</span><span class="n">format_comments</span><span class="p">)</span>
+        <span class="k">else</span>
+          <span class="n">str</span> <span class="o">=</span> <span class="kp">nil</span>
+        <span class="k">end</span>
+      <span class="k">else</span>
+        <span class="kp">nil</span>
+      <span class="k">end</span>
+      
+      <span class="k">if</span> <span class="n">str</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="kp">nil</span>
+      <span class="k">else</span>
+        <span class="n">str</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">get_name</span>
+      <span class="k">if</span> <span class="n">display_name</span>
+        <span class="n">str</span> <span class="o">=</span> <span class="n">display_name</span>
+      <span class="k">else</span>
+        <span class="k">if</span> <span class="n">comments</span>
+          <span class="n">comment_text</span> <span class="o">=</span> <span class="n">comments</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+          <span class="n">str</span> <span class="o">=</span> <span class="s2">&quot;(</span><span class="si">#{</span><span class="n">comment_text</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="k">if</span> <span class="n">str</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="kp">nil</span>
+      <span class="k">else</span>
+        <span class="n">unparen</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-15"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-15">&#182;</a></div><p>Provides access to the Treetop parse tree for this address</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">tree</span>
+      <span class="vi">@tree</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">tree</span><span class="o">=</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="vi">@tree</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">format_comments</span>
+      <span class="k">if</span> <span class="n">comments</span>
+        <span class="n">comment_text</span> <span class="o">=</span> <span class="n">comments</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">escape_paren</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="vi">@format_comments</span> <span class="o">||=</span> <span class="s2">&quot;(</span><span class="si">#{</span><span class="n">comment_text</span><span class="si">}</span><span class="s2">)&quot;</span>
+      <span class="k">else</span>
+        <span class="kp">nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+   
+    <span class="k">def</span> <span class="nf">obs_domain_list</span>
+      <span class="k">if</span> <span class="n">tree</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:angle_addr</span><span class="p">)</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">angle_addr</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:obs_domain_list</span><span class="p">)</span> <span class="p">}</span>
+        <span class="o">!</span><span class="n">obs</span><span class="o">.</span><span class="n">empty?</span> <span class="p">?</span> <span class="n">obs</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">text_value</span> <span class="p">:</span> <span class="kp">nil</span>
+      <span class="k">else</span>
+        <span class="kp">nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">get_local</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">tree</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:local_dot_atom_text</span><span class="p">)</span>
+        <span class="n">tree</span><span class="o">.</span><span class="n">local_dot_atom_text</span><span class="o">.</span><span class="n">text_value</span>
+      <span class="k">when</span> <span class="n">tree</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:angle_addr</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">tree</span><span class="o">.</span><span class="n">angle_addr</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:addr_spec</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">tree</span><span class="o">.</span><span class="n">angle_addr</span><span class="o">.</span><span class="n">addr_spec</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:local_part</span><span class="p">)</span>
+        <span class="n">tree</span><span class="o">.</span><span class="n">angle_addr</span><span class="o">.</span><span class="n">addr_spec</span><span class="o">.</span><span class="n">local_part</span><span class="o">.</span><span class="n">text_value</span>
+      <span class="k">when</span> <span class="n">tree</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:addr_spec</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">tree</span><span class="o">.</span><span class="n">addr_spec</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:local_part</span><span class="p">)</span>
+        <span class="n">tree</span><span class="o">.</span><span class="n">addr_spec</span><span class="o">.</span><span class="n">local_part</span><span class="o">.</span><span class="n">text_value</span>
+      <span class="k">else</span>
+        <span class="n">tree</span> <span class="o">&amp;&amp;</span> <span class="n">tree</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:local_part</span><span class="p">)</span> <span class="p">?</span> <span class="n">tree</span><span class="o">.</span><span class="n">local_part</span><span class="o">.</span><span class="n">text_value</span> <span class="p">:</span> <span class="kp">nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+ 
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

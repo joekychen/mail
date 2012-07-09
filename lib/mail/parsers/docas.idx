@@ -1,0 +1,28 @@
+f | rfc2822.treetop | s | 7.8K | 322 | Tim Sally | poet@atomicpeace.com | 1316282263 |  | Per RFC 5322, do not accept emails with consecutive dots. See #279.
+f | content_disposition.rb | s | 11K | 490 | Kendall Gifford | zettabyte@gmail.com | 1286375739 |  | Merged in libc's changes (http://gist.github.com/472661) to fix issue mikel/mail issue #82: allows Content-Disposition headers' values (inline or attachment) to be in upper or mixed case.
+f | content_disposition.treetop | s | 925B | 38 | Kendall Gifford | zettabyte@gmail.com | 1286375739 |  | Merged in libc's changes (http://gist.github.com/472661) to fix issue mikel/mail issue #82: allows Content-Disposition headers' values (inline or attachment) to be in upper or mixed case.
+f | address_lists.rb | s | 1.3K | 51 | Donald Ball | donald.ball@gmail.com | 1290877526 |  | Allow address lists to handle and ignore empty addresses
+f | rfc2045.treetop | s | 755B | 30 | Mikel Lindsaar | raasdnil@gmail.com | 1270032960 |  | Adding auto encoding to mail headers, all specs pass, very beta right now
+f | content_transfer_encoding.rb | s | 3.2K | 139 | Mikel Lindsaar | raasdnil@gmail.com | 1270032960 |  | Adding auto encoding to mail headers, all specs pass, very beta right now
+f | mime_version.rb | s | 2.9K | 127 | Mikel Lindsaar | raasdnil@gmail.com | 1269739515 |  | Updating treetop with latest commits from Jeremy and Nathan Sobo
+f | rfc2045.rb | s | 13K | 437 | Mikel Lindsaar | raasdnil@gmail.com | 1270032960 |  | Adding auto encoding to mail headers, all specs pass, very beta right now
+f | envelope_from.rb | s | 4.2K | 172 | Mikel Lindsaar | raasdnil@gmail.com | 1269739515 |  | Updating treetop with latest commits from Jeremy and Nathan Sobo
+f | content_type.rb | s | 22K | 904 | Mikel Lindsaar | raasdnil@gmail.com | 1284126290 |  | Resolves issue #58 - NoMethodError on Content-Type parsing. Kudos to Eugene Pimenov (libc)
+f | rfc2822_obsolete.treetop | s | 4.5K | 190 | liufengyun | liufengyunchina@gmail.com | 1324475255 |  | support @ in display name  e.g. To: smith@gmail.com, Mikel@Lindsaar <raasdnil@gmail.com>, abc@ddd <abc@gamil.com>
+f | content_location.treetop | s | 292B | 16 | Mikel Lindsaar | raasdnil@gmail.com | 1256986806 |  | Adding changes to get compatibility with actionmailer, also handled attachment handling
+f | address_lists.treetop | s | 394B | 16 | Donald Ball | donald.ball@gmail.com | 1290877526 |  | Allow address lists to handle and ignore empty addresses
+f | message_ids.rb | s | 864B | 33 | Mikel Lindsaar | raasdnil@gmail.com | 1269739515 |  | Updating treetop with latest commits from Jeremy and Nathan Sobo
+f | rfc2822_obsolete.rb | s | 86K | 3471 | liufengyun | liufengyunchina@gmail.com | 1324475255 |  | support @ in display name  e.g. To: smith@gmail.com, Mikel@Lindsaar <raasdnil@gmail.com>, abc@ddd <abc@gamil.com>
+f | date_time.treetop | s | 138B | 8 | Mikel Lindsaar | raasdnil@gmail.com | 1249724302 |  | OK... Received field working, Date field working
+f | content_transfer_encoding.treetop | s | 309B | 16 | Mikel Lindsaar | raasdnil@gmail.com | 1270032960 |  | Adding auto encoding to mail headers, all specs pass, very beta right now
+f | content_type.treetop | s | 1.5K | 57 | Mikel Lindsaar | raasdnil@gmail.com | 1284126290 |  | Resolves issue #58 - NoMethodError on Content-Type parsing. Kudos to Eugene Pimenov (libc)
+f | received.treetop | s | 126B | 8 | Mikel Lindsaar | raasdnil@gmail.com | 1249724302 |  | OK... Received field working, Date field working
+f | phrase_lists.treetop | s | 235B | 12 | Mikel Lindsaar | raasdnil@gmail.com | 1249481515 |  | Added keyword header field handling and specs
+f | phrase_lists.rb | s | 910B | 33 | Mikel Lindsaar | raasdnil@gmail.com | 1269739515 |  | Updating treetop with latest commits from Jeremy and Nathan Sobo
+f | message_ids.treetop | s | 235B | 12 | Mikel Lindsaar | raasdnil@gmail.com | 1249739331 |  | Got the basic message-id functions working
+f | content_location.rb | s | 2.6K | 119 | Mikel Lindsaar | raasdnil@gmail.com | 1269739515 |  | Updating treetop with latest commits from Jeremy and Nathan Sobo
+f | envelope_from.treetop | s | 958B | 28 | Mikel Lindsaar | raasdnil@gmail.com | 1249893371 |  | Merged in Nicolas work on deliverable, and added envelope handling and message id generation
+f | date_time.rb | s | 2.1K | 97 | Mikel Lindsaar | raasdnil@gmail.com | 1269739515 |  | Updating treetop with latest commits from Jeremy and Nathan Sobo
+f | received.rb | s | 1.3K | 58 | Mikel Lindsaar | raasdnil@gmail.com | 1269739515 |  | Updating treetop with latest commits from Jeremy and Nathan Sobo
+f | mime_version.treetop | s | 298B | 15 | Mikel Lindsaar | raasdnil@gmail.com | 1250002043 |  | Added Mime-Version and Content-Transfer-Encoding.  Also fixed typo in some field files
+f | rfc2822.rb | s | 125K | 4896 | Donald Ball | donald.ball@gmail.com | 1290877777 |  | Allow address lists to handle repeating strings of commas

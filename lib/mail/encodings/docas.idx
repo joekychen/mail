@@ -1,0 +1,6 @@
+f | transfer_encoding.rb | s | 1.3K | 51 | Peter Bowen | pzbowen@gmail.com | 1268351652 |  | Update encodings code
+f | 8bit.rb | s | 566B | 24 | Jeremy Kemper | jeremy@bitsweat.net | 1269762700 |  | Merge remote branch 'origin/master'  Conflicts: 	lib/mail.rb 	lib/mail/utilities.rb 	spec/mail/network/delivery_methods/file_delivery_spec.rb
+f | 7bit.rb | s | 543B | 24 | Jeremy Kemper | jeremy@bitsweat.net | 1269762700 |  | Merge remote branch 'origin/master'  Conflicts: 	lib/mail.rb 	lib/mail/utilities.rb 	spec/mail/network/delivery_methods/file_delivery_spec.rb
+f | base64.rb | s | 620B | 26 | Jeremy Kemper | jeremy@bitsweat.net | 1269762700 |  | Merge remote branch 'origin/master'  Conflicts: 	lib/mail.rb 	lib/mail/utilities.rb 	spec/mail/network/delivery_methods/file_delivery_spec.rb
+f | quoted_printable.rb | s | 841B | 30 | Mikel Lindsaar | raasdnil@gmail.com | 1270294668 |  | Changing to QP for default encoding and decoding, one failing spec
+f | binary.rb | s | 575B | 24 | Jeremy Kemper | jeremy@bitsweat.net | 1269762700 |  | Merge remote branch 'origin/master'  Conflicts: 	lib/mail.rb 	lib/mail/utilities.rb 	spec/mail/network/delivery_methods/file_delivery_spec.rb

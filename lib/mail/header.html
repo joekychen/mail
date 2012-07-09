@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › header.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>header.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  </pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Provides access to a header object.</p>
+
+<p>===Per RFC2822</p>
+
+<p>2.2. Header Fields</p>
+
+<p>Header fields are lines composed of a field name, followed by a colon
+  (":"), followed by a field body, and terminated by CRLF.  A field
+  name MUST be composed of printable US-ASCII characters (i.e.,
+  characters that have values between 33 and 126, inclusive), except
+  colon.  A field body may be composed of any US-ASCII characters,
+  except for CR and LF.  However, a field body may contain CRLF when
+  used in header "folding" and  "unfolding" as described in section
+  2.2.3.  All field bodies MUST conform to the syntax described in
+  sections 3 and 4 of this standard.</p></td><td class="code"><div class="highlight"><pre>  <span class="k">class</span> <span class="nc">Header</span>
+    <span class="kp">include</span> <span class="no">Patterns</span>
+    <span class="kp">include</span> <span class="no">Utilities</span>
+    <span class="kp">include</span> <span class="no">Enumerable</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Creates a new header object.</p>
+
+<p>Accepts raw text or nothing.  If given raw text will attempt to parse
+it and split it into the various fields, instantiating each field as
+it goes.</p>
+
+<p>If it finds a field that should be a structured field (such as content
+type), but it fails to parse it, it will simply make it an unstructured
+field and leave it alone.  This will mean that the data is preserved but
+no automatic processing of that field will happen.  If you find one of
+these cases, please make a patch and send it in, or at the least, send
+me the example so we can fix it.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">header_text</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">,</span> <span class="n">charset</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="vi">@errors</span> <span class="o">=</span> <span class="o">[]</span>
+      <span class="vi">@charset</span> <span class="o">=</span> <span class="n">charset</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">raw_source</span> <span class="o">=</span> <span class="n">header_text</span><span class="o">.</span><span class="n">to_crlf</span>
+      <span class="n">split_header</span> <span class="k">if</span> <span class="n">header_text</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>The preserved raw source of the header as you passed it in, untouched
+for your Regexing glory.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">raw_source</span>
+      <span class="vi">@raw_source</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Returns an array of all the fields in the header in order that they
+were read in.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">fields</span>
+      <span class="vi">@fields</span> <span class="o">||=</span> <span class="no">FieldList</span><span class="o">.</span><span class="n">new</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>3.6. Field definitions</p>
+
+<p>It is important to note that the header fields are not guaranteed to
+  be in a particular order.  They may appear in any order, and they
+  have been known to be reordered occasionally when transported over
+  the Internet.  However, for the purposes of this standard, header
+  fields SHOULD NOT be reordered when a message is transported or
+  transformed.  More importantly, the trace header fields and resent
+  header fields MUST NOT be reordered, and SHOULD be kept in blocks
+  prepended to the message.  See sections 3.6.6 and 3.6.7 for more
+  information.</p>
+
+<p>Populates the fields container with Field objects in the order it
+receives them in.</p>
+
+<p>Acceps an array of field string values, for example:</p>
+
+<p>h = Header.new
+ h.fields = ['From: mikel@me.com', 'To: bob@you.com']</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">fields</span><span class="o">=</span><span class="p">(</span><span class="n">unfolded_fields</span><span class="p">)</span>
+      <span class="vi">@fields</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">FieldList</span><span class="o">.</span><span class="n">new</span>
+      <span class="nb">warn</span> <span class="s2">&quot;Warning: more than 1000 header fields only using the first 1000&quot;</span> <span class="k">if</span> <span class="n">unfolded_fields</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">1000</span>
+      <span class="n">unfolded_fields</span><span class="o">[</span><span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="mi">1000</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">field</span><span class="o">|</span>
+
+        <span class="n">field</span> <span class="o">=</span> <span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>
+        <span class="n">field</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">error</span><span class="o">|</span> <span class="nb">self</span><span class="o">.</span><span class="n">errors</span> <span class="o">&lt;&lt;</span> <span class="n">error</span> <span class="p">}</span>
+        <span class="n">selected</span> <span class="o">=</span> <span class="n">select_field_for</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">any?</span> <span class="o">&amp;&amp;</span> <span class="n">limited_field?</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+          <span class="n">selected</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span>
+          <span class="vi">@fields</span> <span class="o">&lt;&lt;</span> <span class="n">field</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">errors</span>
+      <span class="vi">@errors</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>3.6. Field definitions</p>
+
+<p>The following table indicates limits on the number of times each
+  field may occur in a message header as well as any special
+  limitations on the use of those fields.  An asterisk next to a value
+  in the minimum or maximum column indicates that a special restriction
+  appears in the Notes column.</p>
+
+<p><snip table from 3.6></p>
+
+<p>As per RFC, many fields can appear more than once, we will return a string
+of the value if there is only one header, or if there is more than one 
+matching header, will return an array of values in order that they appear
+in the header ordered from top to bottom.</p>
+
+<p>Example:</p>
+
+<p>h = Header.new
+ h.fields = ['To: mikel@me.com', 'X-Mail-SPAM: 15', 'X-Mail-SPAM: 20']
+ h['To']          #=> 'mikel@me.com'
+ h['X-Mail-SPAM'] #=> ['15', '20']</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">[]</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+      <span class="nb">name</span> <span class="o">=</span> <span class="n">dasherize</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span><span class="o">.</span><span class="n">downcase</span>
+      <span class="n">selected</span> <span class="o">=</span> <span class="n">select_field_for</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+      <span class="k">case</span>
+      <span class="k">when</span> <span class="n">selected</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="n">selected</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span> <span class="p">}</span>
+      <span class="k">when</span> <span class="o">!</span><span class="n">selected</span><span class="o">.</span><span class="n">blank?</span>
+        <span class="n">selected</span><span class="o">.</span><span class="n">first</span>
+      <span class="k">else</span>
+        <span class="kp">nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>Sets the FIRST matching field in the header to passed value, or deletes
+the FIRST field matched from the header if passed nil</p>
+
+<p>Example:</p>
+
+<p>h = Header.new
+ h.fields = ['To: mikel@me.com', 'X-Mail-SPAM: 15', 'X-Mail-SPAM: 20']
+ h['To'] = 'bob@you.com'
+ h['To']    #=> 'bob@you.com'
+ h['X-Mail-SPAM'] = '10000'
+ h['X-Mail-SPAM'] # => ['15', '20', '10000']
+ h['X-Mail-SPAM'] = nil
+ h['X-Mail-SPAM'] # => nil</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">[]=</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+      <span class="nb">name</span> <span class="o">=</span> <span class="n">dasherize</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+      <span class="n">fn</span> <span class="o">=</span> <span class="nb">name</span><span class="o">.</span><span class="n">downcase</span>
+      <span class="n">selected</span> <span class="o">=</span> <span class="n">select_field_for</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+      
+      <span class="k">case</span></pre></div></td></tr>
+
+
+<tr id="section-9"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-9">&#182;</a></div><p>User wants to delete the field</p></td><td class="code"><div class="highlight"><pre>      <span class="k">when</span> <span class="o">!</span><span class="n">selected</span><span class="o">.</span><span class="n">blank?</span> <span class="o">&amp;&amp;</span> <span class="n">value</span> <span class="o">==</span> <span class="kp">nil</span>
+        <span class="n">fields</span><span class="o">.</span><span class="n">delete_if</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">selected</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="p">}</span>
+        </pre></div></td></tr>
+
+
+<tr id="section-10"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-10">&#182;</a></div><p>User wants to change the field</p></td><td class="code"><div class="highlight"><pre>      <span class="k">when</span> <span class="o">!</span><span class="n">selected</span><span class="o">.</span><span class="n">blank?</span> <span class="o">&amp;&amp;</span> <span class="n">limited_field?</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+        <span class="n">selected</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        </pre></div></td></tr>
+
+
+<tr id="section-11"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-11">&#182;</a></div><p>User wants to create the field</p></td><td class="code"><div class="highlight"><pre>      <span class="k">else</span></pre></div></td></tr>
+
+
+<tr id="section-12"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-12">&#182;</a></div><p>Need to insert in correct order for trace fields</p></td><td class="code"><div class="highlight"><pre>        <span class="nb">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">&lt;&lt;</span> <span class="no">Field</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">name</span><span class="o">.</span><span class="n">to_s</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">charset</span>
+      <span class="n">params</span> <span class="o">=</span> <span class="nb">self</span><span class="o">[</span><span class="ss">:content_type</span><span class="o">].</span><span class="n">parameters</span> <span class="k">rescue</span> <span class="kp">nil</span>
+      <span class="k">if</span> <span class="n">params</span>
+        <span class="n">params</span><span class="o">[</span><span class="ss">:charset</span><span class="o">]</span>
+      <span class="k">else</span>
+        <span class="vi">@charset</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">charset</span><span class="o">=</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+      <span class="n">params</span> <span class="o">=</span> <span class="nb">self</span><span class="o">[</span><span class="ss">:content_type</span><span class="o">].</span><span class="n">parameters</span> <span class="k">rescue</span> <span class="kp">nil</span>
+      <span class="k">if</span> <span class="n">params</span>
+        <span class="n">params</span><span class="o">[</span><span class="ss">:charset</span><span class="o">]</span> <span class="o">=</span> <span class="n">val</span>
+      <span class="k">end</span>
+      <span class="vi">@charset</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">end</span>
+    
+    <span class="no">LIMITED_FIELDS</span>   <span class="o">=</span> <span class="sx">%w[ date from sender reply-to to cc bcc </span>
+<span class="sx">                           message-id in-reply-to references subject</span>
+<span class="sx">                           return-path content-type mime-version</span>
+<span class="sx">                           content-transfer-encoding content-description </span>
+<span class="sx">                           content-id content-disposition content-location]</span>
+
+    <span class="k">def</span> <span class="nf">encoded</span>
+      <span class="n">buffer</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+      <span class="n">fields</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">field</span><span class="o">|</span>
+        <span class="n">buffer</span> <span class="o">&lt;&lt;</span> <span class="n">field</span><span class="o">.</span><span class="n">encoded</span>
+      <span class="k">end</span>
+      <span class="n">buffer</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">to_s</span>
+      <span class="n">encoded</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">decoded</span>
+      <span class="k">raise</span> <span class="no">NoMethodError</span><span class="p">,</span> <span class="s1">&#39;Can not decode an entire header as there could be character set conflicts, try calling #decoded on the various fields.&#39;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">field_summary</span>
+      <span class="n">fields</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="s2">&quot;&lt;</span><span class="si">#{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">f</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&gt;&quot;</span> <span class="p">}</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-13"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-13">&#182;</a></div><p>Returns true if the header has a Message-ID defined (empty or not)</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">has_message_id?</span>
+      <span class="o">!</span><span class="n">fields</span><span class="o">.</span><span class="n">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">responsible_for?</span><span class="p">(</span><span class="s1">&#39;Message-ID&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">empty?</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-14"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-14">&#182;</a></div><p>Returns true if the header has a Content-ID defined (empty or not)</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">has_content_id?</span>
+      <span class="o">!</span><span class="n">fields</span><span class="o">.</span><span class="n">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">responsible_for?</span><span class="p">(</span><span class="s1">&#39;Content-ID&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">empty?</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-15"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-15">&#182;</a></div><p>Returns true if the header has a Date defined (empty or not)</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">has_date?</span>
+      <span class="o">!</span><span class="n">fields</span><span class="o">.</span><span class="n">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">responsible_for?</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">empty?</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-16"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-16">&#182;</a></div><p>Returns true if the header has a MIME version defined (empty or not)</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">has_mime_version?</span>
+      <span class="o">!</span><span class="n">fields</span><span class="o">.</span><span class="n">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">responsible_for?</span><span class="p">(</span><span class="s1">&#39;Mime-Version&#39;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">empty?</span>
+    <span class="k">end</span>
+
+    <span class="kp">private</span>
+    
+    <span class="k">def</span> <span class="nf">raw_source</span><span class="o">=</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+      <span class="vi">@raw_source</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-17"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-17">&#182;</a></div><p>2.2.3. Long Header Fields</p>
+
+<p>The process of moving from this folded multiple-line representation
+ of a header field to its single line representation is called
+ "unfolding". Unfolding is accomplished by simply removing any CRLF
+ that is immediately followed by WSP.  Each header field should be
+ treated in its unfolded form for further syntactic and semantic
+ evaluation.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">unfold</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">string</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/</span><span class="si">#{</span><span class="no">CRLF</span><span class="si">}#{</span><span class="no">WSP</span><span class="si">}</span><span class="sr">+/</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/</span><span class="si">#{</span><span class="no">WSP</span><span class="si">}</span><span class="sr">+/</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-18"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-18">&#182;</a></div><p>Returns the header with all the folds removed</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">unfolded_header</span>
+      <span class="vi">@unfolded_header</span> <span class="o">||=</span> <span class="n">unfold</span><span class="p">(</span><span class="n">raw_source</span><span class="p">)</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-19"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-19">&#182;</a></div><p>Splits an unfolded and line break cleaned header into individual field
+strings.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">split_header</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">unfolded_header</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="no">CRLF</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">select_field_for</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+      <span class="n">fields</span><span class="o">.</span><span class="n">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">responsible_for?</span><span class="p">(</span><span class="nb">name</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+    
+    <span class="k">def</span> <span class="nf">limited_field?</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+      <span class="no">LIMITED_FIELDS</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="nb">name</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">downcase</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

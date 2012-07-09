@@ -1,0 +1,19 @@
+f | raw_email_reply.eml | g | 1.4K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email_with_bad_date.eml | g | 2.1K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email_bad_time.eml | g | 2.3K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | basic_email.eml | g | 1.5K |  | Mikel Lindsaar | raasdnil@gmail.com | 1256986806 |  | Adding changes to get compatibility with actionmailer, also handled attachment handling
+f | raw_email_simple.eml | g | 452B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email_with_partially_quoted_subject.eml | g | 531B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email_string_in_date_field.eml | g | 694B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email_multiple_from.eml | g | 990B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email6.eml | g | 955B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email5.eml | g | 912B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email_double_at_in_header.eml | g | 546B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email10.eml | g | 956B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email_quoted_with_0d0a.eml | g | 632B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | mix_caps_content_type.eml | g | 341B |  | Mikel Lindsaar | raasdnil@gmail.com | 1284176712 |  | Fixing spec for multicase content type
+f | raw_email_incorrect_header.eml | g | 898B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email_trailing_dot.eml | g | 1.2K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email_with_at_display_name.eml | g | 1.5K |  | liufengyun | liufengyunchina@gmail.com | 1324475255 |  | support @ in display name  e.g. To: smith@gmail.com, Mikel@Lindsaar <raasdnil@gmail.com>, abc@ddd <abc@gamil.com>
+f | raw_email8.eml | g | 1.8K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | raw_email.eml | g | 544B |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support

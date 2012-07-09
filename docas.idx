@@ -1,0 +1,14 @@
+f | README.md | s | 20K | 501 | Mathieu D'Amours | mathieu.damours@nextorms.com | 1330608286 |  | Small typo in readme.
+f | TODO.rdoc | g | 425B |  | Mikel Lindsaar | raasdnil@gmail.com | 1266973237 |  | Fixing up TODO and docs
+d | reference |  | 25 items |  | Mikel Lindsaar | mikel@rubyx.com | 1291970874 |  | Closes issue 135 - Invalid filename for windows
+f | Dependencies.txt | g | 213B |  | Tim Carey-Smith, Corey Donohoe, Simon Rozet & Ben Burkert | ninja@engineyard.com | 1258600558 |  | Rename Dependancies.txt -> Dependencies.txt
+f | mail.gemspec | g | 1.0K |  | Mikel Lindsaar | mikel@rubyx.com | 1326627498 |  | Version bump to 2.4.0 and gem release
+f | Gemfile | s | 523B | 23 | Mikel Lindsaar | mikel@rubyx.com | 1327068476 |  | Updating treetop version, specs now run 20-30% faster
+d | patches |  | 1 items |  | Mikel Lindsaar | mikel@rubyx.com | 1296017652 |  | Adding patch file
+f | CONTRIBUTING.md | s | 1.9K | 36 | Mikel Lindsaar | mikel@rubyx.com | 1326511286 |  | Updating README and CONTRIBUTING
+f | Rakefile | s | 1023B | 32 | Mikel Lindsaar | mikel@rubyx.com | 1326627498 |  | Version bump to 2.4.0 and gem release
+d | lib |  | 4 items |  | Mickey Reiss | mreiss@andrew.cmu.edu | 1335244077 |  | Fixed typo in documentation
+f | test.rb | s | 426B | 12 | Donald Ball | donald.ball@gmail.com | 1288062582 |  | Merge branch 'master' of github.com:dball/mail  Conflicts: 	lib/mail/encodings.rb 	lib/mail/utilities.rb 	spec/mail/network/retriever_methods/pop3_spec.rb
+f | CHANGELOG.rdoc | g | 28K |  | Mikel Lindsaar | mikel@rubyx.com | 1332572561 |  | Removing unused variable
+d | spec |  | 6 items |  | Mikel Lindsaar | mikel@rubyx.com | 1331725467 |  | Preventing file system traversal in file_delivery method
+f | ROADMAP | g | 2.4K |  | Mikel Lindsaar | raasdnil@gmail.com | 1270810999 |  | Updating Roadmap

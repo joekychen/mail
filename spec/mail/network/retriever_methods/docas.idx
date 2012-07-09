@@ -1,0 +1,3 @@
+f | imap_spec.rb | s | 7.8K | 204 | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | pop3_spec.rb | s | 6.5K | 158 | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | test_retriever_spec.rb | s | 2.2K | 75 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"

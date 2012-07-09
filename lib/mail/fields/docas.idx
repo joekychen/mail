@@ -1,0 +1,33 @@
+f | resent_date_field.rb | s | 796B | 28 | Donald Ball | donald.ball@gmail.com | 1289921587 |  | Fix time zone problem for ruby-1.8.x
+d | common |  | 6 items |  | Derek Prior | derekprior@gmail.com | 1306249855 |  | Fixed more test suite warnings under 1.9.2:  - 'warning: shadowing outer local variable - smtp' in 1.9.2  - 'warning: character class has duplicated range' under 1.9.2  - Fixed final occurrence of 'warning: URI.escape is obsolete' in specs under 1.9.2
+f | sender_field.rb | s | 1.9K | 57 | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | message_id_field.rb | s | 2.3K | 70 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | cc_field.rb | s | 1.7K | 48 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | optional_field.rb | s | 320B | 11 | Jeremy Kemper | jeremy@bitsweat.net | 1268072783 |  | Autoload fields. Move requires to where they're used rather than all at toplevel.
+f | content_disposition_field.rb | s | 1.5K | 58 | Shawn Pyle | spyle@Macintosh-4.local | 1284170265 |  | Updated specs for incorrectly encoding Content-Disposition with fix  Signed-off-by: Mikel Lindsaar <raasdnil@gmail.com>
+f | references_field.rb | s | 1.7K | 48 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | date_field.rb | s | 1.6K | 50 | Karl | karl.baum@weshop.us | 1292473304 |  | added rescue block for badly formatted date
+f | resent_message_id_field.rb | s | 675B | 26 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | resent_from_field.rb | s | 1.9K | 48 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | resent_cc_field.rb | s | 1.8K | 48 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | resent_bcc_field.rb | s | 1.9K | 48 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | content_description_field.rb | s | 389B | 16 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | in_reply_to_field.rb | s | 1.7K | 48 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | resent_to_field.rb | s | 1.8K | 48 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | structured_field.rb | s | 1.5K | 43 | Mikel Lindsaar | raasdnil@gmail.com | 1270731278 |  | Making sure user defined encodings get honoured when encoding a mail object
+f | subject_field.rb | s | 375B | 13 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | content_transfer_encoding_field.rb | s | 1.1K | 41 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | return_path_field.rb | s | 1.6K | 56 | Brad Cantin | bradc@sunbelt-software.com | 1298997572 |  | return_field should handle reading of a mail with a Return-Field <>
+f | content_type_field.rb | s | 4.8K | 172 | John Firebaugh | john.firebaugh@gmail.com | 1294607765 |  | Fix another duplicated character class range warning.
+f | comments_field.rb | s | 1.3K | 38 | Mikel Lindsaar | raasdnil@gmail.com | 1268004021 |  | First pass at auto encoding
+f | keywords_field.rb | s | 847B | 35 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | to_field.rb | s | 1.7K | 48 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | unstructured_field.rb | s | 6.2K | 172 | kennyj | kennyj@gmail.com | 1326975880 |  | Some Refactor
+f | resent_sender_field.rb | s | 1.9K | 53 | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | content_location_field.rb | s | 782B | 34 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | mime_version_field.rb | s | 912B | 42 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | reply_to_field.rb | s | 1.8K | 48 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | bcc_field.rb | s | 1.7K | 49 | Mikel Lindsaar | raasdnil@gmail.com | 1270032960 |  | Adding auto encoding to mail headers, all specs pass, very beta right now
+f | from_field.rb | s | 1.7K | 48 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere
+f | received_field.rb | s | 1.7K | 64 | Brad Cantin | bradc@sunbelt-software.com | 1299000650 |  | When reading incoming email, it is possible that a ReceivedField is blank.  Updated the ReceivedField class to handle these rare but annoying cases.
+f | content_id_field.rb | s | 1.1K | 51 | Mikel Lindsaar | raasdnil@gmail.com | 1270805177 |  | Adding initialization of @charset everywhere

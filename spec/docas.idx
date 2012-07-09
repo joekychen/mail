@@ -1,0 +1,6 @@
+f | matchers_spec.rb | s | 4.0K | 107 | Mikel Lindsaar | mikel@rubyx.com | 1326495498 |  | Fix up matcher spec not clearing out deliveries
+d | matchers |  | 1 items |  | Mikel Lindsaar | raasdnil@gmail.com | 1276375111 |  | Removing requirement on YAML to use version, and moving VERSION to a file in lib
+d | mail |  | 26 items |  | Mikel Lindsaar | mikel@rubyx.com | 1331725467 |  | Preventing file system traversal in file_delivery method
+f | environment.rb | s | 59B | 1 | Mikel Lindsaar | raasdnil@gmail.com | 1286466116 |  | Updating Rakefile to require bundler to run
+f | spec_helper.rb | s | 4.5K | 210 | Jason Stirk | jason@reinteractive.net | 1326512532 |  | Upgrade rspec 2.8.0
+d | fixtures |  | 2 items |  | liufengyun | liufengyunchina@gmail.com | 1324475255 |  | support @ in display name  e.g. To: smith@gmail.com, Mikel@Lindsaar <raasdnil@gmail.com>, abc@ddd <abc@gamil.com>

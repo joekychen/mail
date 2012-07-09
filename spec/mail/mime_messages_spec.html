@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › mime_messages_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>mime_messages_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="s2">&quot;MIME Emails&quot;</span> <span class="k">do</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;general helper methods&quot;</span> <span class="k">do</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should read a mime version from an email&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Mime-Version: 1.0&quot;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">mime_version</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1.0&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return nil if the email has no mime version&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;To: bob&quot;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">mime_version</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">nil</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should read the content-transfer-encoding&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Content-Transfer-Encoding: quoted-printable&quot;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">content_transfer_encoding</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;quoted-printable&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should read the content-description&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Content-Description: This is a description&quot;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">content_description</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;This is a description&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return the content-type&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Content-Type: text/plain&quot;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">mime_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return the charset&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Content-Type: text/plain; charset=utf-8&quot;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">charset</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;utf-8&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should allow you to set the charset&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">charset</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;utf-8&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return the main content-type&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Content-Type: text/plain&quot;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return the sub content-type&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Content-Type: text/plain&quot;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;plain&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return the content-type parameters&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Content-Type: text/plain; charset=US-ASCII; format=flowed&quot;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">content_type_parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;US-ASCII&#39;</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;flowed&#39;</span><span class="p">})</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should recognize a multipart email&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;mime_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;raw_email7.eml&#39;</span><span class="p">))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">should</span> <span class="n">be_multipart</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should recognize a non multipart email&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;plain_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;basic_email.eml&#39;</span><span class="p">))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_multipart</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should not report the email as :attachment?&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_pdf.eml&#39;</span><span class="p">)))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachment?</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">false</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should report the email as :attachment?&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_only_email.eml&#39;</span><span class="p">)))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachment?</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">true</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should recognize an attachment part&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_pdf.eml&#39;</span><span class="p">)))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_attachment</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">attachment?</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">false</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">attachment?</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">true</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should give how may (top level) parts there are&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;mime_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;raw_email7.eml&#39;</span><span class="p">))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should give the content_type of each part&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;mime_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;raw_email11.eml&#39;</span><span class="p">))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">mime_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/alternative&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">mime_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">mime_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/enriched&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should report the mail :has_attachments?&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_pdf.eml&#39;</span><span class="p">)))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">should</span> <span class="n">be_has_attachments</span>
+      <span class="k">end</span>
+
+    <span class="k">end</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;multipart emails&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">&quot;should add a boundary if there is none defined and a part is added&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">part</span><span class="p">(</span><span class="s1">&#39;This is a part&#39;</span><span class="p">)</span>
+          <span class="n">part</span><span class="p">(</span><span class="s1">&#39;This is another part&#39;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_nil</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should not add a boundary for a message that is only an attachment&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="s1">&#39;test.png&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;2938492384923849&quot;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">should</span> <span class="n">be_nil</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;multipart/alternative emails&quot;</span> <span class="k">do</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should know what it&#39;s boundary is if it is a multipart document&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Type: multipart/mixed; boundary=&quot;--==Boundary&quot;&#39;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;--==Boundary&quot;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return nil if there is no content-type defined&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">nil</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should allow you to assign a text part&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">text_mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;This is Text&quot;</span><span class="p">)</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span> <span class="o">=</span> <span class="n">text_mail</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should assign the text part and allow you to reference&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">text_mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;This is Text&quot;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span> <span class="o">=</span> <span class="n">text_mail</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">text_mail</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should allow you to assign a html part&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">html_mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;&lt;b&gt;This is HTML&lt;/b&gt;&quot;</span><span class="p">)</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span> <span class="o">=</span> <span class="n">html_mail</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should assign the html part and allow you to reference&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">html_mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;&lt;b&gt;This is HTML&lt;/b&gt;&quot;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">html_part</span> <span class="o">=</span> <span class="n">html_mail</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">html_part</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">html_mail</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should add the html part and text part&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">body</span> <span class="s2">&quot;This is Text&quot;</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">html_part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">content_type</span> <span class="s2">&quot;text/html; charset=US-ASCII&quot;</span>
+          <span class="n">body</span> <span class="s2">&quot;&lt;b&gt;This is HTML&lt;/b&gt;&quot;</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should set the content type to multipart/alternative if you use the html_part and text_part helpers&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">body</span> <span class="s2">&quot;This is Text&quot;</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">html_part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">content_type</span> <span class="s2">&quot;text/html; charset=US-ASCII&quot;</span>
+          <span class="n">body</span> <span class="s2">&quot;&lt;b&gt;This is HTML&lt;/b&gt;&quot;</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="o">=~</span> <span class="sr">%r|Content-Type: multipart/alternative;\s+boundary=&quot;</span><span class="si">#{</span><span class="n">mail</span><span class="o">.</span><span class="n">boundary</span><span class="si">}</span><span class="sr">&quot;|</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should add the end boundary tag&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">body</span> <span class="s2">&quot;This is Text&quot;</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">html_part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">content_type</span> <span class="s2">&quot;text/html; charset=US-ASCII&quot;</span>
+          <span class="n">body</span> <span class="s2">&quot;&lt;b&gt;This is HTML&lt;/b&gt;&quot;</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="o">=~</span> <span class="sr">%r|</span><span class="si">#{</span><span class="n">mail</span><span class="o">.</span><span class="n">boundary</span><span class="si">}</span><span class="sr">--|</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should not put message-ids into parts&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Subject: FooBar&#39;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">body</span> <span class="s2">&quot;This is Text&quot;</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">html_part</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">content_type</span> <span class="s2">&quot;text/html; charset=US-ASCII&quot;</span>
+          <span class="n">body</span> <span class="s2">&quot;&lt;b&gt;This is HTML&lt;/b&gt;&quot;</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">to_s</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">be_nil</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">be_nil</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should create a multipart/alternative email through a block&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">to</span> <span class="s1">&#39;nicolas.fouche@gmail.com&#39;</span>
+          <span class="n">from</span> <span class="s1">&#39;Mikel Lindsaar &lt;raasdnil@gmail.com&gt;&#39;</span>
+          <span class="n">subject</span> <span class="s1">&#39;First multipart email sent with Mail&#39;</span>
+          <span class="n">text_part</span> <span class="k">do</span>
+            <span class="n">body</span> <span class="s1">&#39;This is plain text&#39;</span>
+          <span class="k">end</span>
+          <span class="n">html_part</span> <span class="k">do</span>
+            <span class="n">content_type</span> <span class="s1">&#39;text/html; charset=UTF-8&#39;</span>
+            <span class="n">body</span> <span class="s1">&#39;&lt;h1&gt;This is HTML&lt;/h1&gt;&#39;</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">should</span> <span class="n">be_multipart</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;This is plain text&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">html_part</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">html_part</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&lt;h1&gt;This is HTML&lt;/h1&gt;&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should detect an html_part in an existing email&quot;</span> <span class="k">do</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;multipart/alternative&#39;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/html&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;HTML TEXT&#39;</span><span class="p">))</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;PLAIN TEXT&#39;</span><span class="p">))</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">text_part</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;PLAIN TEXT&#39;</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">html_part</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;HTML TEXT&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should detect a text_part in an existing email with plain text attachment&quot;</span> <span class="k">do</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;multipart/alternative&#39;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;てすと.txt&#39;</span><span class="p">))</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/html&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;HTML TEXT&#39;</span><span class="p">))</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;PLAIN TEXT&#39;</span><span class="p">))</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">text_part</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;PLAIN TEXT&#39;</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">html_part</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;HTML TEXT&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should detect an html_part in a multi level mime email&quot;</span> <span class="k">do</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;multipart/mixed&#39;</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/script&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;12345&#39;</span><span class="p">)</span>
+        <span class="nb">p</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;multipart/alternative&#39;</span><span class="p">)</span>
+        <span class="nb">p</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/html&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;HTML TEXT&#39;</span><span class="p">))</span>
+        <span class="nb">p</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;PLAIN TEXT&#39;</span><span class="p">))</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="nb">p</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">text_part</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;PLAIN TEXT&#39;</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">html_part</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;HTML TEXT&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should only the first part on a stupidly overly complex email&quot;</span> <span class="k">do</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;multipart/mixed&#39;</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/script&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;12345&#39;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+        <span class="n">b</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;multipart/alternative&#39;</span><span class="p">)</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/html&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;HTML TEXT&#39;</span><span class="p">))</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;PLAIN TEXT&#39;</span><span class="p">))</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+        <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;multipart/alternative&#39;</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/html&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;HTML 2 TEXT&#39;</span><span class="p">))</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;PLAIN 2 TEXT&#39;</span><span class="p">))</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;multipart/alternative&#39;</span><span class="p">)</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/html&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;HTML 3 TEXT&#39;</span><span class="p">))</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="no">Mail</span><span class="o">::</span><span class="no">Part</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:content_type</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="s1">&#39;PLAIN 3 TEXT&#39;</span><span class="p">))</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+        <span class="n">m</span><span class="o">.</span><span class="n">text_part</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;PLAIN TEXT&#39;</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">html_part</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;HTML TEXT&#39;</span>
+      <span class="k">end</span>
+
+    <span class="k">end</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;finding attachments&quot;</span> <span class="k">do</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return an array of attachments&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_content_disposition.eml&#39;</span><span class="p">))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">1</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;hello.rb&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return an array of attachments&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;mime_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;raw_email_with_nested_attachment.eml&#39;</span><span class="p">))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">filename</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;byo-ror-cover.png&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">filename</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;smime.p7s&#39;</span>
+      <span class="k">end</span>
+
+    <span class="k">end</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;adding a file attachment&quot;</span> <span class="k">do</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should set to multipart/mixed if a text part and you add an attachment&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span> <span class="p">{</span> <span class="n">body</span><span class="p">(</span><span class="s2">&quot;log message goes here&quot;</span><span class="p">)</span> <span class="p">}</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">mime_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/mixed&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should set to multipart/mixed if you add an attachment and then a text part&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">text_part</span> <span class="p">{</span> <span class="n">body</span><span class="p">(</span><span class="s2">&quot;log message goes here&quot;</span><span class="p">)</span> <span class="p">}</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">mime_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/mixed&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should add a part given a filename&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">1</span> <span class="c1"># First part is an empty text body</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should give the part the right content type&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">first</span><span class="o">[</span><span class="ss">:content_type</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image/png&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return attachment objects&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">))</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should be return an aray of attachments&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">from</span>    <span class="s1">&#39;mikel@from.lindsaar.net&#39;</span>
+          <span class="n">subject</span> <span class="s1">&#39;Hello there Mikel&#39;</span>
+          <span class="n">to</span>      <span class="s1">&#39;mikel@to.lindsaar.net&#39;</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.jpg&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.pdf&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.zip&#39;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">4</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Part</span> <span class="p">}</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return the filename of each attachment&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">from</span>    <span class="s1">&#39;mikel@from.lindsaar.net&#39;</span>
+          <span class="n">subject</span> <span class="s1">&#39;Hello there Mikel&#39;</span>
+          <span class="n">to</span>      <span class="s1">&#39;mikel@to.lindsaar.net&#39;</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.jpg&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.pdf&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.zip&#39;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">filename</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;test.png&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">filename</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;test.jpg&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">filename</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;test.pdf&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">3</span><span class="o">].</span><span class="n">filename</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;test.zip&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return the type/subtype of each attachment&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">from</span>    <span class="s1">&#39;mikel@from.lindsaar.net&#39;</span>
+          <span class="n">subject</span> <span class="s1">&#39;Hello there Mikel&#39;</span>
+          <span class="n">to</span>      <span class="s1">&#39;mikel@to.lindsaar.net&#39;</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.jpg&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.pdf&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.zip&#39;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">mime_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image/png&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">mime_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image/jpeg&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">mime_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application/pdf&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">3</span><span class="o">].</span><span class="n">mime_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application/zip&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return the content of each attachment&quot;</span> <span class="k">do</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">from</span>    <span class="s1">&#39;mikel@from.lindsaar.net&#39;</span>
+          <span class="n">subject</span> <span class="s1">&#39;Hello there Mikel&#39;</span>
+          <span class="n">to</span>      <span class="s1">&#39;mikel@to.lindsaar.net&#39;</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.jpg&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.pdf&#39;</span><span class="p">)</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.zip&#39;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&gt;=</span> <span class="s1">&#39;1.9&#39;</span>
+          <span class="n">tripped</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">decoded</span>
+          <span class="n">original</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="no">Encoding</span><span class="o">::</span><span class="no">BINARY</span><span class="p">)</span>
+          <span class="n">tripped</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">original</span>
+          <span class="n">tripped</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">decoded</span>
+          <span class="n">original</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.jpg&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="no">Encoding</span><span class="o">::</span><span class="no">BINARY</span><span class="p">)</span>
+          <span class="n">tripped</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">original</span>
+          <span class="n">tripped</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">decoded</span>
+          <span class="n">original</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.pdf&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="no">Encoding</span><span class="o">::</span><span class="no">BINARY</span><span class="p">)</span>
+          <span class="n">tripped</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">original</span>
+          <span class="n">tripped</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">3</span><span class="o">].</span><span class="n">decoded</span>
+          <span class="n">original</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.zip&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="no">Encoding</span><span class="o">::</span><span class="no">BINARY</span><span class="p">)</span>
+          <span class="n">tripped</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">original</span>
+        <span class="k">else</span>
+          <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">))</span>
+          <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.jpg&#39;</span><span class="p">))</span>
+          <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.pdf&#39;</span><span class="p">))</span>
+          <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">3</span><span class="o">].</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.zip&#39;</span><span class="p">))</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should allow you to send in file data instead of having to read it&quot;</span> <span class="k">do</span>
+        <span class="n">file_data</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">))</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">from</span>    <span class="s1">&#39;mikel@from.lindsaar.net&#39;</span>
+          <span class="n">subject</span> <span class="s1">&#39;Hello there Mikel&#39;</span>
+          <span class="n">to</span>      <span class="s1">&#39;mikel@to.lindsaar.net&#39;</span>
+          <span class="n">add_file</span><span class="p">(</span><span class="ss">:filename</span> <span class="o">=&gt;</span> <span class="s1">&#39;test.png&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="n">file_data</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&gt;=</span> <span class="s1">&#39;1.9&#39;</span>
+          <span class="n">tripped</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">decoded</span>
+          <span class="n">original</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="no">Encoding</span><span class="o">::</span><span class="no">BINARY</span><span class="p">)</span>
+          <span class="n">tripped</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">original</span>
+        <span class="k">else</span>
+          <span class="n">mail</span><span class="o">.</span><span class="n">attachments</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">))</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should be able to add a body before adding a file&quot;</span> <span class="k">do</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">from</span>    <span class="s1">&#39;mikel@from.lindsaar.net&#39;</span>
+          <span class="n">subject</span> <span class="s1">&#39;Hello there Mikel&#39;</span>
+          <span class="n">to</span>      <span class="s1">&#39;mikel@to.lindsaar.net&#39;</span>
+          <span class="n">body</span>    <span class="s2">&quot;Attached&quot;</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">1</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">body</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Attached&quot;</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">filename</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;test.png&quot;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should allow you to add a body as text part if you have added a file&quot;</span> <span class="k">do</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">from</span>    <span class="s1">&#39;mikel@from.lindsaar.net&#39;</span>
+          <span class="n">subject</span> <span class="s1">&#39;Hello there Mikel&#39;</span>
+          <span class="n">to</span>      <span class="s1">&#39;mikel@to.lindsaar.net&#39;</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+          <span class="n">body</span>    <span class="s2">&quot;Attached&quot;</span>
+        <span class="k">end</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">first</span><span class="o">[</span><span class="ss">:content_type</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image/png&#39;</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">last</span><span class="o">[</span><span class="ss">:content_type</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should allow you to add a body as text part if you have added a file and not truncate after newlines - issue 208&quot;</span> <span class="k">do</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+          <span class="n">from</span>    <span class="s1">&#39;mikel@from.lindsaar.net&#39;</span>
+          <span class="n">subject</span> <span class="s1">&#39;Hello there Mikel&#39;</span>
+          <span class="n">to</span>      <span class="s1">&#39;mikel@to.lindsaar.net&#39;</span>
+          <span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+          <span class="n">body</span>    <span class="s2">&quot;First Line</span><span class="se">\n\n</span><span class="s2">Second Line</span><span class="se">\n\n</span><span class="s2">Third Line</span><span class="se">\n\n</span><span class="s2">&quot;</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Note: trailing \n\n is stripped off by Mail::Part initialization</p></td><td class="code"><div class="highlight"><pre>        <span class="k">end</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">first</span><span class="o">[</span><span class="ss">:content_type</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image/png&#39;</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">last</span><span class="o">[</span><span class="ss">:content_type</span><span class="o">].</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">match</span><span class="p">(</span><span class="sr">/^First Line\r\n\r\nSecond Line\r\n\r\nThird Line/</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should not raise a warning if there is a charset defined and there are non ascii chars in the body&quot;</span> <span class="k">do</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="s2">&quot;This is NOT plain text ASCII　− かきくけこ&quot;</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="s1">&#39;UTF-8&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">add_file</span> <span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;attachments&#39;</span><span class="p">,</span> <span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+        <span class="no">STDERR</span><span class="o">.</span><span class="n">should_not_receive</span><span class="p">(</span><span class="ss">:puts</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">to_s</span>
+      <span class="k">end</span>
+
+
+    <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

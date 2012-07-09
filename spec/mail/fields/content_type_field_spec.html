@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › content_type_field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>content_type_field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span> <span class="k">do</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Content-Type Header Field</p>
+
+<p>The purpose of the Content-Type field is to describe the data
+contained in the body fully enough that the receiving user agent can
+pick an appropriate agent or mechanism to present the data to the
+user, or otherwise deal with the data in an appropriate manner. The
+value in this field is called a media type.</p>
+
+<p>HISTORICAL NOTE:  The Content-Type header field was first defined in
+RFC 1049.  RFC 1049 used a simpler and less powerful syntax, but one
+that is largely compatible with the mechanism given here.</p>
+
+<p>The Content-Type header field specifies the nature of the data in the
+body of an entity by giving media type and subtype identifiers, and
+by providing auxiliary information that may be required for certain
+media types.  After the media type and subtype names, the remainder
+of the header field is simply a set of parameters, specified in an
+attribute=value notation.  The ordering of parameters is not
+significant.</p>
+
+<p>In general, the top-level media type is used to declare the general
+type of data, while the subtype specifies a specific format for that
+type of data.  Thus, a media type of "image/xyz" is enough to tell a
+user agent that the data is an image, even if the user agent has no
+knowledge of the specific image format "xyz".  Such information can
+be used, for example, to decide whether or not to show a user the raw
+data from an unrecognized subtype -- such an action might be
+reasonable for unrecognized subtypes of text, but not for
+unrecognized subtypes of image or audio.  For this reason, registered
+subtypes of text, image, audio, and video should not contain embedded
+information that is really of a different type.  Such compound
+formats should be represented using the "multipart" or "application"
+types.</p>
+
+<p>Parameters are modifiers of the media subtype, and as such do not
+fundamentally affect the nature of the content.  The set of
+meaningful parameters depends on the media type and subtype.  Most
+parameters are associated with a single specific subtype.  However, a
+given top-level media type may define parameters which are applicable
+to any subtype of that type.  Parameters may be required by their
+defining content type or subtype or they may be optional. MIME
+implementations must ignore any parameters whose names they do not
+recognize.</p>
+
+<p>For example, the "charset" parameter is applicable to any subtype of
+"text", while the "boundary" parameter is required for any subtype of
+the "multipart" media type.</p>
+
+<p>There are NO globally-meaningful parameters that apply to all media
+types.  Truly global mechanisms are best addressed, in the MIME
+model, by the definition of additional Content-* header fields.</p>
+
+<p>An initial set of seven top-level media types is defined in RFC 2046.
+Five of these are discrete types whose content is essentially opaque
+as far as MIME processing is concerned.  The remaining two are
+composite types whose contents require additional handling by MIME
+processors.</p>
+
+<p>This set of top-level media types is intended to be substantially
+complete.  It is expected that additions to the larger set of
+supported types can generally be accomplished by the creation of new
+subtypes of these initial types.  In the future, more top-level types
+may be defined only by a standards-track extension to this standard.
+If another top-level type is to be used for any reason, it must be
+given a name starting with "X-" to indicate its non-standard status
+and to avoid a potential conflict with a future official name.</p></td><td class="code"><div class="highlight"><pre>  <span class="n">describe</span> <span class="s2">&quot;initialization&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should initialize&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;&lt;1234@test.lindsaar.net&gt;&quot;</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string with the field name&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Type: text/plain&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Content-Type&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a string without the field name&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Content-Type&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should accept a nil value and generate a content_type&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Content-Type&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">should_not</span> <span class="n">be_nil</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render encoded&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Type: text/plain&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Content-Type: text/plain</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render encoded with parameters&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain; charset=US-ASCII; format=flowed&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="sx">%Q{Content-Type: text/plain;</span><span class="se">\r\n\s</span><span class="sx">charset=US-ASCII;</span><span class="se">\r\n\s</span><span class="sx">format=flowed</span><span class="se">\r\n</span><span class="sx">}</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render quoted values encoded&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain; example=&quot;foo bar&quot;&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="sx">%Q{Content-Type: text/plain;</span><span class="se">\r\n\s</span><span class="sx">example=&quot;foo bar&quot;</span><span class="se">\r\n</span><span class="sx">}</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render decoded&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain; charset=US-ASCII; format=flowed&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain; charset=US-ASCII; format=flowed&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render quoted values decoded&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain; example=&quot;foo bar&quot;&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">decoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain; example=&quot;foo bar&quot;&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should render &quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;message/delivery-status&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;message&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;delivery-status&#39;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;instance methods&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should return a content_type&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should return a content_type for the :string method&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should return a main_type&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should return a sub_type&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should return a parameter as a hash&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain; charset=US-ASCII&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;US-ASCII&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should return multiple parameters as a hash&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain; charset=US-ASCII; format=flowed&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;US-ASCII&#39;</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;flowed&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should return boundry parameters&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;multipart/mixed; boundary=Apple-Mail-13-196941151&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;boundary&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Apple-Mail-13-196941151&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should be indifferent with the access&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;multipart/mixed; boundary=Apple&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="ss">:boundary</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Apple&quot;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;boundary&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Apple&quot;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;class methods&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should give back an initialized instance with a unique boundary&quot;</span> <span class="k">do</span>
+      <span class="n">boundary</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">with_boundary</span><span class="p">(</span><span class="s1">&#39;multipart/mixed&#39;</span><span class="p">)</span>
+      <span class="n">boundary</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="o">=~</span> <span class="sr">%r{Content-Type: multipart/mixed;\r\n\sboundary=&quot;--==_mimepart_[\w]+_[\w]+&quot;\r\n}</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give back an initialized instance with different type with a unique boundary&quot;</span> <span class="k">do</span>
+      <span class="n">boundary</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">with_boundary</span><span class="p">(</span><span class="s1">&#39;multipart/alternative&#39;</span><span class="p">)</span>
+      <span class="n">boundary</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="o">=~</span> <span class="sr">%r{Content-Type: multipart/alternative;\r\n\sboundary=&quot;--==_mimepart_[\w]+_[\w]+&quot;\r\n}</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give unique boundaries&quot;</span> <span class="k">do</span>
+      <span class="n">boundary1</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">with_boundary</span><span class="p">(</span><span class="s1">&#39;multipart/alternative&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;boundary&#39;</span><span class="o">]</span>
+      <span class="mi">0</span><span class="o">.</span><span class="n">upto</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span> <span class="k">do</span>
+        <span class="n">boundary2</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">with_boundary</span><span class="p">(</span><span class="s1">&#39;multipart/alternative&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;boundary&#39;</span><span class="o">]</span>
+        <span class="n">boundary1</span><span class="o">.</span><span class="n">should_not</span> <span class="o">==</span> <span class="n">boundary2</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;Testing a bunch of email Content-Type fields&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;application/octet-stream; name*=iso-2022-jp&#39;ja&#39;01%20Quien%20Te%20Dij%8aat.%20Pitbull.mp3&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{application/octet-stream; name*=iso-2022-jp&#39;ja&#39;01%20Quien%20Te%20Dij%8aat.%20Pitbull.mp3}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application/octet-stream&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;octet-stream&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s1">&#39;name*&#39;</span> <span class="o">=&gt;</span> <span class="s2">&quot;iso-2022-jp&#39;ja&#39;01%20Quien%20Te%20Dij%8aat.%20Pitbull.mp3&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;application/pdf;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{application/pdf;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application/pdf&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;pdf&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;application/pdf; name=</span><span class="se">\&quot;</span><span class="s2">broken.pdf</span><span class="se">\&quot;</span><span class="s2">&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{application/pdf; name=&quot;broken.pdf&quot;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application/pdf&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;pdf&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;name&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;broken.pdf&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;application/pkcs7-signature;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{application/pkcs7-signature;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application/pkcs7-signature&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;pkcs7-signature&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;application/pkcs7-signature; name=smime.p7s&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{application/pkcs7-signature; name=smime.p7s}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application/pkcs7-signature&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;pkcs7-signature&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;name&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;smime.p7s&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;application/x-gzip; NAME=blah.gz&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{application/x-gzip; NAME=blah.gz}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application/x-gzip&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;x-gzip&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;NAME&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;blah.gz&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;image/jpeg&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{image/jpeg}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image/jpeg&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;jpeg&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;image/jpeg&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{image/jpeg}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image/jpeg&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;jpeg&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;image/jpeg;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{image/jpeg}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image/jpeg&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;jpeg&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;image/png;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{image/png}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image/png&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;png&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;message/delivery-status&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{message/delivery-status}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;message/delivery-status&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;message&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;delivery-status&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;message/rfc822&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{message/rfc822}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;message/rfc822&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;message&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;rfc822&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/alternative;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/alternative;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/alternative; boundary=</span><span class="se">\&quot;</span><span class="s2">----=_NextPart_000_0093_01C81419.EB75E850</span><span class="se">\&quot;</span><span class="s2">&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/alternative; boundary=&quot;----=_NextPart_000_0093_01C81419.EB75E850&quot;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;boundary&quot;</span> <span class="o">=&gt;</span><span class="s2">&quot;----=_NextPart_000_0093_01C81419.EB75E850&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/alternative; boundary=----=_NextPart_000_0093_01C81419.EB75E850&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/alternative; boundary=&quot;----=_NextPart_000_0093_01C81419.EB75E850&quot;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;boundary&quot;</span> <span class="o">=&gt;</span><span class="s2">&quot;----=_NextPart_000_0093_01C81419.EB75E850&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;Multipart/Alternative;boundary=MuLtIpArT_BoUnDaRy&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{Multipart/Alternative; boundary=MuLtIpArT_BoUnDaRy}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;boundary&quot;</span> <span class="o">=&gt;</span><span class="s2">&quot;MuLtIpArT_BoUnDaRy&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;Multipart/Alternative;boundary=MuLtIpArT_BoUnDaRy&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{Multipart/Alternative;boundary=MuLtIpArT_BoUnDaRy}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;boundary&quot;</span> <span class="o">=&gt;</span><span class="s2">&quot;MuLtIpArT_BoUnDaRy&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/mixed&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/mixed}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/mixed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mixed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/mixed;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/mixed;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/mixed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mixed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/mixed; boundary=Apple-Mail-13-196941151&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/mixed; boundary=Apple-Mail-13-196941151}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/mixed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mixed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;boundary&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;Apple-Mail-13-196941151&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/mixed; boundary=mimepart_427e4cb4ca329_133ae40413c81ef&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/mixed; boundary=mimepart_427e4cb4ca329_133ae40413c81ef}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/mixed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mixed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;boundary&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;mimepart_427e4cb4ca329_133ae40413c81ef&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/report; report-type=delivery-status;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/report; report-type=delivery-status;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/report&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;report&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;report-type&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;delivery-status&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/signed;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/signed;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/signed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;signed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/enriched;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/enriched;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/enriched&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;enriched&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/html;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/html;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/html&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;html&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/html; charset=iso-8859-1;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/html; charset=iso-8859-1;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/html&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;html&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;iso-8859-1&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;TEXT/PLAIN; charset=ISO-8859-1;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{TEXT/PLAIN; charset=ISO-8859-1;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;ISO-8859-1&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/plain&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/plain}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/plain;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/plain;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/plain; charset=ISO-8859-1&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/plain; charset=ISO-8859-1}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;ISO-8859-1&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/plain; charset=ISO-8859-1;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/plain; charset=ISO-8859-1; format=flowed}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;ISO-8859-1&#39;</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;flowed&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/plain; charset=us-ascii;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/plain; charset=us-ascii}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;us-ascii&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/plain; charset=US-ASCII; format=flowed&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/plain; charset=US-ASCII; format=flowed}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;US-ASCII&#39;</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;flowed&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/plain; charset=US-ASCII; format=flowed&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/plain; charset=US-ASCII; format=flowed}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;US-ASCII&#39;</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;flowed&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/plain; charset=utf-8&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/plain; charset=utf-8}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/plain; charset=utf-8&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/plain; charset=X-UNKNOWN}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;charset&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;X-UNKNOWN&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/x-ruby-script;&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/x-ruby-script;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/x-ruby-script&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;x-ruby-script&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/x-ruby-script; name=</span><span class="se">\&quot;</span><span class="s2">hello.rb</span><span class="se">\&quot;</span><span class="s2">&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{text/x-ruby-script; name=&quot;hello.rb&quot;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/x-ruby-script&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;x-ruby-script&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;name&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;hello.rb&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/mixed; boundary=</span><span class="se">\&quot;</span><span class="s2">=_NextPart_Lycos_15031600484464_ID</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/mixed; boundary=&quot;=_NextPart_Lycos_15031600484464_ID&quot;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/mixed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mixed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;boundary&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;=_NextPart_Lycos_15031600484464_ID&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/alternative; boundary=----=_=NextPart_000_0093_01C81419.EB75E850&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/alternative; boundary=----=_=NextPart_000_0093_01C81419.EB75E850}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;boundary&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;----=_=NextPart_000_0093_01C81419.EB75E850&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/alternative; boundary=</span><span class="se">\&quot;</span><span class="s2">----=_=NextPart_000_0093_01C81419.EB75E850</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/alternative; boundary=&quot;----=_=NextPart_000_0093_01C81419.EB75E850&quot;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;alternative&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;boundary&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;----=_=NextPart_000_0093_01C81419.EB75E850&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;multipart/related;boundary=1_4626B816_9F1690;Type=</span><span class="se">\&quot;</span><span class="s2">application/smil</span><span class="se">\&quot;</span><span class="s2">;Start=</span><span class="se">\&quot;</span><span class="s2">&lt;mms.smil.txt&gt;</span><span class="se">\&quot;</span><span class="s2">&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{multipart/related;boundary=1_4626B816_9F1690;Type=&quot;application/smil&quot;;Start=&quot;&lt;mms.smil.txt&gt;&quot;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/related&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;related&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;boundary&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;1_4626B816_9F1690&#39;</span><span class="p">,</span> <span class="s2">&quot;Type&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;application/smil&#39;</span><span class="p">,</span> <span class="s2">&quot;Start&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&lt;mms.smil.txt&gt;&#39;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;IMAGE/JPEG; name=</span><span class="se">\&quot;</span><span class="s2">IM 006.jpg</span><span class="se">\&quot;</span><span class="s2">&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{IMAGE/JPEG; name=&quot;IM 006.jpg&quot;}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image/jpeg&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">main_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;image&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">sub_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;jpeg&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;name&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;IM 006.jpg&quot;</span><span class="p">})</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;finding a filename&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should locate a filename if there is a filename&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{application/octet-stream; filename=mikel.jpg}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mikel.jpg&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should locate a name if there is no filename&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{application/octet-stream; name=mikel.jpg}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mikel.jpg&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should locate an encoded name as a filename&quot;</span> <span class="k">do</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="sx">%q{application/octet-stream; name*=iso-2022-jp&#39;ja&#39;01%20Quien%20Te%20Dij%91at.%20Pitbull.mp3}</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+      <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&gt;=</span> <span class="s1">&#39;1.9&#39;</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="s2">&quot;01 Quien Te Dij</span><span class="se">\221</span><span class="s2">at. Pitbull.mp3&quot;</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="no">Encoding</span><span class="o">::</span><span class="no">BINARY</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="no">Encoding</span><span class="o">::</span><span class="no">BINARY</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="s2">&quot;01 Quien Te Dij</span><span class="se">\221</span><span class="s2">at. Pitbull.mp3&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filename</span>
+      <span class="k">end</span>
+      <span class="n">expected</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should encode a non us-ascii filename&quot;</span> <span class="k">do</span>
+      <span class="vi">@original</span> <span class="o">=</span> <span class="vg">$KCODE</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+      <span class="no">Mail</span><span class="o">.</span><span class="n">defaults</span> <span class="k">do</span>
+        <span class="n">param_encode_language</span><span class="p">(</span><span class="s1">&#39;jp&#39;</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;application/octet-stream&#39;</span><span class="p">)</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;01 Quien Te Dij</span><span class="se">\221</span><span class="s2">at. Pitbull.mp3&quot;</span>
+      <span class="k">case</span> 
+      <span class="k">when</span> <span class="no">RUBY_VERSION</span> <span class="o">&gt;=</span> <span class="s1">&#39;1.9.3&#39;</span>
+        <span class="n">string</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="s1">&#39;SJIS&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="sx">%Q{Content-Type: application/octet-stream;</span><span class="se">\r\n\s</span><span class="sx">filename*=windows-31j&#39;jp&#39;01%20Quien%20Te%20Dij%91%61t.%20Pitbull.mp3</span><span class="se">\r\n</span><span class="sx">}</span>
+      <span class="k">when</span> <span class="no">RUBY_VERSION</span> <span class="o">&gt;=</span> <span class="s1">&#39;1.9&#39;</span>
+        <span class="n">string</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="s1">&#39;SJIS&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="sx">%Q{Content-Type: application/octet-stream;</span><span class="se">\r\n\s</span><span class="sx">filename*=shift_jis&#39;jp&#39;01%20Quien%20Te%20Dij%91%61t.%20Pitbull.mp3</span><span class="se">\r\n</span><span class="sx">}</span>
+      <span class="k">else</span>
+        <span class="vg">$KCODE</span> <span class="o">=</span> <span class="s1">&#39;SJIS&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="sx">%Q{Content-Type: application/octet-stream;</span><span class="se">\r\n\s</span><span class="sx">filename*=sjis&#39;jp&#39;01%20Quien%20Te%20Dij%91at.%20Pitbull.mp3</span><span class="se">\r\n</span><span class="sx">}</span>
+      <span class="k">end</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">string</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">should</span> <span class="n">eql</span><span class="p">({</span><span class="s2">&quot;filename&quot;</span> <span class="o">=&gt;</span> <span class="n">string</span><span class="p">})</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+      <span class="vg">$KCODE</span> <span class="o">=</span> <span class="vi">@original</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;handling badly formated content-type fields&quot;</span> <span class="k">do</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle missing sub-type on a text content type&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Type: text&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle missing ; after content-type&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Content-Type: multipart/mixed boundary=&quot;----=_NextPart_000_000F_01C17754.8C3CAF30&quot;&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;multipart/mixed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;boundary&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;----=_NextPart_000_000F_01C17754.8C3CAF30&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;initializing with an array&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should initialize with an array&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">[</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;charset&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;UTF-8&#39;</span><span class="p">}</span><span class="o">]</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/html&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;charset&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;UTF-8&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should allow many parameters to be passed in&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">[</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;format&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;flowed&quot;</span><span class="p">,</span> <span class="s2">&quot;charset&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;utf-8&quot;</span><span class="p">}</span><span class="o">]</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/html&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;charset&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;utf-8&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;format&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;flowed&#39;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;special case values needing sanity&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should handle &#39;text/plain;ISO-8559-1&#39;&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain;ISO-8559-1&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;charset&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;iso-8559-1&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle text; params&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text; charset=utf-8&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;charset&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;utf-8&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s1">&#39;should handle text/html; charset=&quot;charset=&quot;GB2312&quot;&quot;&#39;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/html; charset=&quot;charset=&quot;GB2312&quot;&quot;&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/html&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;charset&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;gb2312&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle application/octet-stream; name=archiveshelp1[1].htm&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;application/octet-stream; name=archiveshelp1[1].htm&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;application/octet-stream&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;name&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;archiveshelp1[1].htm&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s1">&#39;should handle text/plain;; format=&quot;flowed&quot;&#39;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;text/plain;; format=&quot;flowed&quot;&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;format&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;flowed&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s1">&#39;set an empty content type to text/plain&#39;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should just ignore illegal params like audio/x-midi;</span><span class="se">\r\n\s</span><span class="s2">name=Part .exe&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;audio/x-midi;</span><span class="se">\r\n\s</span><span class="s2">name=Part .exe&quot;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;audio/x-midi&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;name&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="kp">nil</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle: rfc822; format=flowed; charset=iso-8859-15&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;rfc822; format=flowed; charset=iso-8859-15&quot;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/plain&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;format&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;flowed&#39;</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="o">[</span><span class="s1">&#39;charset&#39;</span><span class="o">].</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;iso-8859-15&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should just get the mime type if all else fails with some real garbage&quot;</span> <span class="k">do</span>
+      <span class="n">c</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ContentTypeField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;text/html; format=flowed; charset=iso-8859-15  Mime-Version: 1.0&quot;</span><span class="p">)</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;text/html&#39;</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › spec_helper.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../index.html"></a><h1>spec_helper.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../environment&#39;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+
+<span class="k">unless</span> <span class="n">defined?</span><span class="p">(</span><span class="no">MAIL_ROOT</span><span class="p">)</span>
+  <span class="no">STDERR</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">&quot;Running Specs under Ruby Version </span><span class="si">#{</span><span class="no">RUBY_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+  <span class="no">MAIL_ROOT</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">unless</span> <span class="n">defined?</span><span class="p">(</span><span class="no">SPEC_ROOT</span><span class="p">)</span>
+  <span class="no">SPEC_ROOT</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">))</span>
+<span class="k">end</span>
+
+<span class="nb">require</span> <span class="s1">&#39;rspec&#39;</span>
+<span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;matchers&#39;</span><span class="p">,</span> <span class="s1">&#39;break_down_to&#39;</span><span class="p">)</span>
+
+<span class="nb">require</span> <span class="s1">&#39;mail&#39;</span>
+
+<span class="no">RSpec</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+  <span class="n">c</span><span class="o">.</span><span class="n">mock_with</span> <span class="ss">:rspec</span>
+  <span class="n">c</span><span class="o">.</span><span class="n">include</span><span class="p">(</span><span class="no">CustomMatchers</span><span class="p">)</span>
+<span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>NOTE: We set the KCODE manually here in 1.8.X because upgrading to rspec-2.8.0 caused it
+      to default to "NONE" (Why!?).</p></td><td class="code"><div class="highlight"><pre><span class="vg">$KCODE</span><span class="o">=</span><span class="s1">&#39;UTF8&#39;</span> <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s1">&#39;1.9&#39;</span>
+
+<span class="k">def</span> <span class="nf">fixture</span><span class="p">(</span><span class="o">*</span><span class="nb">name</span><span class="p">)</span>
+  <span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">SPEC_ROOT</span><span class="p">,</span> <span class="s1">&#39;fixtures&#39;</span><span class="p">,</span> <span class="nb">name</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">alias</span> <span class="n">doing</span> <span class="nb">lambda</span></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Produces an array or printable ascii by default.</p>
+
+<p>We can assume if a, m and z and 1, 5, 0 work, then the rest
+of the letters and numbers work.</p></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">ascii</span><span class="p">(</span><span class="n">from</span> <span class="o">=</span> <span class="mi">33</span><span class="p">,</span> <span class="n">to</span> <span class="o">=</span> <span class="mi">126</span><span class="p">)</span>
+  <span class="n">chars</span> <span class="o">=</span> <span class="o">[]</span>
+  <span class="n">from</span><span class="o">.</span><span class="n">upto</span><span class="p">(</span><span class="n">to</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">chars</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="s1">&#39;&#39;</span> <span class="o">&lt;&lt;</span> <span class="n">c</span><span class="p">)</span> <span class="p">}</span>
+  <span class="n">boring</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="o">.</span><span class="n">.</span><span class="s1">&#39;l&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_a</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="o">.</span><span class="n">.</span><span class="s1">&#39;o&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_a</span> <span class="o">+</span>
+    <span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="o">.</span><span class="n">.</span><span class="s1">&#39;y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_a</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="o">.</span><span class="n">.</span><span class="s1">&#39;L&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_a</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="o">.</span><span class="n">.</span><span class="s1">&#39;O&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_a</span> <span class="o">+</span>
+    <span class="p">(</span><span class="s1">&#39;P&#39;</span><span class="o">.</span><span class="n">.</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_a</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="o">.</span><span class="n">.</span><span class="s1">&#39;4&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_a</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;6&#39;</span><span class="o">.</span><span class="n">.</span><span class="s1">&#39;8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_a</span>
+  <span class="n">chars</span> <span class="o">-</span> <span class="n">boring</span>
+<span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Original mockup from ActionMailer</p></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MockSMTP</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">deliveries</span>
+    <span class="vc">@@deliveries</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vc">@@deliveries</span> <span class="o">=</span> <span class="o">[]</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">sendmail</span><span class="p">(</span><span class="n">mail</span><span class="p">,</span> <span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="p">)</span>
+    <span class="vc">@@deliveries</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="n">mail</span><span class="p">,</span> <span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="o">]</span>
+    <span class="s1">&#39;OK&#39;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">block_given?</span>
+      <span class="k">return</span> <span class="k">yield</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="k">return</span> <span class="nb">self</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">finish</span>
+    <span class="k">return</span> <span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">clear_deliveries</span>
+    <span class="vc">@@deliveries</span> <span class="o">=</span> <span class="o">[]</span>
+  <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>in the standard lib: net/smtp.rb line 577
+  a TypeError is thrown unless this arg is a
+  kind of OpenSSL::SSL::SSLContext</p></td><td class="code"><div class="highlight"><pre>  <span class="k">def</span> <span class="nf">enable_tls</span><span class="p">(</span><span class="n">context</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">context</span> <span class="o">&amp;&amp;</span> <span class="n">context</span><span class="o">.</span><span class="n">kind_of?</span><span class="p">(</span><span class="no">OpenSSL</span><span class="o">::</span><span class="no">SSL</span><span class="o">::</span><span class="no">SSLContext</span><span class="p">)</span>
+      <span class="kp">true</span>
+    <span class="k">elsif</span> <span class="n">context</span>
+      <span class="k">raise</span> <span class="no">TypeError</span><span class="p">,</span>
+        <span class="s2">&quot;wrong argument (</span><span class="si">#{</span><span class="n">context</span><span class="o">.</span><span class="n">class</span><span class="si">}</span><span class="s2">)! &quot;</span><span class="o">+</span>
+        <span class="s2">&quot;(Expected kind of OpenSSL::SSL::SSLContext)&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">enable_starttls_auto</span>
+    <span class="kp">true</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Net</span><span class="o">::</span><span class="no">SMTP</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">new</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="no">MockSMTP</span><span class="o">.</span><span class="n">new</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">MockPopMail</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">rfc2822</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+    <span class="vi">@rfc2822</span> <span class="o">=</span> <span class="n">rfc2822</span>
+    <span class="vi">@number</span> <span class="o">=</span> <span class="n">number</span>
+    <span class="vi">@deleted</span> <span class="o">=</span> <span class="kp">false</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">pop</span>
+    <span class="vi">@rfc2822</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">number</span>
+    <span class="vi">@number</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">to_s</span>
+    <span class="s2">&quot;</span><span class="si">#{</span><span class="n">number</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">pop</span><span class="si">}</span><span class="s2">&quot;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">delete</span>
+    <span class="vi">@deleted</span> <span class="o">=</span> <span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">deleted?</span>
+    <span class="vi">@deleted</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">MockPOP3</span>
+  <span class="vc">@@start</span> <span class="o">=</span> <span class="kp">false</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vc">@@popmails</span> <span class="o">=</span> <span class="o">[]</span>
+    <span class="mi">20</span><span class="o">.</span><span class="n">times</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span></pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>"test00", "test01", "test02", ..., "test19"</p></td><td class="code"><div class="highlight"><pre>      <span class="vc">@@popmails</span> <span class="o">&lt;&lt;</span> <span class="no">MockPopMail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;test</span><span class="si">#{</span><span class="n">i</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">popmails</span>
+    <span class="vc">@@popmails</span><span class="o">.</span><span class="n">clone</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">each_mail</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="vc">@@popmails</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">popmail</span><span class="o">|</span>
+      <span class="k">yield</span> <span class="n">popmail</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">mails</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="vc">@@popmails</span><span class="o">.</span><span class="n">clone</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="vc">@@start</span> <span class="o">=</span> <span class="kp">true</span>
+    <span class="nb">block_given?</span> <span class="p">?</span> <span class="k">yield</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">:</span> <span class="nb">self</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">enable_ssl</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">started?</span>
+    <span class="vc">@@start</span> <span class="o">==</span> <span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">started?</span>
+    <span class="vc">@@start</span> <span class="o">==</span> <span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">reset</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">finish</span>
+    <span class="vc">@@start</span> <span class="o">=</span> <span class="kp">false</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">delete_all</span>
+    <span class="vc">@@popmails</span> <span class="o">=</span> <span class="o">[]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="nb">require</span> <span class="s1">&#39;net/pop&#39;</span>
+<span class="k">class</span> <span class="nc">Net</span><span class="o">::</span><span class="no">POP3</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">new</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="no">MockPOP3</span><span class="o">.</span><span class="n">new</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">MockIMAPFetchData</span>
+  <span class="kp">attr_reader</span> <span class="ss">:attr</span><span class="p">,</span> <span class="ss">:number</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">rfc822</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+    <span class="vi">@attr</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;RFC822&#39;</span> <span class="o">=&gt;</span> <span class="n">rfc822</span> <span class="p">}</span>
+    <span class="vi">@number</span> <span class="o">=</span> <span class="n">number</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">MockIMAP</span>
+  <span class="vc">@@connection</span> <span class="o">=</span> <span class="kp">false</span>
+  <span class="vc">@@mailbox</span> <span class="o">=</span> <span class="kp">nil</span>
+  <span class="vc">@@marked_for_deletion</span> <span class="o">=</span> <span class="o">[]</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">examples</span>
+    <span class="vc">@@examples</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vc">@@examples</span> <span class="o">=</span> <span class="o">[]</span>
+    <span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="mi">19</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+      <span class="vc">@@examples</span> <span class="o">&lt;&lt;</span> <span class="no">MockIMAPFetchData</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;test</span><span class="si">#{</span><span class="n">i</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+    <span class="vc">@@connection</span> <span class="o">=</span> <span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">disconnect</span>
+    <span class="vc">@@connection</span> <span class="o">=</span> <span class="kp">false</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="n">mailbox</span><span class="p">)</span>
+    <span class="vc">@@mailbox</span> <span class="o">=</span> <span class="n">mailbox</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">examine</span><span class="p">(</span><span class="n">mailbox</span><span class="p">)</span>
+    <span class="nb">select</span><span class="p">(</span><span class="n">mailbox</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">uid_search</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">charset</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
+    <span class="o">[*</span><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="vc">@@examples</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">]</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">uid_fetch</span><span class="p">(</span><span class="n">set</span><span class="p">,</span> <span class="kp">attr</span><span class="p">)</span>
+    <span class="o">[</span><span class="vc">@@examples</span><span class="o">[</span><span class="n">set</span><span class="o">]]</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">uid_store</span><span class="p">(</span><span class="n">set</span><span class="p">,</span> <span class="kp">attr</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
+    <span class="k">if</span> <span class="kp">attr</span> <span class="o">==</span> <span class="s2">&quot;+FLAGS&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">flags</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="no">Net</span><span class="o">::</span><span class="no">IMAP</span><span class="o">::</span><span class="no">DELETED</span><span class="p">)</span>
+      <span class="vc">@@marked_for_deletion</span> <span class="o">&lt;&lt;</span> <span class="n">set</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">expunge</span>
+    <span class="vc">@@marked_for_deletion</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>    <span class="c1"># start with highest index first</span>
+      <span class="vc">@@examples</span><span class="o">.</span><span class="n">delete_at</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="vc">@@marked_for_deletion</span> <span class="o">=</span> <span class="o">[]</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">mailbox</span><span class="p">;</span> <span class="vc">@@mailbox</span> <span class="k">end</span>    <span class="c1"># test only</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">disconnected?</span><span class="p">;</span> <span class="vc">@@connection</span> <span class="o">==</span> <span class="kp">false</span> <span class="k">end</span>
+  <span class="k">def</span>      <span class="nf">disconnected?</span><span class="p">;</span> <span class="vc">@@connection</span> <span class="o">==</span> <span class="kp">false</span> <span class="k">end</span>
+
+<span class="k">end</span>
+
+<span class="nb">require</span> <span class="s1">&#39;net/imap&#39;</span>
+<span class="k">class</span> <span class="nc">Net</span><span class="o">::</span><span class="no">IMAP</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">new</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="no">MockIMAP</span><span class="o">.</span><span class="n">new</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:1}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../javascript/docco.min.js"></script>
+</html>

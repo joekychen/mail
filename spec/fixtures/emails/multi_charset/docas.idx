@@ -1,0 +1,3 @@
+f | japanese_attachment_long_name.eml | g | 2.3K |  | Mikel Lindsaar | raasdnil@gmail.com | 1256986806 |  | Adding changes to get compatibility with actionmailer, also handled attachment handling
+f | japanese_attachment.eml | g | 875B |  | Mikel Lindsaar | raasdnil@gmail.com | 1256431468 |  | Adding in some multibyte support... and cleanup for first gem release
+f | japanese.eml | g | 328B |  | Mikel Lindsaar | raasdnil@gmail.com | 1256431468 |  | Adding in some multibyte support... and cleanup for first gem release

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › network › retriever_methods › pop3.rb
+| encoding: utf-8
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../../index.html"></a><h1>pop3.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>The Pop3 retriever allows to get the last, first or all emails from a POP3 server.
+Each email retrieved (RFC2822) is given as an instance of +Message+.</p>
+
+<p>While being retrieved, emails can be yielded if a block is given.</p>
+
+<p>=== Example of retrieving Emails from GMail:</p>
+
+<p>Mail.defaults do
+    retriever<em>method :pop3, { :address             => "pop.gmail.com",
+                              :port                => 995,
+                              :user</em>name           => '<username>',
+                              :password            => '<password>',
+                              :enable_ssl          => true }
+  end</p>
+
+<p>Mail.all    #=> Returns an array of all emails
+  Mail.first  #=> Returns the first unread email
+  Mail.last   #=> Returns the first unread email</p>
+
+<p>You can also pass options into Mail.find to locate an email in your pop mailbox
+with the following options:</p>
+
+<p>what:  last or first emails. The default is :first.
+  order: order of emails returned. Possible values are :asc or :desc. Default value is :asc.
+  count: number of emails to retrieve. The default value is 10. A value of 1 returns an
+         instance of Message, not an array of Message instances.</p>
+
+<p>Mail.find(:what => :first, :count => 10, :order => :asc)
+  #=> Returns the first 10 emails in ascending order</p></td><td class="code"><div class="highlight"><pre>  <span class="k">class</span> <span class="nc">POP3</span> <span class="o">&lt;</span> <span class="no">Retriever</span>
+    <span class="nb">require</span> <span class="s1">&#39;net/pop&#39;</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">:address</span>              <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+                        <span class="ss">:port</span>                 <span class="o">=&gt;</span> <span class="mi">110</span><span class="p">,</span>
+                        <span class="ss">:user_name</span>            <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                        <span class="ss">:password</span>             <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                        <span class="ss">:authentication</span>       <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
+                        <span class="ss">:enable_ssl</span>           <span class="o">=&gt;</span> <span class="kp">false</span> <span class="p">}</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">end</span>
+    
+    <span class="kp">attr_accessor</span> <span class="ss">:settings</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Find emails in a POP3 mailbox. Without any options, the 5 last received emails are returned.</p>
+
+<p>Possible options:
+  what:  last or first emails. The default is :first.
+  order: order of emails returned. Possible values are :asc or :desc. Default value is :asc.
+  count: number of emails to retrieve. The default value is 10. A value of 1 returns an
+         instance of Message, not an array of Message instances.
+  delete<em>after</em>find: flag for whether to delete each retreived email after find. Default
+          is false. Use #find<em>and</em>delete if you would like this to default to true.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">options</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="n">options</span> <span class="o">=</span> <span class="n">validate_options</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+      
+      <span class="n">start</span> <span class="k">do</span> <span class="o">|</span><span class="n">pop3</span><span class="o">|</span>
+        <span class="n">mails</span> <span class="o">=</span> <span class="n">pop3</span><span class="o">.</span><span class="n">mails</span>
+        <span class="n">pop3</span><span class="o">.</span><span class="n">reset</span> <span class="c1"># Clears all &quot;deleted&quot; marks. This prevents non-explicit/accidental deletions due to server settings.</span>
+        <span class="n">mails</span><span class="o">.</span><span class="n">sort!</span> <span class="p">{</span> <span class="o">|</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="o">|</span> <span class="n">m2</span><span class="o">.</span><span class="n">number</span> <span class="o">&lt;=&gt;</span> <span class="n">m1</span><span class="o">.</span><span class="n">number</span> <span class="p">}</span> <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:what</span><span class="o">]</span> <span class="o">==</span> <span class="ss">:last</span>
+        <span class="n">mails</span> <span class="o">=</span> <span class="n">mails</span><span class="o">.</span><span class="n">first</span><span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:count</span><span class="o">]</span><span class="p">)</span> <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:count</span><span class="o">].</span><span class="n">is_a?</span> <span class="nb">Integer</span>
+        
+        <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:what</span><span class="o">].</span><span class="n">to_sym</span> <span class="o">==</span> <span class="ss">:last</span> <span class="o">&amp;&amp;</span> <span class="n">options</span><span class="o">[</span><span class="ss">:order</span><span class="o">].</span><span class="n">to_sym</span> <span class="o">==</span> <span class="ss">:desc</span> <span class="o">||</span>
+           <span class="n">options</span><span class="o">[</span><span class="ss">:what</span><span class="o">].</span><span class="n">to_sym</span> <span class="o">==</span> <span class="ss">:first</span> <span class="o">&amp;&amp;</span> <span class="n">options</span><span class="o">[</span><span class="ss">:order</span><span class="o">].</span><span class="n">to_sym</span> <span class="o">==</span> <span class="ss">:asc</span> <span class="o">||</span>
+          <span class="n">mails</span><span class="o">.</span><span class="n">reverse!</span>
+        <span class="k">end</span>
+        
+        <span class="k">if</span> <span class="nb">block_given?</span>
+          <span class="n">mails</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">mail</span><span class="o">|</span>
+            <span class="n">new_message</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">mail</span><span class="o">.</span><span class="n">pop</span><span class="p">)</span>
+            <span class="n">new_message</span><span class="o">.</span><span class="n">mark_for_delete</span> <span class="o">=</span> <span class="kp">true</span> <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:delete_after_find</span><span class="o">]</span>
+            <span class="k">yield</span> <span class="n">new_message</span>
+            <span class="n">mail</span><span class="o">.</span><span class="n">delete</span> <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:delete_after_find</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="n">new_message</span><span class="o">.</span><span class="n">is_marked_for_delete?</span> <span class="c1"># Delete if still marked for delete</span>
+          <span class="k">end</span>
+        <span class="k">else</span>
+          <span class="n">emails</span> <span class="o">=</span> <span class="o">[]</span>
+          <span class="n">mails</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">mail</span><span class="o">|</span>
+            <span class="n">emails</span> <span class="o">&lt;&lt;</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">mail</span><span class="o">.</span><span class="n">pop</span><span class="p">)</span>
+            <span class="n">mail</span><span class="o">.</span><span class="n">delete</span> <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:delete_after_find</span><span class="o">]</span>
+          <span class="k">end</span>
+          <span class="n">emails</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">options</span><span class="o">[</span><span class="ss">:count</span><span class="o">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">?</span> <span class="n">emails</span><span class="o">.</span><span class="n">first</span> <span class="p">:</span> <span class="n">emails</span>
+        <span class="k">end</span>
+        
+      <span class="k">end</span>
+    <span class="k">end</span>
+    </pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Delete all emails from a POP3 server   </p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">delete_all</span>
+      <span class="n">start</span> <span class="k">do</span> <span class="o">|</span><span class="n">pop3</span><span class="o">|</span>
+        <span class="k">unless</span> <span class="n">pop3</span><span class="o">.</span><span class="n">mails</span><span class="o">.</span><span class="n">empty?</span>
+          <span class="n">pop3</span><span class="o">.</span><span class="n">delete_all</span>
+          <span class="n">pop3</span><span class="o">.</span><span class="n">finish</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Returns the connection object of the retrievable (IMAP or POP3)</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">connection</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="no">ArgumentError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Mail::Retrievable#connection takes a block&#39;</span><span class="p">)</span> <span class="k">unless</span> <span class="nb">block_given?</span>
+
+      <span class="n">start</span> <span class="k">do</span> <span class="o">|</span><span class="n">pop3</span><span class="o">|</span>
+        <span class="k">yield</span> <span class="n">pop3</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+  <span class="kp">private</span>
+  </pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>Set default options</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">validate_options</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+      <span class="n">options</span> <span class="o">||=</span> <span class="p">{}</span>
+      <span class="n">options</span><span class="o">[</span><span class="ss">:count</span><span class="o">]</span> <span class="o">||=</span> <span class="mi">10</span>
+      <span class="n">options</span><span class="o">[</span><span class="ss">:order</span><span class="o">]</span> <span class="o">||=</span> <span class="ss">:asc</span>
+      <span class="n">options</span><span class="o">[</span><span class="ss">:what</span><span class="o">]</span>  <span class="o">||=</span> <span class="ss">:first</span>
+      <span class="n">options</span><span class="o">[</span><span class="ss">:delete_after_find</span><span class="o">]</span> <span class="o">||=</span> <span class="kp">false</span>
+      <span class="n">options</span>
+    <span class="k">end</span>
+  </pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>Start a POP3 session and ensure that it will be closed in any case. Any messages
+marked for deletion via #find<em>and</em>delete or with the :delete<em>after</em>find option
+will be deleted when the session is closed.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">config</span> <span class="o">=</span> <span class="no">Configuration</span><span class="o">.</span><span class="n">instance</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="no">ArgumentError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Mail::Retrievable#pop3_start takes a block&quot;</span><span class="p">)</span> <span class="k">unless</span> <span class="nb">block_given?</span>
+    
+      <span class="n">pop3</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">POP3</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">settings</span><span class="o">[</span><span class="ss">:address</span><span class="o">]</span><span class="p">,</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:port</span><span class="o">]</span><span class="p">,</span> <span class="kp">false</span><span class="p">)</span>
+      <span class="n">pop3</span><span class="o">.</span><span class="n">enable_ssl</span><span class="p">(</span><span class="no">OpenSSL</span><span class="o">::</span><span class="no">SSL</span><span class="o">::</span><span class="no">VERIFY_NONE</span><span class="p">)</span> <span class="k">if</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:enable_ssl</span><span class="o">]</span>
+      <span class="n">pop3</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">settings</span><span class="o">[</span><span class="ss">:user_name</span><span class="o">]</span><span class="p">,</span> <span class="n">settings</span><span class="o">[</span><span class="ss">:password</span><span class="o">]</span><span class="p">)</span>
+    
+      <span class="k">yield</span> <span class="n">pop3</span>
+    <span class="k">ensure</span>
+      <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="n">pop3</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">pop3</span> <span class="o">&amp;&amp;</span> <span class="n">pop3</span><span class="o">.</span><span class="n">started?</span>
+        <span class="n">pop3</span><span class="o">.</span><span class="n">finish</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:4}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../../javascript/docco.min.js"></script>
+</html>

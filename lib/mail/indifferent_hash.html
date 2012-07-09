@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › indifferent_hash.rb
+| encoding: utf-8
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>indifferent_hash.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>This is an almost cut and paste from ActiveSupport v3.0.6, copied in here so that Mail
+itself does not depend on ActiveSupport to avoid versioning conflicts</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">class</span> <span class="nc">IndifferentHash</span> <span class="o">&lt;</span> <span class="no">Hash</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">constructor</span> <span class="o">=</span> <span class="p">{})</span>
+      <span class="k">if</span> <span class="n">constructor</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Hash</span><span class="p">)</span>
+        <span class="k">super</span><span class="p">()</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">constructor</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="k">super</span><span class="p">(</span><span class="n">constructor</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Symbol</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="kp">include</span><span class="p">?(</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span>
+        <span class="nb">self</span><span class="o">[</span><span class="n">key</span><span class="o">]</span>
+      <span class="k">else</span>
+        <span class="k">super</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">new_from_hash_copying_default</span><span class="p">(</span><span class="nb">hash</span><span class="p">)</span>
+      <span class="no">IndifferentHash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">hash</span><span class="p">)</span><span class="o">.</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">new_hash</span><span class="o">|</span>
+        <span class="n">new_hash</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="nb">hash</span><span class="o">.</span><span class="n">default</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">alias_method</span> <span class="ss">:regular_writer</span><span class="p">,</span> <span class="ss">:[]=</span> <span class="k">unless</span> <span class="nb">method_defined?</span><span class="p">(</span><span class="ss">:regular_writer</span><span class="p">)</span>
+    <span class="n">alias_method</span> <span class="ss">:regular_update</span><span class="p">,</span> <span class="ss">:update</span> <span class="k">unless</span> <span class="nb">method_defined?</span><span class="p">(</span><span class="ss">:regular_update</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Assigns a new value to the hash:</p>
+
+<p>hash = HashWithIndifferentAccess.new
+  hash[:key] = "value"</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">[]=</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+      <span class="n">regular_writer</span><span class="p">(</span><span class="n">convert_key</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">convert_value</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">end</span>
+
+    <span class="n">alias_method</span> <span class="ss">:store</span><span class="p">,</span> <span class="ss">:[]=</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Updates the instantized hash with values from the second:</p>
+
+<p>hash<em>1 = HashWithIndifferentAccess.new
+  hash</em>1[:key] = "value"</p>
+
+<p>hash<em>2 = HashWithIndifferentAccess.new
+  hash</em>2[:key] = "New Value!"</p>
+
+<p>hash<em>1.update(hash</em>2) # => {"key"=>"New Value!"}</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">other_hash</span><span class="p">)</span>
+      <span class="n">other_hash</span><span class="o">.</span><span class="n">each_pair</span> <span class="p">{</span> <span class="o">|</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span> <span class="n">regular_writer</span><span class="p">(</span><span class="n">convert_key</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">convert_value</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="p">}</span>
+      <span class="nb">self</span>
+    <span class="k">end</span>
+
+    <span class="n">alias_method</span> <span class="ss">:merge!</span><span class="p">,</span> <span class="ss">:update</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Checks the hash for a key matching the argument passed in:</p>
+
+<p>hash = HashWithIndifferentAccess.new
+  hash["key"] = "value"
+  hash.key? :key  # => true
+  hash.key? "key" # => true</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">key?</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+      <span class="k">super</span><span class="p">(</span><span class="n">convert_key</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+    <span class="k">end</span>
+
+    <span class="n">alias_method</span> <span class="ss">:include?</span><span class="p">,</span> <span class="ss">:key?</span>
+    <span class="n">alias_method</span> <span class="ss">:has_key?</span><span class="p">,</span> <span class="ss">:key?</span>
+    <span class="n">alias_method</span> <span class="ss">:member?</span><span class="p">,</span> <span class="ss">:key?</span></pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>Fetches the value for the specified key, same as doing hash[key]</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="o">*</span><span class="n">extras</span><span class="p">)</span>
+      <span class="k">super</span><span class="p">(</span><span class="n">convert_key</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="o">*</span><span class="n">extras</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>Returns an array of the values at the specified indices:</p>
+
+<p>hash = HashWithIndifferentAccess.new
+  hash[:a] = "x"
+  hash[:b] = "y"
+  hash.values_at("a", "b") # => ["x", "y"]</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">values_at</span><span class="p">(</span><span class="o">*</span><span class="n">indices</span><span class="p">)</span>
+      <span class="n">indices</span><span class="o">.</span><span class="n">collect</span> <span class="p">{</span><span class="o">|</span><span class="n">key</span><span class="o">|</span> <span class="nb">self</span><span class="o">[</span><span class="n">convert_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">]</span><span class="p">}</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>Returns an exact copy of the hash.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">dup</span>
+      <span class="no">IndifferentHash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-9"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-9">&#182;</a></div><p>Merges the instantized and the specified hashes together, giving precedence to the values from the second hash
+Does not overwrite the existing hash.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="nb">hash</span><span class="p">)</span>
+      <span class="nb">self</span><span class="o">.</span><span class="n">dup</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">hash</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-10"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-10">&#182;</a></div><p>Performs the opposite of merge, with the keys and values from the first hash taking precedence over the second.
+This overloaded definition prevents returning a regular hash, if reverse_merge is called on a HashWithDifferentAccess.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">reverse_merge</span><span class="p">(</span><span class="n">other_hash</span><span class="p">)</span>
+      <span class="k">super</span> <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">new_from_hash_copying_default</span><span class="p">(</span><span class="n">other_hash</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">reverse_merge!</span><span class="p">(</span><span class="n">other_hash</span><span class="p">)</span>
+      <span class="n">replace</span><span class="p">(</span><span class="n">reverse_merge</span><span class="p">(</span> <span class="n">other_hash</span> <span class="p">))</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-11"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-11">&#182;</a></div><p>Removes a specified key from the hash.</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+      <span class="k">super</span><span class="p">(</span><span class="n">convert_key</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">stringify_keys!</span><span class="p">;</span> <span class="nb">self</span> <span class="k">end</span>
+    <span class="k">def</span> <span class="nf">stringify_keys</span><span class="p">;</span> <span class="nb">dup</span> <span class="k">end</span>
+    <span class="k">def</span> <span class="nf">symbolize_keys</span><span class="p">;</span> <span class="n">to_hash</span><span class="o">.</span><span class="n">symbolize_keys</span> <span class="k">end</span>
+    <span class="k">def</span> <span class="nf">to_options!</span><span class="p">;</span> <span class="nb">self</span> <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">to_hash</span>
+      <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">default</span><span class="p">)</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+    <span class="k">end</span>
+
+  <span class="kp">protected</span>
+
+    <span class="k">def</span> <span class="nf">convert_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+      <span class="n">key</span><span class="o">.</span><span class="n">kind_of?</span><span class="p">(</span><span class="no">Symbol</span><span class="p">)</span> <span class="p">?</span> <span class="n">key</span><span class="o">.</span><span class="n">to_s</span> <span class="p">:</span> <span class="n">key</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">convert_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">class</span> <span class="o">==</span> <span class="no">Hash</span>
+        <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">new_from_hash_copying_default</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="k">elsif</span> <span class="n">value</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">Array</span><span class="p">)</span>
+        <span class="n">value</span><span class="o">.</span><span class="n">dup</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">convert_value</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">})</span>
+      <span class="k">else</span>
+        <span class="n">value</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › multibyte › unicode.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>unicode.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">module</span> <span class="nn">Multibyte</span>
+    <span class="k">module</span> <span class="nn">Unicode</span>
+
+      <span class="kp">extend</span> <span class="nb">self</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>A list of all available normalization forms. See http://www.unicode.org/reports/tr15/tr15-29.html for more
+information about normalization.</p></td><td class="code"><div class="highlight"><pre>      <span class="no">NORMALIZATION_FORMS</span> <span class="o">=</span> <span class="o">[</span><span class="ss">:c</span><span class="p">,</span> <span class="ss">:kc</span><span class="p">,</span> <span class="ss">:d</span><span class="p">,</span> <span class="ss">:kd</span><span class="o">]</span></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>The Unicode version that is supported by the implementation</p></td><td class="code"><div class="highlight"><pre>      <span class="no">UNICODE_VERSION</span> <span class="o">=</span> <span class="s1">&#39;5.2.0&#39;</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>The default normalization used for operations that require normalization. It can be set to any of the
+normalizations in NORMALIZATION_FORMS.</p>
+
+<p>Example:
+  Mail::Multibyte::Unicode.default<em>normalization</em>form = :c</p></td><td class="code"><div class="highlight"><pre>      <span class="kp">attr_accessor</span> <span class="ss">:default_normalization_form</span>
+      <span class="vi">@default_normalization_form</span> <span class="o">=</span> <span class="ss">:kc</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>Hangul character boundaries and properties</p></td><td class="code"><div class="highlight"><pre>      <span class="no">HANGUL_SBASE</span> <span class="o">=</span> <span class="mh">0xAC00</span>
+      <span class="no">HANGUL_LBASE</span> <span class="o">=</span> <span class="mh">0x1100</span>
+      <span class="no">HANGUL_VBASE</span> <span class="o">=</span> <span class="mh">0x1161</span>
+      <span class="no">HANGUL_TBASE</span> <span class="o">=</span> <span class="mh">0x11A7</span>
+      <span class="no">HANGUL_LCOUNT</span> <span class="o">=</span> <span class="mi">19</span>
+      <span class="no">HANGUL_VCOUNT</span> <span class="o">=</span> <span class="mi">21</span>
+      <span class="no">HANGUL_TCOUNT</span> <span class="o">=</span> <span class="mi">28</span>
+      <span class="no">HANGUL_NCOUNT</span> <span class="o">=</span> <span class="no">HANGUL_VCOUNT</span> <span class="o">*</span> <span class="no">HANGUL_TCOUNT</span>
+      <span class="no">HANGUL_SCOUNT</span> <span class="o">=</span> <span class="mi">11172</span>
+      <span class="no">HANGUL_SLAST</span> <span class="o">=</span> <span class="no">HANGUL_SBASE</span> <span class="o">+</span> <span class="no">HANGUL_SCOUNT</span>
+      <span class="no">HANGUL_JAMO_FIRST</span> <span class="o">=</span> <span class="mh">0x1100</span>
+      <span class="no">HANGUL_JAMO_LAST</span> <span class="o">=</span> <span class="mh">0x11FF</span></pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>All the unicode whitespace</p></td><td class="code"><div class="highlight"><pre>      <span class="no">WHITESPACE</span> <span class="o">=</span> <span class="o">[</span>
+        <span class="p">(</span><span class="mh">0x0009</span><span class="o">.</span><span class="n">.</span><span class="mh">0x000D</span><span class="p">)</span><span class="o">.</span><span class="n">to_a</span><span class="p">,</span> <span class="c1"># White_Space # Cc   [5] &lt;control-0009&gt;..&lt;control-000D&gt;</span>
+        <span class="mh">0x0020</span><span class="p">,</span>                <span class="c1"># White_Space # Zs       SPACE</span>
+        <span class="mh">0x0085</span><span class="p">,</span>                <span class="c1"># White_Space # Cc       &lt;control-0085&gt;</span>
+        <span class="mh">0x00A0</span><span class="p">,</span>                <span class="c1"># White_Space # Zs       NO-BREAK SPACE</span>
+        <span class="mh">0x1680</span><span class="p">,</span>                <span class="c1"># White_Space # Zs       OGHAM SPACE MARK</span>
+        <span class="mh">0x180E</span><span class="p">,</span>                <span class="c1"># White_Space # Zs       MONGOLIAN VOWEL SEPARATOR</span>
+        <span class="p">(</span><span class="mh">0x2000</span><span class="o">.</span><span class="n">.</span><span class="mh">0x200A</span><span class="p">)</span><span class="o">.</span><span class="n">to_a</span><span class="p">,</span> <span class="c1"># White_Space # Zs  [11] EN QUAD..HAIR SPACE</span>
+        <span class="mh">0x2028</span><span class="p">,</span>                <span class="c1"># White_Space # Zl       LINE SEPARATOR</span>
+        <span class="mh">0x2029</span><span class="p">,</span>                <span class="c1"># White_Space # Zp       PARAGRAPH SEPARATOR</span>
+        <span class="mh">0x202F</span><span class="p">,</span>                <span class="c1"># White_Space # Zs       NARROW NO-BREAK SPACE</span>
+        <span class="mh">0x205F</span><span class="p">,</span>                <span class="c1"># White_Space # Zs       MEDIUM MATHEMATICAL SPACE</span>
+        <span class="mh">0x3000</span><span class="p">,</span>                <span class="c1"># White_Space # Zs       IDEOGRAPHIC SPACE</span>
+      <span class="o">].</span><span class="n">flatten</span><span class="o">.</span><span class="n">freeze</span></pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>BOM (byte order mark) can also be seen as whitespace, it's a non-rendering character used to distinguish
+between little and big endian. This is not an issue in utf-8, so it must be ignored.</p></td><td class="code"><div class="highlight"><pre>      <span class="no">LEADERS_AND_TRAILERS</span> <span class="o">=</span> <span class="no">WHITESPACE</span> <span class="o">+</span> <span class="o">[</span><span class="mi">65279</span><span class="o">]</span> <span class="c1"># ZERO-WIDTH NO-BREAK SPACE aka BOM</span></pre></div></td></tr>
+
+
+<tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>Returns a regular expression pattern that matches the passed Unicode codepoints</p></td><td class="code"><div class="highlight"><pre>      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">codepoints_to_pattern</span><span class="p">(</span><span class="n">array_of_codepoints</span><span class="p">)</span> <span class="c1">#:nodoc:</span>
+        <span class="n">array_of_codepoints</span><span class="o">.</span><span class="n">collect</span><span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="o">[</span><span class="n">e</span><span class="o">].</span><span class="n">pack</span> <span class="s1">&#39;U*&#39;</span> <span class="p">}</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="no">TRAILERS_PAT</span> <span class="o">=</span> <span class="sr">/(</span><span class="si">#{</span><span class="n">codepoints_to_pattern</span><span class="p">(</span><span class="no">LEADERS_AND_TRAILERS</span><span class="p">)</span><span class="si">}</span><span class="sr">)+\Z/u</span>
+      <span class="no">LEADERS_PAT</span> <span class="o">=</span> <span class="sr">/\A(</span><span class="si">#{</span><span class="n">codepoints_to_pattern</span><span class="p">(</span><span class="no">LEADERS_AND_TRAILERS</span><span class="p">)</span><span class="si">}</span><span class="sr">)+/u</span></pre></div></td></tr>
+
+
+<tr id="section-9"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-9">&#182;</a></div><p>Unpack the string at codepoints boundaries. Raises an EncodingError when the encoding of the string isn't
+valid UTF-8.</p>
+
+<p>Example:
+  Unicode.u_unpack('Café') # => [67, 97, 102, 233]</p></td><td class="code"><div class="highlight"><pre>      <span class="k">def</span> <span class="nf">u_unpack</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="k">begin</span>
+          <span class="n">string</span><span class="o">.</span><span class="n">unpack</span> <span class="s1">&#39;U*&#39;</span>
+        <span class="k">rescue</span> <span class="no">ArgumentError</span>
+          <span class="k">raise</span> <span class="no">EncodingError</span><span class="p">,</span> <span class="s1">&#39;malformed UTF-8 character&#39;</span>
+        <span class="k">end</span>
+      <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-10"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-10">&#182;</a></div><p>Detect whether the codepoint is in a certain character class. Returns +true+ when it's in the specified
+character class and +false+ otherwise. Valid character classes are: <tt>:cr</tt>, <tt>:lf</tt>, <tt>:l</tt>,
+<tt>:v</tt>, <tt>:lv</tt>, <tt>:lvt</tt> and <tt>:t</tt>.</p>
+
+<p>Primarily used by the grapheme cluster support.</p></td><td class="code"><div class="highlight"><pre>      <span class="k">def</span> <span class="nf">in_char_class?</span><span class="p">(</span><span class="n">codepoint</span><span class="p">,</span> <span class="n">classes</span><span class="p">)</span>
+        <span class="n">classes</span><span class="o">.</span><span class="n">detect</span> <span class="p">{</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">database</span><span class="o">.</span><span class="n">boundary</span><span class="o">[</span><span class="n">c</span><span class="o">]</span> <span class="o">===</span> <span class="n">codepoint</span> <span class="p">}</span> <span class="p">?</span> <span class="kp">true</span> <span class="p">:</span> <span class="kp">false</span>
+      <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-11"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-11">&#182;</a></div><p>Unpack the string at grapheme boundaries. Returns a list of character lists.</p>
+
+<p>Example:
+  Unicode.g<em>unpack('क्षि') # => [[2325, 2381], [2359], [2367]]
+  Unicode.g</em>unpack('Café') # => [[67], [97], [102], [233]]</p></td><td class="code"><div class="highlight"><pre>      <span class="k">def</span> <span class="nf">g_unpack</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="n">codepoints</span> <span class="o">=</span> <span class="n">u_unpack</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="n">unpacked</span> <span class="o">=</span> <span class="o">[]</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">marker</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">eoc</span> <span class="o">=</span> <span class="n">codepoints</span><span class="o">.</span><span class="n">length</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">pos</span> <span class="o">&lt;</span> <span class="n">eoc</span><span class="p">)</span>
+          <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+          <span class="n">previous</span> <span class="o">=</span> <span class="n">codepoints</span><span class="o">[</span><span class="n">pos</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span>
+          <span class="n">current</span> <span class="o">=</span> <span class="n">codepoints</span><span class="o">[</span><span class="n">pos</span><span class="o">]</span>
+          <span class="k">if</span> <span class="p">(</span></pre></div></td></tr>
+
+
+<tr id="section-12"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-12">&#182;</a></div><p>CR X LF</p></td><td class="code"><div class="highlight"><pre>              <span class="p">(</span> <span class="n">previous</span> <span class="o">==</span> <span class="n">database</span><span class="o">.</span><span class="n">boundary</span><span class="o">[</span><span class="ss">:cr</span><span class="o">]</span> <span class="ow">and</span> <span class="n">current</span> <span class="o">==</span> <span class="n">database</span><span class="o">.</span><span class="n">boundary</span><span class="o">[</span><span class="ss">:lf</span><span class="o">]</span> <span class="p">)</span> <span class="ow">or</span></pre></div></td></tr>
+
+
+<tr id="section-13"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-13">&#182;</a></div><p>L X (L|V|LV|LVT)</p></td><td class="code"><div class="highlight"><pre>              <span class="p">(</span> <span class="n">database</span><span class="o">.</span><span class="n">boundary</span><span class="o">[</span><span class="ss">:l</span><span class="o">]</span> <span class="o">===</span> <span class="n">previous</span> <span class="ow">and</span> <span class="n">in_char_class?</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="o">[</span><span class="ss">:l</span><span class="p">,</span><span class="ss">:v</span><span class="p">,</span><span class="ss">:lv</span><span class="p">,</span><span class="ss">:lvt</span><span class="o">]</span><span class="p">)</span> <span class="p">)</span> <span class="ow">or</span></pre></div></td></tr>
+
+
+<tr id="section-14"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-14">&#182;</a></div><p>(LV|V) X (V|T)</p></td><td class="code"><div class="highlight"><pre>              <span class="p">(</span> <span class="n">in_char_class?</span><span class="p">(</span><span class="n">previous</span><span class="p">,</span> <span class="o">[</span><span class="ss">:lv</span><span class="p">,</span><span class="ss">:v</span><span class="o">]</span><span class="p">)</span> <span class="ow">and</span> <span class="n">in_char_class?</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="o">[</span><span class="ss">:v</span><span class="p">,</span><span class="ss">:t</span><span class="o">]</span><span class="p">)</span> <span class="p">)</span> <span class="ow">or</span></pre></div></td></tr>
+
+
+<tr id="section-15"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-15">&#182;</a></div><p>(LVT|T) X (T)</p></td><td class="code"><div class="highlight"><pre>              <span class="p">(</span> <span class="n">in_char_class?</span><span class="p">(</span><span class="n">previous</span><span class="p">,</span> <span class="o">[</span><span class="ss">:lvt</span><span class="p">,</span><span class="ss">:t</span><span class="o">]</span><span class="p">)</span> <span class="ow">and</span> <span class="n">database</span><span class="o">.</span><span class="n">boundary</span><span class="o">[</span><span class="ss">:t</span><span class="o">]</span> <span class="o">===</span> <span class="n">current</span> <span class="p">)</span> <span class="ow">or</span></pre></div></td></tr>
+
+
+<tr id="section-16"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-16">&#182;</a></div><p>X Extend</p></td><td class="code"><div class="highlight"><pre>              <span class="p">(</span><span class="n">database</span><span class="o">.</span><span class="n">boundary</span><span class="o">[</span><span class="ss">:extend</span><span class="o">]</span> <span class="o">===</span> <span class="n">current</span><span class="p">)</span>
+            <span class="p">)</span>
+          <span class="k">else</span>
+            <span class="n">unpacked</span> <span class="o">&lt;&lt;</span> <span class="n">codepoints</span><span class="o">[</span><span class="n">marker</span><span class="o">.</span><span class="n">.pos</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span>
+            <span class="n">marker</span> <span class="o">=</span> <span class="n">pos</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="n">unpacked</span>
+      <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-17"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-17">&#182;</a></div><p>Reverse operation of g_unpack.</p>
+
+<p>Example:
+  Unicode.g<em>pack(Unicode.g</em>unpack('क्षि')) # => 'क्षि'</p></td><td class="code"><div class="highlight"><pre>      <span class="k">def</span> <span class="nf">g_pack</span><span class="p">(</span><span class="n">unpacked</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">unpacked</span><span class="o">.</span><span class="n">flatten</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;U*&#39;</span><span class="p">)</span>
+      <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-18"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-18">&#182;</a></div><p>Re-order codepoints so the string becomes canonical.</p></td><td class="code"><div class="highlight"><pre>      <span class="k">def</span> <span class="nf">reorder_characters</span><span class="p">(</span><span class="n">codepoints</span><span class="p">)</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">codepoints</span><span class="o">.</span><span class="n">length</span><span class="o">-</span> <span class="mi">1</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="k">do</span>
+          <span class="n">cp1</span><span class="p">,</span> <span class="n">cp2</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">codepoints</span><span class="o">[</span><span class="n">codepoints</span><span class="o">[</span><span class="n">pos</span><span class="o">]]</span><span class="p">,</span> <span class="n">database</span><span class="o">.</span><span class="n">codepoints</span><span class="o">[</span><span class="n">codepoints</span><span class="o">[</span><span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="o">]]</span>
+          <span class="k">if</span> <span class="p">(</span><span class="n">cp1</span><span class="o">.</span><span class="n">combining_class</span> <span class="o">&gt;</span> <span class="n">cp2</span><span class="o">.</span><span class="n">combining_class</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">cp2</span><span class="o">.</span><span class="n">combining_class</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">codepoints</span><span class="o">[</span><span class="n">pos</span><span class="o">.</span><span class="n">.pos</span><span class="o">+</span><span class="mi">1</span><span class="o">]</span> <span class="o">=</span> <span class="n">cp2</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">cp1</span><span class="o">.</span><span class="n">code</span>
+            <span class="n">pos</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pos</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="p">:</span> <span class="mi">1</span><span class="p">)</span>
+          <span class="k">else</span>
+            <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="n">codepoints</span>
+      <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-19"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-19">&#182;</a></div><p>Decompose composed characters to the decomposed form.</p></td><td class="code"><div class="highlight"><pre>      <span class="k">def</span> <span class="nf">decompose_codepoints</span><span class="p">(</span><span class="n">type</span><span class="p">,</span> <span class="n">codepoints</span><span class="p">)</span>
+        <span class="n">codepoints</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="o">[]</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">decomposed</span><span class="p">,</span> <span class="n">cp</span><span class="o">|</span></pre></div></td></tr>
+
+
+<tr id="section-20"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-20">&#182;</a></div><p>if it's a hangul syllable starter character</p></td><td class="code"><div class="highlight"><pre>          <span class="k">if</span> <span class="no">HANGUL_SBASE</span> <span class="o">&lt;=</span> <span class="n">cp</span> <span class="ow">and</span> <span class="n">cp</span> <span class="o">&lt;</span> <span class="no">HANGUL_SLAST</span>
+            <span class="n">sindex</span> <span class="o">=</span> <span class="n">cp</span> <span class="o">-</span> <span class="no">HANGUL_SBASE</span>
+            <span class="n">ncp</span> <span class="o">=</span> <span class="o">[]</span> <span class="c1"># new codepoints</span>
+            <span class="n">ncp</span> <span class="o">&lt;&lt;</span> <span class="no">HANGUL_LBASE</span> <span class="o">+</span> <span class="n">sindex</span> <span class="o">/</span> <span class="no">HANGUL_NCOUNT</span>
+            <span class="n">ncp</span> <span class="o">&lt;&lt;</span> <span class="no">HANGUL_VBASE</span> <span class="o">+</span> <span class="p">(</span><span class="n">sindex</span> <span class="o">%</span> <span class="no">HANGUL_NCOUNT</span><span class="p">)</span> <span class="o">/</span> <span class="no">HANGUL_TCOUNT</span>
+            <span class="n">tindex</span> <span class="o">=</span> <span class="n">sindex</span> <span class="o">%</span> <span class="no">HANGUL_TCOUNT</span>
+            <span class="n">ncp</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="no">HANGUL_TBASE</span> <span class="o">+</span> <span class="n">tindex</span><span class="p">)</span> <span class="k">unless</span> <span class="n">tindex</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">decomposed</span><span class="o">.</span><span class="n">concat</span> <span class="n">ncp</span></pre></div></td></tr>
+
+
+<tr id="section-21"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-21">&#182;</a></div><p>if the codepoint is decomposable in with the current decomposition type</p></td><td class="code"><div class="highlight"><pre>          <span class="k">elsif</span> <span class="p">(</span><span class="n">ncp</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">codepoints</span><span class="o">[</span><span class="n">cp</span><span class="o">].</span><span class="n">decomp_mapping</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="o">!</span><span class="n">database</span><span class="o">.</span><span class="n">codepoints</span><span class="o">[</span><span class="n">cp</span><span class="o">].</span><span class="n">decomp_type</span> <span class="o">||</span> <span class="n">type</span> <span class="o">==</span> <span class="ss">:compatability</span><span class="p">)</span>
+            <span class="n">decomposed</span><span class="o">.</span><span class="n">concat</span> <span class="n">decompose_codepoints</span><span class="p">(</span><span class="n">type</span><span class="p">,</span> <span class="n">ncp</span><span class="o">.</span><span class="n">dup</span><span class="p">)</span>
+          <span class="k">else</span>
+            <span class="n">decomposed</span> <span class="o">&lt;&lt;</span> <span class="n">cp</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+      <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-22"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-22">&#182;</a></div><p>Compose decomposed characters to the composed form.</p></td><td class="code"><div class="highlight"><pre>      <span class="k">def</span> <span class="nf">compose_codepoints</span><span class="p">(</span><span class="n">codepoints</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">eoa</span> <span class="o">=</span> <span class="n">codepoints</span><span class="o">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">starter_pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">starter_char</span> <span class="o">=</span> <span class="n">codepoints</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+        <span class="n">previous_combining_class</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">while</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">eoa</span>
+          <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+          <span class="n">lindex</span> <span class="o">=</span> <span class="n">starter_char</span> <span class="o">-</span> <span class="no">HANGUL_LBASE</span></pre></div></td></tr>
+
+
+<tr id="section-23"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-23">&#182;</a></div><p>-- Hangul</p></td><td class="code"><div class="highlight"><pre>          <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">lindex</span> <span class="ow">and</span> <span class="n">lindex</span> <span class="o">&lt;</span> <span class="no">HANGUL_LCOUNT</span>
+            <span class="n">vindex</span> <span class="o">=</span> <span class="n">codepoints</span><span class="o">[</span><span class="n">starter_pos</span><span class="o">+</span><span class="mi">1</span><span class="o">]</span> <span class="o">-</span> <span class="no">HANGUL_VBASE</span> <span class="k">rescue</span> <span class="n">vindex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">vindex</span> <span class="ow">and</span> <span class="n">vindex</span> <span class="o">&lt;</span> <span class="no">HANGUL_VCOUNT</span>
+              <span class="n">tindex</span> <span class="o">=</span> <span class="n">codepoints</span><span class="o">[</span><span class="n">starter_pos</span><span class="o">+</span><span class="mi">2</span><span class="o">]</span> <span class="o">-</span> <span class="no">HANGUL_TBASE</span> <span class="k">rescue</span> <span class="n">tindex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+              <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">tindex</span> <span class="ow">and</span> <span class="n">tindex</span> <span class="o">&lt;</span> <span class="no">HANGUL_TCOUNT</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">starter_pos</span> <span class="o">+</span> <span class="mi">2</span>
+                <span class="n">eoa</span> <span class="o">-=</span> <span class="mi">2</span>
+              <span class="k">else</span>
+                <span class="n">tindex</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">starter_pos</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">eoa</span> <span class="o">-=</span> <span class="mi">1</span>
+              <span class="k">end</span>
+              <span class="n">codepoints</span><span class="o">[</span><span class="n">starter_pos</span><span class="o">.</span><span class="n">.j</span><span class="o">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lindex</span> <span class="o">*</span> <span class="no">HANGUL_VCOUNT</span> <span class="o">+</span> <span class="n">vindex</span><span class="p">)</span> <span class="o">*</span> <span class="no">HANGUL_TCOUNT</span> <span class="o">+</span> <span class="n">tindex</span> <span class="o">+</span> <span class="no">HANGUL_SBASE</span>
+            <span class="k">end</span>
+            <span class="n">starter_pos</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">starter_char</span> <span class="o">=</span> <span class="n">codepoints</span><span class="o">[</span><span class="n">starter_pos</span><span class="o">]</span></pre></div></td></tr>
+
+
+<tr id="section-24"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-24">&#182;</a></div><p>-- Other characters</p></td><td class="code"><div class="highlight"><pre>          <span class="k">else</span>
+            <span class="n">current_char</span> <span class="o">=</span> <span class="n">codepoints</span><span class="o">[</span><span class="n">pos</span><span class="o">]</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">codepoints</span><span class="o">[</span><span class="n">current_char</span><span class="o">]</span>
+            <span class="k">if</span> <span class="n">current</span><span class="o">.</span><span class="n">combining_class</span> <span class="o">&gt;</span> <span class="n">previous_combining_class</span>
+              <span class="k">if</span> <span class="n">ref</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">composition_map</span><span class="o">[</span><span class="n">starter_char</span><span class="o">]</span>
+                <span class="n">composition</span> <span class="o">=</span> <span class="n">ref</span><span class="o">[</span><span class="n">current_char</span><span class="o">]</span>
+              <span class="k">else</span>
+                <span class="n">composition</span> <span class="o">=</span> <span class="kp">nil</span>
+              <span class="k">end</span>
+              <span class="k">unless</span> <span class="n">composition</span><span class="o">.</span><span class="n">nil?</span>
+                <span class="n">codepoints</span><span class="o">[</span><span class="n">starter_pos</span><span class="o">]</span> <span class="o">=</span> <span class="n">composition</span>
+                <span class="n">starter_char</span> <span class="o">=</span> <span class="n">composition</span>
+                <span class="n">codepoints</span><span class="o">.</span><span class="n">delete_at</span> <span class="n">pos</span>
+                <span class="n">eoa</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">pos</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">previous_combining_class</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+              <span class="k">else</span>
+                <span class="n">previous_combining_class</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">combining_class</span>
+              <span class="k">end</span>
+            <span class="k">else</span>
+              <span class="n">previous_combining_class</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">combining_class</span>
+            <span class="k">end</span>
+            <span class="k">if</span> <span class="n">current</span><span class="o">.</span><span class="n">combining_class</span> <span class="o">==</span> <span class="mi">0</span>
+              <span class="n">starter_pos</span> <span class="o">=</span> <span class="n">pos</span>
+              <span class="n">starter_char</span> <span class="o">=</span> <span class="n">codepoints</span><span class="o">[</span><span class="n">pos</span><span class="o">]</span>
+            <span class="k">end</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="n">codepoints</span>
+      <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-25"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-25">&#182;</a></div><p>Replaces all ISO-8859-1 or CP1252 characters by their UTF-8 equivalent resulting in a valid UTF-8 string.</p>
+
+<p>Passing +true+ will forcibly tidy all bytes, assuming that the string's encoding is entirely CP1252 or ISO-8859-1.</p></td><td class="code"><div class="highlight"><pre>      <span class="k">def</span> <span class="nf">tidy_bytes</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kp">false</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">force</span>
+          <span class="k">return</span> <span class="n">string</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;C*&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">b</span><span class="o">|</span>
+            <span class="n">tidy_byte</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+          <span class="k">end</span><span class="o">.</span><span class="n">flatten</span><span class="o">.</span><span class="n">compact</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;C*&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;U*&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;U*&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+
+        <span class="n">bytes</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;C*&quot;</span><span class="p">)</span>
+        <span class="n">conts_expected</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">last_lead</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">bytes</span><span class="o">.</span><span class="n">each_index</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+
+          <span class="n">byte</span>          <span class="o">=</span> <span class="n">bytes</span><span class="o">[</span><span class="n">i</span><span class="o">]</span>
+          <span class="n">is_cont</span>       <span class="o">=</span> <span class="n">byte</span> <span class="o">&gt;</span> <span class="mi">127</span> <span class="o">&amp;&amp;</span> <span class="n">byte</span> <span class="o">&lt;</span> <span class="mi">192</span>
+          <span class="n">is_lead</span>       <span class="o">=</span> <span class="n">byte</span> <span class="o">&gt;</span> <span class="mi">191</span> <span class="o">&amp;&amp;</span> <span class="n">byte</span> <span class="o">&lt;</span> <span class="mi">245</span>
+          <span class="n">is_unused</span>     <span class="o">=</span> <span class="n">byte</span> <span class="o">&gt;</span> <span class="mi">240</span>
+          <span class="n">is_restricted</span> <span class="o">=</span> <span class="n">byte</span> <span class="o">&gt;</span> <span class="mi">244</span></pre></div></td></tr>
+
+
+<tr id="section-26"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-26">&#182;</a></div><p>Impossible or highly unlikely byte? Clean it.</p></td><td class="code"><div class="highlight"><pre>          <span class="k">if</span> <span class="n">is_unused</span> <span class="o">||</span> <span class="n">is_restricted</span>
+            <span class="n">bytes</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">tidy_byte</span><span class="p">(</span><span class="n">byte</span><span class="p">)</span>
+          <span class="k">elsif</span> <span class="n">is_cont</span></pre></div></td></tr>
+
+
+<tr id="section-27"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-27">&#182;</a></div><p>Not expecting contination byte? Clean up. Otherwise, now expect one less.</p></td><td class="code"><div class="highlight"><pre>            <span class="n">conts_expected</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">?</span> <span class="n">bytes</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">tidy_byte</span><span class="p">(</span><span class="n">byte</span><span class="p">)</span> <span class="p">:</span> <span class="n">conts_expected</span> <span class="o">-=</span> <span class="mi">1</span>
+          <span class="k">else</span>
+            <span class="k">if</span> <span class="n">conts_expected</span> <span class="o">&gt;</span> <span class="mi">0</span></pre></div></td></tr>
+
+
+<tr id="section-28"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-28">&#182;</a></div><p>Expected continuation, but got ASCII or leading? Clean backwards up to
+the leading byte.</p></td><td class="code"><div class="highlight"><pre>              <span class="p">(</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">last_lead</span><span class="p">))</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span><span class="o">|</span><span class="n">j</span><span class="o">|</span> <span class="n">bytes</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span><span class="o">]</span> <span class="o">=</span> <span class="n">tidy_byte</span><span class="p">(</span><span class="n">bytes</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span><span class="o">]</span><span class="p">)}</span>
+              <span class="n">conts_expected</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">end</span>
+            <span class="k">if</span> <span class="n">is_lead</span></pre></div></td></tr>
+
+
+<tr id="section-29"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-29">&#182;</a></div><p>Final byte is leading? Clean it.</p></td><td class="code"><div class="highlight"><pre>              <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">bytes</span><span class="o">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">bytes</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">tidy_byte</span><span class="p">(</span><span class="n">bytes</span><span class="o">.</span><span class="n">last</span><span class="p">)</span>
+              <span class="k">else</span></pre></div></td></tr>
+
+
+<tr id="section-30"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-30">&#182;</a></div><p>Valid leading byte? Expect continuations determined by position of
+first zero bit, with max of 3.</p></td><td class="code"><div class="highlight"><pre>                <span class="n">conts_expected</span> <span class="o">=</span> <span class="n">byte</span> <span class="o">&lt;</span> <span class="mi">224</span> <span class="o">?</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">byte</span> <span class="o">&lt;</span> <span class="mi">240</span> <span class="o">?</span> <span class="mi">2</span> <span class="p">:</span> <span class="mi">3</span>
+                <span class="n">last_lead</span> <span class="o">=</span> <span class="n">i</span>
+              <span class="k">end</span>
+            <span class="k">end</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="n">bytes</span><span class="o">.</span><span class="n">empty?</span> <span class="p">?</span> <span class="s2">&quot;&quot;</span> <span class="p">:</span> <span class="n">bytes</span><span class="o">.</span><span class="n">flatten</span><span class="o">.</span><span class="n">compact</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;C*&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;U*&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;U*&quot;</span><span class="p">)</span>
+      <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-31"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-31">&#182;</a></div><p>Returns the KC normalization of the string by default. NFKC is considered the best normalization form for
+passing strings to databases and validations.</p>
+
+<ul>
+<li><tt>string</tt> - The string to perform normalization on.</li>
+<li><tt>form</tt> - The form you want to normalize in. Should be one of the following:
+<tt>:c</tt>, <tt>:kc</tt>, <tt>:d</tt>, or <tt>:kd</tt>. Default is
+Mail::Multibyte.default<em>normalization</em>form</li>
+</ul></td><td class="code"><div class="highlight"><pre>      <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
+        <span class="n">form</span> <span class="o">||=</span> <span class="vi">@default_normalization_form</span></pre></div></td></tr>
+
+
+<tr id="section-32"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-32">&#182;</a></div><p>See http://www.unicode.org/reports/tr15, Table 1</p></td><td class="code"><div class="highlight"><pre>        <span class="n">codepoints</span> <span class="o">=</span> <span class="n">u_unpack</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="k">case</span> <span class="n">form</span>
+          <span class="k">when</span> <span class="ss">:d</span>
+            <span class="n">reorder_characters</span><span class="p">(</span><span class="n">decompose_codepoints</span><span class="p">(</span><span class="ss">:canonical</span><span class="p">,</span> <span class="n">codepoints</span><span class="p">))</span>
+          <span class="k">when</span> <span class="ss">:c</span>
+            <span class="n">compose_codepoints</span><span class="p">(</span><span class="n">reorder_characters</span><span class="p">(</span><span class="n">decompose_codepoints</span><span class="p">(</span><span class="ss">:canonical</span><span class="p">,</span> <span class="n">codepoints</span><span class="p">)))</span>
+          <span class="k">when</span> <span class="ss">:kd</span>
+            <span class="n">reorder_characters</span><span class="p">(</span><span class="n">decompose_codepoints</span><span class="p">(</span><span class="ss">:compatability</span><span class="p">,</span> <span class="n">codepoints</span><span class="p">))</span>
+          <span class="k">when</span> <span class="ss">:kc</span>
+            <span class="n">compose_codepoints</span><span class="p">(</span><span class="n">reorder_characters</span><span class="p">(</span><span class="n">decompose_codepoints</span><span class="p">(</span><span class="ss">:compatability</span><span class="p">,</span> <span class="n">codepoints</span><span class="p">)))</span>
+          <span class="k">else</span>
+            <span class="k">raise</span> <span class="no">ArgumentError</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">form</span><span class="si">}</span><span class="s2"> is not a valid normalization variant&quot;</span><span class="p">,</span> <span class="nb">caller</span>
+        <span class="k">end</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;U*&#39;</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">apply_mapping</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">mapping</span><span class="p">)</span> <span class="c1">#:nodoc:</span>
+        <span class="n">u_unpack</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">codepoint</span><span class="o">|</span>
+          <span class="n">cp</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">codepoints</span><span class="o">[</span><span class="n">codepoint</span><span class="o">]</span>
+          <span class="k">if</span> <span class="n">cp</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ncp</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">mapping</span><span class="p">))</span> <span class="ow">and</span> <span class="n">ncp</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="n">ncp</span>
+          <span class="k">else</span>
+            <span class="n">codepoint</span>
+          <span class="k">end</span>
+        <span class="k">end</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;U*&#39;</span><span class="p">)</span>
+      <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-33"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-33">&#182;</a></div><p>Holds data about a codepoint in the Unicode database</p></td><td class="code"><div class="highlight"><pre>      <span class="k">class</span> <span class="nc">Codepoint</span>
+        <span class="kp">attr_accessor</span> <span class="ss">:code</span><span class="p">,</span> <span class="ss">:combining_class</span><span class="p">,</span> <span class="ss">:decomp_type</span><span class="p">,</span> <span class="ss">:decomp_mapping</span><span class="p">,</span> <span class="ss">:uppercase_mapping</span><span class="p">,</span> <span class="ss">:lowercase_mapping</span>
+      <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-34"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-34">&#182;</a></div><p>Holds static data from the Unicode database</p></td><td class="code"><div class="highlight"><pre>      <span class="k">class</span> <span class="nc">UnicodeDatabase</span>
+        <span class="no">ATTRIBUTES</span> <span class="o">=</span> <span class="ss">:codepoints</span><span class="p">,</span> <span class="ss">:composition_exclusion</span><span class="p">,</span> <span class="ss">:composition_map</span><span class="p">,</span> <span class="ss">:boundary</span><span class="p">,</span> <span class="ss">:cp1252</span>
+
+        <span class="kp">attr_writer</span><span class="p">(</span><span class="o">*</span><span class="no">ATTRIBUTES</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">initialize</span>
+          <span class="vi">@codepoints</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">Codepoint</span><span class="o">.</span><span class="n">new</span><span class="p">)</span>
+          <span class="vi">@composition_exclusion</span> <span class="o">=</span> <span class="o">[]</span>
+          <span class="vi">@composition_map</span> <span class="o">=</span> <span class="p">{}</span>
+          <span class="vi">@boundary</span> <span class="o">=</span> <span class="p">{}</span>
+          <span class="vi">@cp1252</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-35"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-35">&#182;</a></div><p>Lazy load the Unicode database so it's only loaded when it's actually used</p></td><td class="code"><div class="highlight"><pre>        <span class="no">ATTRIBUTES</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">attr_name</span><span class="o">|</span>
+          <span class="nb">class_eval</span><span class="p">(</span><span class="o">&lt;&lt;-</span><span class="no">EOS</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">,</span> <span class="bp">__LINE__</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="sh">            def #{attr_name}     # def codepoints</span>
+<span class="sh">              load               #   load</span>
+<span class="sh">              @#{attr_name}      #   @codepoints</span>
+<span class="sh">            end                  # end</span>
+<span class="no">          EOS</span>
+        <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-36"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-36">&#182;</a></div><p>Loads the Unicode database and returns all the internal objects of UnicodeDatabase.</p></td><td class="code"><div class="highlight"><pre>        <span class="k">def</span> <span class="nf">load</span>
+          <span class="k">begin</span>
+            <span class="vi">@codepoints</span><span class="p">,</span> <span class="vi">@composition_exclusion</span><span class="p">,</span> <span class="vi">@composition_map</span><span class="p">,</span> <span class="vi">@boundary</span><span class="p">,</span> <span class="vi">@cp1252</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="no">Marshal</span><span class="o">.</span><span class="n">load</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span> <span class="p">}</span>
+          <span class="k">rescue</span> <span class="no">Exception</span> <span class="o">=&gt;</span> <span class="n">e</span>
+              <span class="k">raise</span> <span class="no">IOError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t load the Unicode tables for UTF8Handler (</span><span class="si">#{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">), Mail::Multibyte is unusable&quot;</span><span class="p">)</span>
+          <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-37"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-37">&#182;</a></div><p>Redefine the === method so we can write shorter rules for grapheme cluster breaks</p></td><td class="code"><div class="highlight"><pre>          <span class="vi">@boundary</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">_</span><span class="o">|</span>
+            <span class="vi">@boundary</span><span class="o">[</span><span class="n">k</span><span class="o">].</span><span class="n">instance_eval</span> <span class="k">do</span>
+              <span class="k">def</span> <span class="nf">===</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+                <span class="n">detect</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">i</span> <span class="o">===</span> <span class="n">other</span> <span class="p">}</span> <span class="p">?</span> <span class="kp">true</span> <span class="p">:</span> <span class="kp">false</span>
+              <span class="k">end</span>
+            <span class="k">end</span> <span class="k">if</span> <span class="vi">@boundary</span><span class="o">[</span><span class="n">k</span><span class="o">].</span><span class="n">kind_of?</span><span class="p">(</span><span class="nb">Array</span><span class="p">)</span>
+          <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-38"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-38">&#182;</a></div><p>define attr_reader methods for the instance variables</p></td><td class="code"><div class="highlight"><pre>          <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+            <span class="kp">attr_reader</span><span class="p">(</span><span class="o">*</span><span class="no">ATTRIBUTES</span><span class="p">)</span>
+          <span class="k">end</span>
+        <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-39"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-39">&#182;</a></div><p>Returns the directory in which the data files are stored</p></td><td class="code"><div class="highlight"><pre>        <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">dirname</span>
+          <span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/../values/&#39;</span>
+        <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-40"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-40">&#182;</a></div><p>Returns the filename for the data file for this version</p></td><td class="code"><div class="highlight"><pre>        <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">filename</span>
+          <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span> <span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="s2">&quot;unicode_tables.dat&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="kp">private</span>
+
+      <span class="k">def</span> <span class="nf">tidy_byte</span><span class="p">(</span><span class="n">byte</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">byte</span> <span class="o">&lt;</span> <span class="mi">160</span>
+          <span class="o">[</span><span class="n">database</span><span class="o">.</span><span class="n">cp1252</span><span class="o">[</span><span class="n">byte</span><span class="o">]</span> <span class="o">||</span> <span class="n">byte</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;C*&quot;</span><span class="p">)</span>
+        <span class="k">elsif</span> <span class="n">byte</span> <span class="o">&lt;</span> <span class="mi">192</span>
+          <span class="o">[</span><span class="mi">194</span><span class="p">,</span> <span class="n">byte</span><span class="o">]</span>
+        <span class="k">else</span>
+          <span class="o">[</span><span class="mi">195</span><span class="p">,</span> <span class="n">byte</span> <span class="o">-</span> <span class="mi">64</span><span class="o">]</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">database</span>
+        <span class="vi">@database</span> <span class="o">||=</span> <span class="no">UnicodeDatabase</span><span class="o">.</span><span class="n">new</span>
+      <span class="k">end</span>
+
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

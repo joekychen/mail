@@ -1,0 +1,25 @@
+f | rfc2047 Multipurpose Internet Mail Extensions (3).txt | g | 33K |  | Mikel Lindsaar | raasdnil@gmail.com | 1227323998 |  | Importing the base of the Mail system.
+f | rfc1049 Content-Type Header Field for Internet Messages.txt | g | 18K |  | Mikel Lindsaar | raasdnil@gmail.com | 1249472038 |  | Added roadmap, additional RFC reference, and put in structure for date fields
+f | rfc1345 Character Mnemonics and Character Sets.txt | g | 233K |  | Mikel Lindsaar | mikel@rubyx.com | 1291970874 |  | Closes issue 135 - Invalid filename for windows
+f | rfc4234 Augmented BNF for Syntax Specifications - ABNF.txt | g | 25K |  | Mikel Lindsaar | mikel@rubyx.com | 1291970874 |  | Closes issue 135 - Invalid filename for windows
+f | rfc2111 Content-ID and Message-ID URLs.txt | g | 8.9K |  | Mikel Lindsaar | raasdnil@gmail.com | 1227323998 |  | Importing the base of the Mail system.
+f | rfc2183 Content-Disposition Header Field.txt | g | 22K |  | Mikel Lindsaar | raasdnil@gmail.com | 1227323998 |  | Importing the base of the Mail system.
+f | rfc1035 Domain Implementation and Specification.txt | g | 120K |  | Mikel Lindsaar | raasdnil@gmail.com | 1250002043 |  | Added Mime-Version and Content-Transfer-Encoding.  Also fixed typo in some field files
+f | rfc2049 Multipurpose Internet Mail Extensions (5).txt | g | 50K |  | Mikel Lindsaar | raasdnil@gmail.com | 1250136373 |  | Added basic multipart support
+f | rfc1344 Implications of MIME for Internet Mail Gateways.txt | g | 25K |  | Mikel Lindsaar | raasdnil@gmail.com | 1249903836 |  | Adding more RFCs in preparation of MIME handling
+f | rfc2046 Multipurpose Internet Mail Extensions (2).txt | g | 105K |  | Mikel Lindsaar | raasdnil@gmail.com | 1227323998 |  | Importing the base of the Mail system.
+f | rfc2387 MIME Multipart-Related Content-type.txt | g | 18K |  | Mikel Lindsaar | raasdnil@gmail.com | 1227323998 |  | Importing the base of the Mail system.
+f | rfc3696 Checking and Transformation of Names.txt | g | 38K |  | Mikel Lindsaar | raasdnil@gmail.com | 1247561972 |  | Got address parser working on some basic tests and new RFCs added
+f | rfc822 Standard for the Format of ARPA Internet Text Messages.txt | g | 103K |  | Mikel Lindsaar | raasdnil@gmail.com | 1249904481 |  | Added in RFC822 as it is referenced a lot from the MIME RFCs
+f | rfc1652 SMTP Service Extension for 8bit-MIMEtransport.txt | g | 11K |  | Mikel Lindsaar | raasdnil@gmail.com | 1249905788 |  | Adding some more RFCs
+f | rfc2045 Multipurpose Internet Mail Extensions (1).txt | g | 71K |  | Mikel Lindsaar | raasdnil@gmail.com | 1227323998 |  | Importing the base of the Mail system.
+f | rfc2048 Multipurpose Internet Mail Extensions (4).txt | g | 43K |  | Mikel Lindsaar | raasdnil@gmail.com | 1249905788 |  | Adding some more RFCs
+f | rfc3462 Reporting of Mail System Administrative Messages.txt | g | 12K |  | Mikel Lindsaar | raasdnil@gmail.com | 1227323998 |  | Importing the base of the Mail system.
+f | rfc2821 Simple Mail Transfer Protocol.txt | g | 176K |  | Mikel Lindsaar | raasdnil@gmail.com | 1250002043 |  | Added Mime-Version and Content-Transfer-Encoding.  Also fixed typo in some field files
+f | rfc2231 MIME Parameter Value and Encoded Word Extensions.txt | g | 18K |  | Mikel Lindsaar | raasdnil@gmail.com | 1227323998 |  | Importing the base of the Mail system.
+f | rfc1892 Multipart Report .txt | g | 7.6K |  | Mikel Lindsaar | raasdnil@gmail.com | 1227323998 |  | Importing the base of the Mail system.
+f | US ASCII Table.txt | g | 5.4K |  | Mikel Lindsaar | raasdnil@gmail.com | 1250002043 |  | Added Mime-Version and Content-Transfer-Encoding.  Also fixed typo in some field files
+f | rfc1524 A User Agent Configuration Mechanism For Multimedia Mail Format Information.txt | g | 25K |  | Mikel Lindsaar | raasdnil@gmail.com | 1249903836 |  | Adding more RFCs in preparation of MIME handling
+f | rfc4155 The application-mbox Media Type.txt | g | 19K |  | Mikel Lindsaar | raasdnil@gmail.com | 1249893371 |                                                        INFORMATIONAL | Merged in Nicolas work on deliverable, and added envelope handling and message id generation
+f | rfc2822 Internet Message Format.txt | g | 108K |  | Mikel Lindsaar | raasdnil@gmail.com | 1227323998 |  | Importing the base of the Mail system.
+f | rfc1893 Mail System Status Codes.txt | g | 27K |  | Mikel Lindsaar | raasdnil@gmail.com | 1227323998 |  | Importing the base of the Mail system.

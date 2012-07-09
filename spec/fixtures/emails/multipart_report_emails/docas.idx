@@ -1,0 +1,5 @@
+f | multi_address_bounce2.eml | g | 7.6K |  | Mikel Lindsaar | raasdnil@gmail.com | 1267003011 |  | Closes issue 38 - final_recipient method give problem when one bounce email for multiple email ids
+f | multipart_report_multiple_status.eml | g | 4.4K |  | Mikel Lindsaar | raasdnil@gmail.com | 1284176755 |  | Fixed bounce detection for multipart reports that contain a human readable report status part
+f | multi_address_bounce1.eml | g | 7.6K |  | Mikel Lindsaar | raasdnil@gmail.com | 1267003011 |  | Closes issue 38 - final_recipient method give problem when one bounce email for multiple email ids
+f | report_530.eml | g | 4.0K |  | Mikel Lindsaar | raasdnil@gmail.com | 1251089306 |  | Added handling of multipart/report types and all accessor methods
+f | report_422.eml | g | 4.0K |  | Mikel Lindsaar | raasdnil@gmail.com | 1251089306 |  | Added handling of multipart/report types and all accessor methods

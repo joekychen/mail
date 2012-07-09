@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › example_emails_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../index.html"></a><h1>example_emails_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="s2">&quot;Test emails&quot;</span> <span class="k">do</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;from RFC2822&quot;</span> <span class="k">do</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>From RFC 2822:
+This could be called a canonical message.  It has a single author,
+John Doe, a single recipient, Mary Smith, a subject, the date, a
+message identifier, and a textual message in the body.</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle the basic test email&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example01.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;jdoe@machine.example&quot;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;mary@example.net&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@local.machine.example&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;21 Nov 1997 09:55:06 -0600&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">subject</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Saying Hello&#39;</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>From RFC 2822:
+If John's secretary Michael actually sent the message, though John
+was the author and replies to this message should go back to him, the
+sender field would be used:</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle the sender test email&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example02.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;jdoe@machine.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">sender</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mjones@machine.example&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;mary@example.net&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@local.machine.example&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;21 Nov 1997 09:55:06 -0600&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">subject</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Saying Hello&#39;</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>From RFC 2822:
+This message includes multiple addresses in the destination fields
+and also uses several different forms of addresses.</p>
+
+<p>Note that the display names for Joe Q. Public and Giant; "Big" Box
+needed to be enclosed in double-quotes because the former contains
+the period and the latter contains both semicolon and double-quote
+characters (the double-quote characters appearing as quoted-pair
+construct).  Conversely, the display name for Who? could appear
+without them because the question mark is legal in an atom.  Notice
+also that jdoe@example.org and boss@nil.test have no display names
+associated with them at all, and jdoe@example.org uses the simpler
+address form without the angle brackets.</p>
+
+<p>"Giant; \"Big\" Box" <a href="&#109;&#x61;&#105;&#x6C;&#x74;o:&#115;&#121;&#x73;&#x73;e&#114;&#118;i&#x63;&#x65;&#x73;&#64;&#x65;&#x78;&#x61;&#x6D;p&#x6C;&#x65;&#x2E;&#x6E;&#101;&#116;">&#115;&#121;&#x73;&#x73;e&#114;&#118;i&#x63;&#x65;&#x73;&#64;&#x65;&#x78;&#x61;&#x6D;p&#x6C;&#x65;&#x2E;&#x6E;&#101;&#116;</a></p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle multiple recipients test email&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example03.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;john.q.public@example.com&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;mary@x.test&#39;</span><span class="p">,</span> <span class="s1">&#39;jdoe@example.org&#39;</span><span class="p">,</span> <span class="s1">&#39;one@y.test&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">cc</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;boss@nil.test&#39;</span><span class="p">,</span> <span class="s2">&quot;sysservices@example.net&quot;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;5678.21-Nov-1997@example.com&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;1 Jul 2003 10:52:37 +0200&#39;</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>From RFC 2822:
+A.1.3. Group addresses
+In this message, the "To:" field has a single group recipient named A
+Group which contains 3 addresses, and a "Cc:" field with an empty
+group recipient named Undisclosed recipients.</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle group address email test&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example04.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;pete@silly.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;c@a.test&#39;</span><span class="p">,</span> <span class="s1">&#39;joe@where.test&#39;</span><span class="p">,</span> <span class="s1">&#39;jdoe@one.test&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">[</span><span class="ss">:cc</span><span class="o">].</span><span class="n">group_names</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;Undisclosed recipients&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;testabcd.1234@silly.example&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Thu, 13 Feb 1969 23:32:54 -0330&#39;</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>From RFC 2822:
+A.2. Reply messages
+The following is a series of three messages that make up a
+conversation thread between John and Mary.  John firsts sends a
+message to Mary, Mary then replies to John's message, and then John
+replies to Mary's reply message.</p>
+
+<p>Note especially the "Message-ID:", "References:", and "In-Reply-To:"
+fields in each message.</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle reply messages&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example05.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;jdoe@machine.example&quot;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;mary@example.net&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">subject</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Saying Hello&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@local.machine.example&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Fri, 21 Nov 1997 09:55:06 -0600&#39;</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>From RFC 2822:
+When sending replies, the Subject field is often retained, though
+prepended with "Re: " as described in section 3.6.5.
+Note the "Reply-To:" field in the below message.  When John replies
+to Mary's message above, the reply should go to the address in the
+"Reply-To:" field instead of the address in the "From:" field.</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle reply message 2&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example06.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;mary@example.net&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;jdoe@machine.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">reply_to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;smith@home.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">subject</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Re: Saying Hello&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;3456@example.net&#39;</span>
+      <span class="n">mail</span><span class="o">[</span><span class="ss">:in_reply_to</span><span class="o">].</span><span class="n">message_ids</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;1234@local.machine.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">[</span><span class="ss">:references</span><span class="o">].</span><span class="n">message_ids</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;1234@local.machine.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Fri, 21 Nov 1997 10:01:10 -0600&#39;</span><span class="p">)</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>From RFC 2822:
+Final reply message</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle the final reply message&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example07.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;smith@home.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;jdoe@machine.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">subject</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Re: Saying Hello&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Fri, 21 Nov 1997 11:00:00 -0600&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;abcd.1234@local.machine.tld&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">in_reply_to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;3456@example.net&#39;</span>
+      <span class="n">mail</span><span class="o">[</span><span class="ss">:references</span><span class="o">].</span><span class="n">message_ids</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;1234@local.machine.example&#39;</span><span class="p">,</span> <span class="s1">&#39;3456@example.net&#39;</span><span class="o">]</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-9"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-9">&#182;</a></div><p>From RFC2822
+A.3. Resent messages
+Say that Mary, upon receiving this message, wishes to send a copy of
+the message to Jane such that (a) the message would appear to have
+come straight from John; (b) if Jane replies to the message, the
+reply should go back to John; and (c) all of the original
+information, like the date the message was originally sent to Mary,
+the message identifier, and the original addressee, is preserved.  In
+this case, resent fields are prepended to the message:</p>
+
+<p>If Jane, in turn, wished to resend this message to another person,
+she would prepend her own set of resent header fields to the above
+and send that.</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle the rfc resent example email&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example08.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">resent_from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;mary@example.net&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">resent_to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;j-brown@other.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">resent_date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Mon, 24 Nov 1997 14:22:01 -0800&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">resent_message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;78910@example.net&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;jdoe@machine.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;mary@example.net&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">subject</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Saying Hello&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Fri, 21 Nov 1997 09:55:06 -0600&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@local.machine.example&#39;</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-10"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-10">&#182;</a></div><p>A.4. Messages with trace fields
+As messages are sent through the transport system as described in
+[RFC2821], trace fields are prepended to the message.  The following
+is an example of what those trace fields might look like.  Note that
+there is some folding white space in the first one since these lines
+can be long.</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle the RFC trace example email&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example09.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">received</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">info</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;from x.y.test by example.net via TCP with ESMTP id ABC12345 for &lt;mary@example.net&gt;&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">received</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">date_time</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;21 Nov 1997 10:05:43 -0600&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">received</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">info</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;from machine.example by x.y.test&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">received</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">date_time</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;21 Nov 1997 10:01:22 -0600&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;jdoe@machine.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;mary@example.net&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">subject</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Saying Hello&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Fri, 21 Nov 1997 09:55:06 -0600&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@local.machine.example&#39;</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-11"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-11">&#182;</a></div><p>A.5. White space, comments, and other oddities
+White space, including folding white space, and comments can be
+inserted between many of the tokens of fields.  Taking the example
+from A.1.3, white space and comments can be inserted into all of the
+fields.</p>
+
+<p>The below example is aesthetically displeasing, but perfectly legal.
+Note particularly (1) the comments in the "From:" field (including
+one that has a ")" character appearing as part of a quoted-pair); (2)
+the white space absent after the ":" in the "To:" field as well as
+the comment and folding white space after the group name, the special
+character (".") in the comment in Chris Jones's address, and the
+folding white space before and after "joe@example.org,"; (3) the
+multiple and nested comments in the "Cc:" field as well as the
+comment immediately following the ":" after "Cc"; (4) the folding
+white space (but no comments except at the end) and the missing
+seconds in the time of the date field; and (5) the white space before
+(but not within) the identifier in the "Message-ID:" field.</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle the rfc whitespace test email&quot;</span> <span class="k">do</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example10.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;pete(his account)@silly.test&quot;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span>  <span class="o">[</span><span class="s2">&quot;c@(Chris&#39;s host.)public.example&quot;</span><span class="p">,</span> <span class="s2">&quot;joe@example.org&quot;</span><span class="p">,</span> <span class="s2">&quot;jdoe@one.test&quot;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">[</span><span class="ss">:cc</span><span class="o">].</span><span class="n">group_names</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;(Empty list)(start)Undisclosed recipients &#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Thu, 13 Feb 1969 23:32 -0330&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;testabcd.1234@silly.test&#39;</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-12"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-12">&#182;</a></div><p>A.6. Obsoleted forms
+The following are examples of obsolete (that is, the "MUST NOT
+generate") syntactic elements described in section 4 of this
+document.
+A.6.1. Obsolete addressing
+Note in the below example the lack of quotes around Joe Q. Public,
+the route that appears in the address for Mary Smith, the two commas
+that appear in the "To:" field, and the spaces that appear around the
+"." in the jdoe address.</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle the rfc obsolete addressing&quot;</span> <span class="k">do</span>
+      <span class="n">pending</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example11.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">[</span><span class="ss">:from</span><span class="o">].</span><span class="n">addresses</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;john.q.public@example.com&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;&quot;Joe Q. Public&quot; &lt;john.q.public@example.com&gt;&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;@machine.tld:mary@example.net&quot;</span><span class="p">,</span> <span class="s1">&#39;jdoe@test.example&#39;</span><span class="o">]</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Tue, 1 Jul 2003 10:52:37 +0200&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;5678.21-Nov-1997@example.com&#39;</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-13"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-13">&#182;</a></div><p>A.6.2. Obsolete dates</p>
+
+<p>The following message uses an obsolete date format, including a non-
+numeric time zone and a two digit year.  Note that although the
+day-of-week is missing, that is not specific to the obsolete syntax;
+it is optional in the current syntax as well.</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle the rfc obsolete dates&quot;</span> <span class="k">do</span>
+      <span class="n">pending</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example12.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;jdoe@machine.example&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mary@example.net&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;21 Nov 97 09:55:06 GMT&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@local.machine.example&#39;</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-14"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-14">&#182;</a></div><p>A.6.3. Obsolete white space and comments</p>
+
+<p>White space and comments can appear between many more elements than
+in the current syntax.  Also, folding lines that are made up entirely
+of white space are legal.</p>
+
+<p>Note especially the second line of the "To:" field.  It starts with
+two space characters.  (Note that "__" represent blank spaces.)
+Therefore, it is considered part of the folding as described in
+section 4.2.  Also, the comments and white space throughout
+addresses, dates, and message identifiers are all part of the
+obsolete syntax.</p></td><td class="code"><div class="highlight"><pre>    <span class="n">it</span> <span class="s2">&quot;should handle the rfc obsolete whitespace email&quot;</span> <span class="k">do</span>
+      <span class="n">pending</span>
+      <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;rfc2822&#39;</span><span class="p">,</span> <span class="s1">&#39;example13.eml&#39;</span><span class="p">))</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">from</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;John Doe &lt;jdoe@machine(comment).example&gt;&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Mary Smith &lt;mary@example.net&gt;&#39;</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">::</span><span class="no">DateTime</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;Fri, 21 Nov 1997 09:55:06 -0600&#39;</span><span class="p">)</span>
+      <span class="n">mail</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;1234@local(blah).machine.example&#39;</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">email</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;from the wild&quot;</span> <span class="k">do</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;raw_email_encoded_stack_level_too_deep.eml&quot;</span> <span class="k">do</span>
+      <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+        <span class="vi">@message</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;mime_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;raw_email_encoded_stack_level_too_deep.eml&#39;</span><span class="p">)))</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return an &#39;encoded&#39; version without raising a SystemStackError&quot;</span> <span class="k">do</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="vi">@message</span><span class="o">.</span><span class="n">encoded</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should have two parts&quot;</span> <span class="k">do</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+      <span class="k">end</span>
+
+    <span class="k">end</span>
+
+    <span class="n">describe</span> <span class="s2">&quot;sig_only_email.eml&quot;</span> <span class="k">do</span>
+      <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+        <span class="vi">@message</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;mime_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;sig_only_email.eml&#39;</span><span class="p">)))</span>
+      <span class="k">end</span>
+      
+      <span class="n">it</span> <span class="s2">&quot;should not error on multiart/signed emails&quot;</span> <span class="k">do</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="vi">@message</span><span class="o">.</span><span class="n">encoded</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+      <span class="k">end</span>
+      
+      <span class="n">it</span> <span class="s2">&quot;should have one attachment called signature.asc&quot;</span> <span class="k">do</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">1</span>
+        <span class="vi">@message</span><span class="o">.</span><span class="n">attachments</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;signature.asc&#39;</span>
+      <span class="k">end</span>
+      
+    <span class="k">end</span>
+    
+    <span class="n">describe</span> <span class="s2">&quot;handling invalid group lists&quot;</span> <span class="k">do</span>
+      <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+        <span class="vi">@message</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;error_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;empty_group_lists.eml&#39;</span><span class="p">)))</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should parse the email and encode without crashing&quot;</span> <span class="k">do</span>
+        <span class="n">doing</span> <span class="p">{</span> <span class="vi">@message</span><span class="o">.</span><span class="n">encoded</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;should return an empty groups list&quot;</span> <span class="k">do</span>
+        <span class="vi">@message</span><span class="o">[</span><span class="ss">:to</span><span class="o">].</span><span class="n">group_addresses</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[]</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;empty address lists&quot;</span> <span class="k">do</span>
+
+    <span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+      <span class="vi">@message</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Message</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fixture</span><span class="p">(</span><span class="s1">&#39;emails&#39;</span><span class="p">,</span> <span class="s1">&#39;error_emails&#39;</span><span class="p">,</span> <span class="s1">&#39;weird_to_header.eml&#39;</span><span class="p">)))</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should parse the email and encode without crashing&quot;</span> <span class="k">do</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="vi">@message</span><span class="o">.</span><span class="n">encoded</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should return an empty groups list&quot;</span> <span class="k">do</span>
+      <span class="vi">@message</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s1">&#39;user-example@aol.com&#39;</span><span class="p">,</span> <span class="s1">&#39;e-s-a-s-2200@app.ar.com&#39;</span><span class="o">]</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:2}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../javascript/docco.min.js"></script>
+</html>

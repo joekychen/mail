@@ -1,0 +1,6 @@
+f | sendmail_spec.rb | s | 5.4K | 134 | Mikel Lindsaar | mikel@rubyx.com | 1331023523 |  | Making sure that destinations are also properly escaped in all version of ruby
+f | file_delivery_spec.rb | s | 2.8K | 75 | Mikel Lindsaar | mikel@rubyx.com | 1331725467 |  | Preventing file system traversal in file_delivery method
+f | smtp_spec.rb | s | 5.6K | 155 | kennyj | kennyj@gmail.com | 1326987468 |  | Fix warning: assigned but unused variable
+f | exim_spec.rb | s | 5.2K | 134 | Mikel Lindsaar | mikel@rubyx.com | 1331020778 |  | Fix security vulnerability allowing command line exploit when using exim or sendmail from the command line
+f | smtp_connection_spec.rb | s | 1.1K | 36 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | test_mailer_spec.rb | s | 1.6K | 52 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"

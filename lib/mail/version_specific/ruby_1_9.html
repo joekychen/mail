@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › version_specific › ruby_1_9.rb
+| encoding: utf-8
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>ruby_1_9.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">class</span> <span class="nc">Ruby19</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Escapes any parenthesis in a string that are unescaped this uses
+a Ruby 1.9.1 regexp feature of negative look behind</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">escape_paren</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="n">re</span> <span class="o">=</span> <span class="sr">/(?&lt;!\\)([\(\)])/</span>          <span class="c1"># Only match unescaped parens</span>
+      <span class="n">str</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="n">re</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="s1">&#39;\\&#39;</span> <span class="o">+</span> <span class="n">s</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">paren</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="vg">$1</span> <span class="k">if</span> <span class="n">str</span> <span class="o">=~</span> <span class="sr">/^\((.*)?\)$/</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="n">escape_paren</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">str</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">escape_bracket</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="n">re</span> <span class="o">=</span> <span class="sr">/(?&lt;!\\)([\&lt;\&gt;])/</span>          <span class="c1"># Only match unescaped brackets</span>
+      <span class="n">str</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="n">re</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="s1">&#39;\\&#39;</span> <span class="o">+</span> <span class="n">s</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">bracket</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="vg">$1</span> <span class="k">if</span> <span class="n">str</span> <span class="o">=~</span> <span class="sr">/^\&lt;(.*)?\&gt;$/</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="n">escape_bracket</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="s1">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="n">str</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">decode_base64</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="n">str</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span> <span class="s1">&#39;m&#39;</span> <span class="p">)</span><span class="o">.</span><span class="n">first</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">encode_base64</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="o">[</span><span class="n">str</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span> <span class="s1">&#39;m&#39;</span> <span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">has_constant?</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+      <span class="n">klass</span><span class="o">.</span><span class="n">const_defined?</span><span class="p">(</span> <span class="n">string</span><span class="p">,</span> <span class="kp">false</span> <span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">get_constant</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+      <span class="n">klass</span><span class="o">.</span><span class="n">const_get</span><span class="p">(</span> <span class="n">string</span> <span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">b_value_encode</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="n">encoding</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">encoding</span><span class="o">.</span><span class="n">to_s</span>
+      <span class="o">[</span><span class="no">Ruby19</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">str</span><span class="p">),</span> <span class="n">encoding</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">b_value_decode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="n">match</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sr">/\=\?(.+)?\?[Bb]\?(.+)?\?\=/m</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">match</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="n">match</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
+        <span class="n">str</span> <span class="o">=</span> <span class="no">Ruby19</span><span class="o">.</span><span class="n">decode_base64</span><span class="p">(</span><span class="n">match</span><span class="o">[</span><span class="mi">2</span><span class="o">]</span><span class="p">)</span>
+        <span class="n">str</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="n">fix_encoding</span><span class="p">(</span><span class="n">encoding</span><span class="p">))</span>
+      <span class="k">end</span>
+      <span class="n">decoded</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="ss">:invalid</span> <span class="o">=&gt;</span> <span class="ss">:replace</span><span class="p">,</span> <span class="ss">:replace</span> <span class="o">=&gt;</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+      <span class="n">decoded</span><span class="o">.</span><span class="n">valid_encoding?</span> <span class="p">?</span> <span class="n">decoded</span> <span class="p">:</span> <span class="n">decoded</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-16le&quot;</span><span class="p">,</span> <span class="ss">:invalid</span> <span class="o">=&gt;</span> <span class="ss">:replace</span><span class="p">,</span> <span class="ss">:replace</span> <span class="o">=&gt;</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">q_value_encode</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+      <span class="n">encoding</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">encoding</span><span class="o">.</span><span class="n">to_s</span>
+      <span class="o">[</span><span class="no">Encodings</span><span class="o">::</span><span class="no">QuotedPrintable</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">str</span><span class="p">),</span> <span class="n">encoding</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">q_value_decode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="n">match</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sr">/\=\?(.+)?\?[Qq]\?(.+)?\?\=/m</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">match</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="n">match</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
+        <span class="n">str</span> <span class="o">=</span> <span class="no">Encodings</span><span class="o">::</span><span class="no">QuotedPrintable</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">match</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/_/</span><span class="p">,</span> <span class="s1">&#39;=20&#39;</span><span class="p">))</span>
+        <span class="n">str</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="n">fix_encoding</span><span class="p">(</span><span class="n">encoding</span><span class="p">))</span>
+      <span class="k">end</span>
+      <span class="n">decoded</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="ss">:invalid</span> <span class="o">=&gt;</span> <span class="ss">:replace</span><span class="p">,</span> <span class="ss">:replace</span> <span class="o">=&gt;</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+      <span class="n">decoded</span><span class="o">.</span><span class="n">valid_encoding?</span> <span class="p">?</span> <span class="n">decoded</span> <span class="p">:</span> <span class="n">decoded</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-16le&quot;</span><span class="p">,</span> <span class="ss">:invalid</span> <span class="o">=&gt;</span> <span class="ss">:replace</span><span class="p">,</span> <span class="ss">:replace</span> <span class="o">=&gt;</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">param_decode</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+      <span class="n">string</span> <span class="o">=</span> <span class="n">uri_parser</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="n">string</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span> <span class="k">if</span> <span class="n">encoding</span>
+      <span class="n">string</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">param_encode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="n">encoding</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">encoding</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">downcase</span>
+      <span class="n">language</span> <span class="o">=</span> <span class="no">Configuration</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">param_encode_language</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">encoding</span><span class="si">}</span><span class="s2">&#39;</span><span class="si">#{</span><span class="n">language</span><span class="si">}</span><span class="s2">&#39;</span><span class="si">#{</span><span class="n">uri_parser</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">str</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">uri_parser</span>
+      <span class="vi">@uri_parser</span> <span class="o">||=</span> <span class="no">URI</span><span class="o">::</span><span class="no">Parser</span><span class="o">.</span><span class="n">new</span>
+    <span class="k">end</span></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>mails somtimes includes invalid encodings like iso885915 or utf8 so we transform them to iso885915 or utf8
+TODO: add this as a test somewhere
+Encoding.list.map{|e| [e.to<em>s.upcase==fix</em>encoding(e.to<em>s.downcase.gsub("-", "")), e.to</em>s] }.select {|a,b| !b}
+ Encoding.list.map{|e| [e.to<em>s==fix</em>encoding(e.to<em>s), e.to</em>s] }.select {|a,b| !b}</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Ruby19</span><span class="o">.</span><span class="nf">fix_encoding</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+      <span class="k">case</span> <span class="n">encoding</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>ISO-8859-15, ISO-2022-JP and alike</p></td><td class="code"><div class="highlight"><pre>        <span class="k">when</span> <span class="sr">/iso-?(\d{4})-?(\w{1,2})/i</span> <span class="k">then</span> <span class="k">return</span> <span class="s2">&quot;ISO-</span><span class="si">#{</span><span class="vg">$1</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="vg">$2</span><span class="si">}</span><span class="s2">&quot;</span></pre></div></td></tr>
+
+
+<tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>"ISO-2022-JP-KDDI"  and alike</p></td><td class="code"><div class="highlight"><pre>        <span class="k">when</span> <span class="sr">/iso-?(\d{4})-?(\w{1,2})-?(\w*)/i</span> <span class="k">then</span> <span class="k">return</span> <span class="s2">&quot;ISO-</span><span class="si">#{</span><span class="vg">$1</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="vg">$2</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="vg">$3</span><span class="si">}</span><span class="s2">&quot;</span></pre></div></td></tr>
+
+
+<tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>UTF-8, UTF-32BE and alike</p></td><td class="code"><div class="highlight"><pre>        <span class="k">when</span> <span class="sr">/utf-?(\d{1,2})?(\w{1,2})/i</span> <span class="k">then</span> <span class="k">return</span> <span class="s2">&quot;UTF-</span><span class="si">#{</span><span class="vg">$1</span><span class="si">}#{</span><span class="vg">$2</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/\A(UTF-(?:16|32))\z/</span><span class="p">,</span> <span class="s1">&#39;\\1BE&#39;</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>Windows-1252 and alike</p></td><td class="code"><div class="highlight"><pre>        <span class="k">when</span> <span class="sr">/Windows-?(.*)/i</span> <span class="k">then</span> <span class="k">return</span> <span class="s2">&quot;Windows-</span><span class="si">#{</span><span class="vg">$1</span><span class="si">}</span><span class="s2">&quot;</span></pre></div></td></tr>
+
+
+<tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>more aliases to be added if needed</p></td><td class="code"><div class="highlight"><pre>        <span class="k">else</span> <span class="k">return</span> <span class="n">encoding</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

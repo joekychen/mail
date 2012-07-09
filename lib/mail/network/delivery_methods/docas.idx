@@ -1,0 +1,6 @@
+f | exim.rb | s | 1.3K | 49 | Mikel Lindsaar | mikel@rubyx.com | 1331020778 |  | Fix security vulnerability allowing command line exploit when using exim or sendmail from the command line
+f | sendmail.rb | s | 1.8K | 56 | Mikel Lindsaar | mikel@rubyx.com | 1331023523 |  | Making sure that destinations are also properly escaped in all version of ruby
+f | file_delivery.rb | s | 1.2K | 33 | Mikel Lindsaar | mikel@rubyx.com | 1331725467 |  | Preventing file system traversal in file_delivery method
+f | smtp_connection.rb | s | 2.5K | 65 | Aaron Spiegel | spiegela@gmail.com | 1294875474 |  | Added :return_response boolean option to return the actual SMTP server response for :smtp and :smtp_connection delivery_methods
+f | smtp.rb | s | 5.9K | 142 | Mikel Lindsaar | mikel@rubyx.com | 1326498271 |  | Merge branch 'master' of https://github.com/ShogunPanda/mail into ShogunPanda-master
+f | test_mailer.rb | s | 1.0K | 34 | System Administrator | root@baci.lindsaar.net | 1264415896 |  | Version bump to 2.1.0  Now passes a block to the delivery handler, which can just call yield if it want's Mail to just do it's normal delivery method  Moved Mail.deliveries into Mail::TestMailer.deliveries. Now only gets mail appended to it if you are sending with the :test delivery_method (only for testing)

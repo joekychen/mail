@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › fields › return_path_field_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>return_path_field_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ReturnPathField</span> <span class="k">do</span>
+  <span class="n">it</span> <span class="s2">&quot;should allow you to specify a field&quot;</span> <span class="k">do</span>
+    <span class="n">rp</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ReturnPathField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Return-Path: mikel@test.lindsaar.net&#39;</span><span class="p">)</span>
+    <span class="n">rp</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;mikel@test.lindsaar.net&#39;</span>
+  <span class="k">end</span>
+  
+  <span class="n">it</span> <span class="s2">&quot;should encode the addr_spec in &lt;&gt;&quot;</span> <span class="k">do</span>
+    <span class="n">rp</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ReturnPathField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Return-Path: mikel@test.lindsaar.net&#39;</span><span class="p">)</span>
+    <span class="n">rp</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Return-Path: &lt;mikel@test.lindsaar.net&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+  <span class="k">end</span>
+
+  <span class="n">it</span> <span class="s2">&quot;should accept &lt;&gt;&quot;</span> <span class="k">do</span>
+    <span class="n">rp</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">ReturnPathField</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">)</span>
+    <span class="n">rp</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;Return-Path: &lt;&gt;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+  <span class="k">end</span>
+  
+  <span class="n">it</span> <span class="s2">&quot;should set the return path&quot;</span> <span class="k">do</span>
+    <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+      <span class="n">to</span> <span class="s2">&quot;to@someemail.com&quot;</span>
+      <span class="n">from</span> <span class="s2">&quot;from@someemail.com&quot;</span>
+      <span class="n">subject</span> <span class="s2">&quot;Can&#39;t set the return-path&quot;</span>
+      <span class="n">return_path</span> <span class="s2">&quot;bounce@someemail.com&quot;</span> 
+      <span class="n">message_id</span> <span class="s2">&quot;&lt;1234@someemail.com&gt;&quot;</span>
+      <span class="n">body</span> <span class="s2">&quot;body&quot;</span>
+    <span class="k">end</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">return_path</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;bounce@someemail.com&quot;</span>
+  <span class="k">end</span>
+  
+  <span class="n">it</span> <span class="s2">&quot;should set the return path&quot;</span> <span class="k">do</span>
+    <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+      <span class="n">to</span> <span class="s2">&quot;to@someemail.com&quot;</span>
+      <span class="n">from</span> <span class="s2">&quot;from@someemail.com&quot;</span>
+      <span class="n">subject</span> <span class="s2">&quot;Can&#39;t set the return-path&quot;</span>
+      <span class="n">return_path</span> <span class="s2">&quot;bounce@someemail.com&quot;</span> 
+      <span class="n">message_id</span> <span class="s2">&quot;&lt;1234@someemail.com&gt;&quot;</span>
+      <span class="n">body</span> <span class="s2">&quot;body&quot;</span>
+    <span class="k">end</span>
+    <span class="n">encoded_mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">mail</span><span class="o">.</span><span class="n">encoded</span><span class="p">)</span>
+    <span class="n">encoded_mail</span><span class="o">.</span><span class="n">return_path</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s2">&quot;bounce@someemail.com&quot;</span>
+  <span class="k">end</span>
+  
+  <span class="n">it</span> <span class="s2">&quot;should wrap the return path addr_spec in &lt;&gt;&quot;</span> <span class="k">do</span>
+    <span class="n">mail</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+      <span class="n">to</span> <span class="s2">&quot;to@someemail.com&quot;</span>
+      <span class="n">from</span> <span class="s2">&quot;from@someemail.com&quot;</span>
+      <span class="n">subject</span> <span class="s2">&quot;Can&#39;t set the return-path&quot;</span>
+      <span class="n">return_path</span> <span class="s2">&quot;bounce@someemail.com&quot;</span> 
+      <span class="n">message_id</span> <span class="s2">&quot;&lt;1234@someemail.com&gt;&quot;</span>
+      <span class="n">body</span> <span class="s2">&quot;body&quot;</span>
+    <span class="k">end</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">should</span> <span class="o">=~</span> <span class="sr">/&lt;bounce@someemail\.com&gt;/</span>
+  <span class="k">end</span>
+  
+  
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

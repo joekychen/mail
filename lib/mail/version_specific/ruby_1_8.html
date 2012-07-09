@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » lib › mail › version_specific › ruby_1_8.rb
+| encoding: utf-8
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>ruby_1_8.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="k">module</span> <span class="nn">Mail</span>
+  <span class="k">class</span> <span class="nc">Ruby18</span>
+    <span class="nb">require</span> <span class="s1">&#39;base64&#39;</span></pre></div></td></tr>
+
+
+<tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>Escapes any parenthesis in a string that are unescaped. This can't
+use the Ruby 1.9.1 regexp feature of negative look behind so we have
+to do two replacement, first unescape everything, then re-escape it</p></td><td class="code"><div class="highlight"><pre>    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">escape_paren</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="n">re</span> <span class="o">=</span> <span class="sr">/\\\)/</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="n">re</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="s1">&#39;)&#39;</span><span class="p">}</span>
+      <span class="n">re</span> <span class="o">=</span> <span class="sr">/\\\(/</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="n">re</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="s1">&#39;(&#39;</span><span class="p">}</span>
+      <span class="n">re</span> <span class="o">=</span> <span class="sr">/([\(\)])/</span>          <span class="c1"># Only match unescaped parens</span>
+      <span class="n">str</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="n">re</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="s1">&#39;\\&#39;</span> <span class="o">+</span> <span class="n">s</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">paren</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="vg">$1</span> <span class="k">if</span> <span class="n">str</span> <span class="o">=~</span> <span class="sr">/^\((.*)?\)$/</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="n">escape_paren</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">str</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">escape_bracket</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="n">re</span> <span class="o">=</span> <span class="sr">/\\\&gt;/</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="n">re</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">}</span>
+      <span class="n">re</span> <span class="o">=</span> <span class="sr">/\\\&lt;/</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="n">re</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">}</span>
+      <span class="n">re</span> <span class="o">=</span> <span class="sr">/([\&lt;\&gt;])/</span>          <span class="c1"># Only match unescaped parens</span>
+      <span class="n">str</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="n">re</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span> <span class="s1">&#39;\\&#39;</span> <span class="o">+</span> <span class="n">s</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">bracket</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="vg">$1</span> <span class="k">if</span> <span class="n">str</span> <span class="o">=~</span> <span class="sr">/^\&lt;(.*)?\&gt;$/</span>
+      <span class="n">str</span> <span class="o">=</span> <span class="n">escape_bracket</span><span class="p">(</span> <span class="n">str</span> <span class="p">)</span>
+      <span class="s1">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="n">str</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">decode_base64</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="no">Base64</span><span class="o">.</span><span class="n">decode64</span><span class="p">(</span><span class="n">str</span><span class="p">)</span> <span class="k">if</span> <span class="n">str</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">encode_base64</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="no">Base64</span><span class="o">.</span><span class="n">encode64</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">has_constant?</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+      <span class="n">klass</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span> <span class="n">string</span> <span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">get_constant</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+      <span class="n">klass</span><span class="o">.</span><span class="n">const_get</span><span class="p">(</span> <span class="n">string</span> <span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">b_value_encode</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>Ruby 1.8 requires an encoding to work</p></td><td class="code"><div class="highlight"><pre>      <span class="k">raise</span> <span class="no">ArgumentError</span><span class="p">,</span> <span class="s2">&quot;Must supply an encoding&quot;</span> <span class="k">if</span> <span class="n">encoding</span><span class="o">.</span><span class="n">nil?</span>
+      <span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">upcase</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+      <span class="o">[</span><span class="no">Encodings</span><span class="o">::</span><span class="no">Base64</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">str</span><span class="p">),</span> <span class="n">encoding</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">b_value_decode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="n">match</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sr">/\=\?(.+)?\?[Bb]\?(.+)?\?\=/m</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">match</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="n">match</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
+        <span class="n">str</span> <span class="o">=</span> <span class="no">Ruby18</span><span class="o">.</span><span class="n">decode_base64</span><span class="p">(</span><span class="n">match</span><span class="o">[</span><span class="mi">2</span><span class="o">]</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="n">str</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">q_value_encode</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span></pre></div></td></tr>
+
+
+<tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>Ruby 1.8 requires an encoding to work</p></td><td class="code"><div class="highlight"><pre>      <span class="k">raise</span> <span class="no">ArgumentError</span><span class="p">,</span> <span class="s2">&quot;Must supply an encoding&quot;</span> <span class="k">if</span> <span class="n">encoding</span><span class="o">.</span><span class="n">nil?</span>
+      <span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">upcase</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+      <span class="o">[</span><span class="no">Encodings</span><span class="o">::</span><span class="no">QuotedPrintable</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">str</span><span class="p">),</span> <span class="n">encoding</span><span class="o">]</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">q_value_decode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="n">match</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sr">/\=\?(.+)?\?[Qq]\?(.+)?\?\=/m</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">match</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="n">match</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
+        <span class="n">str</span> <span class="o">=</span> <span class="no">Encodings</span><span class="o">::</span><span class="no">QuotedPrintable</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">match</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/_/</span><span class="p">,</span> <span class="s1">&#39;=20&#39;</span><span class="p">))</span>
+      <span class="k">end</span>
+      <span class="n">str</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">param_decode</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+      <span class="no">URI</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">Ruby18</span><span class="o">.</span><span class="nf">param_encode</span><span class="p">(</span><span class="n">str</span><span class="p">)</span>
+      <span class="n">encoding</span> <span class="o">=</span> <span class="vg">$KCODE</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">downcase</span>
+      <span class="n">language</span> <span class="o">=</span> <span class="no">Configuration</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">param_encode_language</span>
+      <span class="s2">&quot;</span><span class="si">#{</span><span class="n">encoding</span><span class="si">}</span><span class="s2">&#39;</span><span class="si">#{</span><span class="n">language</span><span class="si">}</span><span class="s2">&#39;</span><span class="si">#{</span><span class="no">URI</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">str</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html><head><title>joekychen/mail » spec › mail › elements › address_list_spec.rb
+
+</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Docco">
+<link rel="stylesheet" media="all" href="../../../stylesheets/docco.min.css" />
+
+
+</head>
+<body>
+<div id="container">
+<div id="background"></div>
+<table cellpadding="0" cellspacing="0">
+<thead><tr><th class="docs"><a id="home" href="../../../index.html"></a><h1>address_list_spec.rb</h1></th><th class="code"></th></tr></thead>
+<tbody>
+
+
+<tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>encoding: utf-8</p></td><td class="code"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+
+<span class="n">describe</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span> <span class="k">do</span>
+
+  <span class="n">describe</span> <span class="s2">&quot;parsing&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should parse an address list&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span>  <span class="o">=</span> <span class="s1">&#39;test@lindsaar.net&#39;</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an error if the input is useless&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s1">&#39;@@@@@@&#39;</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should not raise an error if the input is just blank&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="kp">nil</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should_not</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should raise an error if the input is useless&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s2">&quot;This ( is an invalid address!&quot;</span>
+      <span class="n">doing</span> <span class="p">{</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">raise_error</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give the address passed in&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span>  <span class="o">=</span> <span class="s1">&#39;test@lindsaar.net&#39;</span>
+      <span class="n">result</span>      <span class="o">=</span> <span class="s1">&#39;test@lindsaar.net&#39;</span>
+      <span class="n">a</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give the addresses passed in&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span>  <span class="o">=</span> <span class="s1">&#39;test@lindsaar.net, test2@lindsaar.net&#39;</span>
+      <span class="n">result</span>      <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;test@lindsaar.net&#39;</span><span class="p">,</span> <span class="s1">&#39;test2@lindsaar.net&#39;</span><span class="o">]</span>
+      <span class="n">a</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span><span class="o">|</span><span class="n">addr</span><span class="o">|</span> <span class="n">addr</span><span class="o">.</span><span class="n">to_s</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should preserve the display name&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span>  <span class="o">=</span> <span class="s1">&#39;&quot;Mikel Lindsaar&quot; &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+      <span class="n">result</span>      <span class="o">=</span> <span class="s1">&#39;Mikel Lindsaar &lt;mikel@test.lindsaar.net&gt;&#39;</span>
+      <span class="n">a</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">display_name</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="s1">&#39;Mikel Lindsaar&#39;</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle and ignore nil addresses&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span>  <span class="o">=</span> <span class="s1">&#39; , user-example@aol.com, e-s-a-s-2200@app.ar.com&#39;</span>
+      <span class="n">result</span>      <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;user-example@aol.com&#39;</span><span class="p">,</span> <span class="s1">&#39;e-s-a-s-2200@app.ar.com&#39;</span><span class="o">]</span>
+      <span class="n">a</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span><span class="o">|</span><span class="n">addr</span><span class="o">|</span> <span class="n">addr</span><span class="o">.</span><span class="n">to_s</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle truly horrific combinations of commas, spaces, and addresses&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s1">&#39;  ,, foo@example.com,  ,    ,,, bar@example.com  ,,&#39;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;foo@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;bar@example.com&#39;</span><span class="o">]</span>
+      <span class="n">a</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span><span class="o">|</span><span class="n">addr</span><span class="o">|</span> <span class="n">addr</span><span class="o">.</span><span class="n">to_s</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle folding whitespace&quot;</span> <span class="k">do</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s2">&quot;foo@example.com,</span><span class="se">\r\n\t</span><span class="s2">bar@example.com&quot;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;foo@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;bar@example.com&#39;</span><span class="o">]</span>
+      <span class="n">a</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span><span class="o">|</span><span class="n">addr</span><span class="o">|</span> <span class="n">addr</span><span class="o">.</span><span class="n">to_s</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should handle malformed folding whitespace&quot;</span> <span class="k">do</span>
+      <span class="n">pending</span>
+      <span class="n">parse_text</span> <span class="o">=</span> <span class="s2">&quot;leads@sg.dc.com,</span><span class="se">\n\t</span><span class="s2"> sag@leads.gs.ry.com,</span><span class="se">\n\t</span><span class="s2"> sn@example-hotmail.com,</span><span class="se">\n\t</span><span class="s2"> e-s-a-g-8718@app.ar.com,</span><span class="se">\n\t</span><span class="s2"> jp@t-exmaple.com,</span><span class="se">\n\t\n\t</span><span class="s2"> cc@c-l-example.com&quot;</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="sx">%w(leads@sg.dc.com sag@leads.gs.ry.com sn@example-hotmail.com e-s-a-g-8718@app.ar.com jp@t-exmaple.com cc@c-l-example.com)</span>
+      <span class="n">a</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">parse_text</span><span class="p">)</span>
+      <span class="n">a</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span><span class="o">|</span><span class="n">addr</span><span class="o">|</span> <span class="n">addr</span><span class="o">.</span><span class="n">to_s</span> <span class="p">}</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="n">result</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+  
+  <span class="n">describe</span> <span class="s2">&quot;functionality&quot;</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">&quot;should give back a list of address nodes&quot;</span> <span class="k">do</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;mikel@me.com, bob@you.com&#39;</span><span class="p">)</span>
+      <span class="n">list</span><span class="o">.</span><span class="n">address_nodes</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should have each nood a class of SyntaxNode&quot;</span> <span class="k">do</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;mikel@me.com, bob@you.com&#39;</span><span class="p">)</span>
+      <span class="n">list</span><span class="o">.</span><span class="n">address_nodes</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">n</span><span class="o">|</span> <span class="n">n</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Treetop</span><span class="o">::</span><span class="no">Runtime</span><span class="o">::</span><span class="no">SyntaxNode</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give a block of address nodes with groups&quot;</span> <span class="k">do</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;sam@me.com, my_group: mikel@me.com, bob@you.com;&#39;</span><span class="p">)</span>
+      <span class="n">list</span><span class="o">.</span><span class="n">address_nodes</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give all the recipients when asked&quot;</span> <span class="k">do</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;sam@me.com, my_group: mikel@me.com, bob@you.com;&#39;</span><span class="p">)</span>
+      <span class="n">list</span><span class="o">.</span><span class="n">individual_recipients</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">1</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give all the groups when asked&quot;</span> <span class="k">do</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;sam@me.com, my_group: mikel@me.com, bob@you.com;&#39;</span><span class="p">)</span>
+      <span class="n">list</span><span class="o">.</span><span class="n">group_recipients</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">1</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should ask the group for all it&#39;s addresses&quot;</span> <span class="k">do</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;sam@me.com, my_group: mikel@me.com, bob@you.com;&#39;</span><span class="p">)</span>
+      <span class="n">list</span><span class="o">.</span><span class="n">group_recipients</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">group_list</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should give all the addresses when asked&quot;</span> <span class="k">do</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;sam@me.com, my_group: mikel@me.com, bob@you.com;&#39;</span><span class="p">)</span>
+      <span class="n">list</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">3</span>
+    <span class="k">end</span>
+    
+    <span class="n">it</span> <span class="s2">&quot;should handle a really nasty obsolete address list&quot;</span> <span class="k">do</span>
+      <span class="n">pending</span>
+      <span class="n">psycho_obsolete</span> <span class="o">=</span> <span class="s2">&quot;Mary Smith &lt;@machine.tld:mary@example.net&gt;, , jdoe@test   . example&quot;</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">psycho_obsolete</span><span class="p">)</span>
+      <span class="n">list</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="mi">2</span>
+    <span class="k">end</span>
+    
+
+    <span class="n">it</span> <span class="s2">&quot;should create an address instance for each address returned&quot;</span> <span class="k">do</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;sam@me.com, my_group: mikel@me.com, bob@you.com;&#39;</span><span class="p">)</span>
+      <span class="n">list</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">address</span><span class="o">|</span>
+        <span class="n">address</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="no">Mail</span><span class="o">::</span><span class="no">Address</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">&quot;should provide a list of group names&quot;</span> <span class="k">do</span>
+      <span class="n">list</span> <span class="o">=</span> <span class="no">Mail</span><span class="o">::</span><span class="no">AddressList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;sam@me.com, my_group: mikel@me.com, bob@you.com;&#39;</span><span class="p">)</span>
+      <span class="n">list</span><span class="o">.</span><span class="n">group_names</span><span class="o">.</span><span class="n">should</span> <span class="n">eq</span> <span class="o">[</span><span class="s2">&quot;my_group&quot;</span><span class="o">]</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+</pre></div></td></tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+<script>docas={repo:"joekychen/mail",depth:3}</script>
+<script>document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js' : 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')+'><\\/script>')</script>
+<script src="http://baoshan.github.com/moment/min/moment.min.js"></script>
+<script src="../../../javascript/docco.min.js"></script>
+</html>

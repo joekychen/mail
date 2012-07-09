@@ -1,28 +1,4 @@
-<!DOCTYPE html>
-<html><head>
-<title>joekychen/mail - A Really Ruby Mail Library</title>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<link rel="stylesheet" media="all" href="stylesheets/index.min.css" />
-</head>
-<body>
-<div id="container">
-<div id="background"></div>
-<table cellpadding="0" cellspacing="0">
-<tbody>
-<tr>
-<td>
-<div style="position:absolute;top:0px;left:0px;width:525px">
-<a href="https://github.com/joekychen/mail"><img src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
-</div>
-<h1>mail</h1>
-<p>A Really Ruby Mail Library</p>
-<!--readme-->
-</td>
-<td></td>
-</tr>
-<tr>
-<td>
-<div class="markdown_browser"><h1>Mail</h1>
+<h1>Mail</h1>
 
 <h2>Introduction</h2>
 
@@ -224,11 +200,11 @@ give it a unique, random Message-ID along the lines of:</p>
 <p>```ruby
 mail = Mail.new do
   to         'you@test.lindsaar.net'
-  message_id '<a href="&#x6D;&#97;&#x69;&#x6C;&#x74;&#x6F;:Th&#105;&#x73;&#73;s&#x4D;y&#x4D;e&#115;&#115;&#x61;&#x67;&#x65;&#73;&#100;&#64;&#115;&#x6F;&#x6D;e&#x2E;&#x64;&#x6F;&#109;&#97;i&#x6E;&#46;&#x63;&#x6F;&#109;">Th&#105;&#x73;&#73;s&#x4D;y&#x4D;e&#115;&#115;&#x61;&#x67;&#x65;&#73;&#100;&#64;&#115;&#x6F;&#x6D;e&#x2E;&#x64;&#x6F;&#109;&#97;i&#x6E;&#46;&#x63;&#x6F;&#109;</a>'
+  message_id '<a href="&#109;&#x61;&#x69;&#108;&#116;&#x6F;:T&#x68;i&#115;&#73;&#115;&#x4D;&#121;M&#x65;&#x73;&#115;&#x61;&#x67;&#x65;&#73;&#100;&#x40;s&#111;&#x6D;&#x65;&#46;d&#111;&#109;&#97;&#105;&#x6E;&#46;&#x63;&#x6F;&#109;">T&#x68;i&#115;&#73;&#115;&#x4D;&#121;M&#x65;&#x73;&#115;&#x61;&#x67;&#x65;&#73;&#100;&#x40;s&#111;&#x6D;&#x65;&#46;d&#111;&#109;&#97;&#105;&#x6E;&#46;&#x63;&#x6F;&#109;</a>'
   body       'Some simple body'
 end</p>
 
-<p>mail.to_s =~ /Message-ID: <a href="&#109;&#x61;&#105;&#x6C;&#116;&#111;:&#84;&#104;&#105;&#115;&#x49;&#x73;M&#x79;&#x4D;&#x65;&#115;&#115;&#x61;&#x67;&#101;&#x49;&#100;&#64;&#115;&#111;&#x6D;&#101;&#46;&#100;&#111;&#x6D;&#x61;&#105;&#110;&#x2E;&#x63;&#111;&#109;">&#84;&#104;&#105;&#115;&#x49;&#x73;M&#x79;&#x4D;&#x65;&#115;&#115;&#x61;&#x67;&#101;&#x49;&#100;&#64;&#115;&#111;&#x6D;&#101;&#46;&#100;&#111;&#x6D;&#x61;&#105;&#110;&#x2E;&#x63;&#111;&#109;</a>/ #=> 27
+<p>mail.to_s =~ /Message-ID: <a href="ma&#105;&#x6C;&#116;&#x6F;:&#x54;&#104;&#105;s&#x49;&#x73;&#x4D;&#x79;&#x4D;&#101;&#115;&#115;&#97;&#103;&#x65;&#x49;&#x64;&#64;&#115;&#x6F;&#109;&#x65;&#46;&#100;&#x6F;&#x6D;&#x61;&#x69;&#x6E;&#x2E;&#99;&#x6F;&#109;">&#x54;&#104;&#105;s&#x49;&#x73;&#x4D;&#x79;&#x4D;&#101;&#115;&#115;&#97;&#103;&#x65;&#x49;&#x64;&#64;&#115;&#x6F;&#109;&#x65;&#46;&#100;&#x6F;&#x6D;&#x61;&#x69;&#x6E;&#x2E;&#99;&#x6F;&#109;</a>/ #=> 27
 ```</p>
 
 <p>Mail will take the message_id you assign to it trusting that you know
@@ -339,7 +315,7 @@ mail.to              #=> 'bob@test.lindsaar.net'
 mail.cc              #=> 'sam@test.lindsaar.net'
 mail.subject         #=> "This is the subject"
 mail.date.to<em>s       #=> '21 Nov 1997 09:55:06 -0600'
-mail.message</em>id      #=> '<a href="&#x6D;&#97;&#105;&#108;&#x74;&#x6F;:&#52;&#68;&#54;&#x41;&#x41;&#x37;&#x45;B&#x2E;6&#52;&#x39;&#x30;&#53;&#x33;&#52;&#64;&#120;&#120;&#x78;&#46;&#120;&#120;&#x78;">&#52;&#68;&#54;&#x41;&#x41;&#x37;&#x45;B&#x2E;6&#52;&#x39;&#x30;&#53;&#x33;&#52;&#64;&#120;&#120;&#x78;&#46;&#120;&#120;&#x78;</a>'
+mail.message</em>id      #=> '<a href="&#x6D;&#97;i&#x6C;&#x74;&#x6F;:4&#68;&#x36;&#65;&#65;&#x37;E&#x42;&#46;&#x36;&#52;&#x39;&#48;&#x35;&#51;&#52;&#x40;&#x78;&#120;&#x78;&#x2E;&#x78;&#x78;&#120;">4&#68;&#x36;&#65;&#65;&#x37;E&#x42;&#46;&#x36;&#52;&#x39;&#48;&#x35;&#51;&#52;&#x40;&#x78;&#120;&#x78;&#x2E;&#x78;&#x78;&#120;</a>'
 mail.body.decoded    #=> 'This is the body of the email...
 ```</p>
 
@@ -392,7 +368,7 @@ simple as possible.... (asking a lot from a mail library)</p>
 <p>```ruby
 mail = Mail.deliver do
   to      'nicolas@test.lindsaar.net.au'
-  from    'Mikel Lindsaar <a href="&#109;&#x61;&#x69;&#108;&#116;&#x6F;:&#x6D;&#x69;&#107;&#101;&#x6C;&#x40;t&#x65;&#115;&#116;&#x2E;&#108;&#x69;&#110;&#x64;&#115;&#97;&#97;&#x72;.&#x6E;&#101;&#116;&#46;&#97;&#x75;">&#x6D;&#x69;&#107;&#101;&#x6C;&#x40;t&#x65;&#115;&#116;&#x2E;&#108;&#x69;&#110;&#x64;&#115;&#97;&#97;&#x72;.&#x6E;&#101;&#116;&#46;&#97;&#x75;</a>'
+  from    'Mikel Lindsaar <a href="m&#x61;&#x69;&#x6C;&#116;&#x6F;:&#x6D;&#x69;&#107;&#x65;&#108;&#x40;&#x74;&#x65;&#115;&#x74;&#46;&#108;&#x69;&#110;&#x64;&#115;&#97;&#x61;&#114;.n&#x65;&#116;&#46;&#97;&#x75;">&#x6D;&#x69;&#107;&#x65;&#108;&#x40;&#x74;&#x65;&#115;&#x74;&#46;&#108;&#x69;&#110;&#x64;&#115;&#97;&#x61;&#114;.n&#x65;&#116;&#46;&#97;&#x75;</a>'
   subject 'First multipart email sent with Mail'</p>
 
 <p>text_part do
@@ -414,17 +390,17 @@ so desire...</p>
 puts mail.to_s #=></p>
 
 <p>To: nicolas@test.lindsaar.net.au
-From: Mikel Lindsaar <a href="&#109;&#97;&#105;&#108;&#x74;&#x6F;:&#x6D;&#x69;&#x6B;e&#108;&#x40;&#x74;&#x65;&#x73;&#x74;&#x2E;&#x6C;&#x69;&#x6E;&#100;&#x73;&#97;&#97;r&#x2E;&#x6E;&#x65;&#116;&#46;&#97;&#117;">&#x6D;&#x69;&#x6B;e&#108;&#x40;&#x74;&#x65;&#x73;&#x74;&#x2E;&#x6C;&#x69;&#x6E;&#100;&#x73;&#97;&#97;r&#x2E;&#x6E;&#x65;&#116;&#46;&#97;&#117;</a>
+From: Mikel Lindsaar <a href="&#x6D;&#x61;&#x69;&#x6C;&#116;&#x6F;:&#109;&#x69;&#x6B;&#x65;l&#64;&#116;&#101;&#x73;&#x74;&#x2E;&#x6C;&#x69;&#x6E;&#x64;&#115;&#97;a&#114;&#x2E;&#110;&#101;&#x74;.&#x61;&#117;">&#109;&#x69;&#x6B;&#x65;l&#64;&#116;&#101;&#x73;&#x74;&#x2E;&#x6C;&#x69;&#x6E;&#x64;&#115;&#97;a&#114;&#x2E;&#110;&#101;&#x74;.&#x61;&#117;</a>
 Subject: First multipart email sent with Mail
 Content-Type: multipart/alternative;
   boundary=--==<em>mimepart</em>4a914f0c911be_6f0f1ab8026659
-Message-ID: <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6F;:&#x34;&#x61;&#x39;14f&#x31;&#50;&#x61;&#99;7&#x65;&#95;&#x36;f&#x30;&#102;1&#x61;&#98;&#56;&#x30;&#50;&#54;&#x37;&#x64;&#x31;&#64;&#x62;&#97;&#x63;i&#x2E;l&#x6F;&#99;&#97;&#108;&#46;&#109;&#x61;&#105;&#x6C;">&#x34;&#x61;&#x39;14f&#x31;&#50;&#x61;&#99;7&#x65;&#95;&#x36;f&#x30;&#102;1&#x61;&#98;&#56;&#x30;&#50;&#54;&#x37;&#x64;&#x31;&#64;&#x62;&#97;&#x63;i&#x2E;l&#x6F;&#99;&#97;&#108;&#46;&#109;&#x61;&#105;&#x6C;</a>
+Message-ID: <a href="m&#x61;&#x69;&#108;&#x74;&#x6F;:&#x34;&#97;&#57;&#x31;&#x34;&#x66;&#x31;&#50;&#x61;c&#x37;&#101;&#95;&#x36;&#x66;&#x30;&#x66;&#x31;&#x61;b&#56;&#x30;&#50;&#54;&#55;&#100;&#x31;&#64;&#98;&#97;&#x63;&#105;&#46;&#108;&#111;c&#x61;l.&#109;&#97;&#x69;&#x6C;">&#x34;&#97;&#57;&#x31;&#x34;&#x66;&#x31;&#50;&#x61;c&#x37;&#101;&#95;&#x36;&#x66;&#x30;&#x66;&#x31;&#x61;b&#56;&#x30;&#50;&#54;&#55;&#100;&#x31;&#64;&#98;&#97;&#x63;&#105;&#46;&#108;&#111;c&#x61;l.&#109;&#97;&#x69;&#x6C;</a>
 Date: Mon, 24 Aug 2009 00:15:46 +1000
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit</p>
 
 <p>----==<em>mimepart</em>4a914f0c911be_6f0f1ab8026659
-Content-ID: <a href="m&#97;&#x69;&#x6C;&#116;&#111;:&#52;&#97;&#x39;&#49;&#x34;&#x66;&#x31;&#50;&#x63;&#x38;&#99;&#x34;&#95;6f&#x30;&#x66;&#49;&#97;&#98;&#x38;0&#50;&#54;8&#100;&#x36;&#x40;&#98;&#97;&#x63;&#105;&#46;&#x6C;&#111;&#99;&#97;&#x6C;.&#x6D;&#x61;&#x69;&#108;">&#52;&#97;&#x39;&#49;&#x34;&#x66;&#x31;&#50;&#x63;&#x38;&#99;&#x34;&#95;6f&#x30;&#x66;&#49;&#97;&#98;&#x38;0&#50;&#54;8&#100;&#x36;&#x40;&#98;&#97;&#x63;&#105;&#46;&#x6C;&#111;&#99;&#97;&#x6C;.&#x6D;&#x61;&#x69;&#108;</a>
+Content-ID: <a href="&#109;&#x61;&#x69;&#108;&#116;&#111;:&#52;a&#x39;&#49;&#52;&#x66;&#49;&#50;&#x63;&#56;&#99;&#52;&#x5F;&#54;f&#48;&#102;&#x31;&#x61;b&#56;&#x30;&#x32;&#54;&#x38;&#100;&#54;&#x40;&#x62;&#x61;c&#105;&#x2E;&#x6C;&#111;&#99;&#x61;&#108;&#46;m&#97;&#x69;&#108;">&#52;a&#x39;&#49;&#52;&#x66;&#49;&#50;&#x63;&#56;&#99;&#52;&#x5F;&#54;f&#48;&#102;&#x31;&#x61;b&#56;&#x30;&#x32;&#54;&#x38;&#100;&#54;&#x40;&#x62;&#x61;c&#105;&#x2E;&#x6C;&#111;&#99;&#x61;&#108;&#46;m&#97;&#x69;&#108;</a>
 Date: Mon, 24 Aug 2009 00:15:46 +1000
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -433,7 +409,7 @@ Content-Transfer-Encoding: 7bit</p>
 <p>This is plain text
 ----==<em>mimepart</em>4a914f0c911be_6f0f1ab8026659
 Content-Type: text/html; charset=UTF-8
-Content-ID: <a href="&#x6D;&#x61;i&#108;&#x74;o:&#52;&#97;&#57;&#49;&#52;&#x66;&#49;&#x32;&#x63;&#x66;&#56;&#54;&#95;&#x36;&#x66;&#x30;&#x66;1a&#98;&#x38;&#48;&#50;&#x36;&#x39;&#50;&#x63;&#x40;&#98;&#x61;&#99;&#105;&#x2E;l&#111;&#x63;&#x61;&#x6C;.&#x6D;&#97;&#105;&#108;">&#52;&#97;&#57;&#49;&#52;&#x66;&#49;&#x32;&#x63;&#x66;&#56;&#54;&#95;&#x36;&#x66;&#x30;&#x66;1a&#98;&#x38;&#48;&#50;&#x36;&#x39;&#50;&#x63;&#x40;&#98;&#x61;&#99;&#105;&#x2E;l&#111;&#x63;&#x61;&#x6C;.&#x6D;&#97;&#105;&#108;</a>
+Content-ID: <a href="&#x6D;&#x61;&#105;&#108;&#x74;&#x6F;:&#x34;&#97;&#x39;&#49;&#52;&#x66;&#49;&#50;&#99;&#102;&#56;&#x36;&#95;6&#x66;&#48;&#102;&#x31;&#97;&#x62;&#x38;&#x30;&#x32;&#54;&#57;&#50;&#x63;&#64;&#x62;&#97;&#99;&#x69;&#46;&#x6C;&#111;&#99;&#97;&#108;&#46;m&#x61;&#105;l">&#x34;&#97;&#x39;&#49;&#52;&#x66;&#49;&#50;&#99;&#102;&#56;&#x36;&#95;6&#x66;&#48;&#102;&#x31;&#97;&#x62;&#x38;&#x30;&#x32;&#54;&#57;&#50;&#x63;&#64;&#x62;&#97;&#99;&#x69;&#46;&#x6C;&#111;&#99;&#97;&#108;&#46;m&#x61;&#105;l</a>
 Date: Mon, 24 Aug 2009 00:15:46 +1000
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit</p>
@@ -459,7 +435,7 @@ an email, not Mail::Messages.</p>
 <p>```ruby
 mail = Mail.new do
   to      'nicolas@test.lindsaar.net.au'
-  from    'Mikel Lindsaar <a href="&#x6D;&#x61;&#x69;&#x6C;&#x74;&#111;:&#109;&#x69;&#x6B;&#x65;&#x6C;&#x40;&#x74;&#x65;&#115;&#x74;&#46;&#108;&#105;&#x6E;&#x64;&#x73;&#97;&#97;&#114;&#x2E;&#x6E;&#101;&#116;&#46;&#97;&#117;">&#109;&#x69;&#x6B;&#x65;&#x6C;&#x40;&#x74;&#x65;&#115;&#x74;&#46;&#108;&#105;&#x6E;&#x64;&#x73;&#97;&#97;&#114;&#x2E;&#x6E;&#101;&#116;&#46;&#97;&#117;</a>'
+  from    'Mikel Lindsaar <a href="&#x6D;&#97;&#105;&#x6C;&#x74;&#x6F;:&#109;&#x69;&#x6B;e&#x6C;&#x40;&#x74;e&#115;&#116;&#46;&#x6C;&#105;&#110;&#100;&#x73;&#97;&#x61;&#x72;&#46;&#x6E;e&#x74;&#46;&#x61;&#x75;">&#109;&#x69;&#x6B;e&#x6C;&#x40;&#x74;e&#115;&#116;&#46;&#x6C;&#105;&#110;&#100;&#x73;&#97;&#x61;&#x72;&#46;&#x6E;e&#x74;&#46;&#x61;&#x75;</a>'
   subject 'First multipart email sent with Mail'
 end</p>
 
@@ -533,7 +509,7 @@ file_data = File.read('path/to/myfile.pdf')
 <p>```ruby
 @mail = Mail.new do
   to      'nicolas@test.lindsaar.net.au'
-  from    'Mikel Lindsaar <a href="m&#97;&#x69;&#x6C;&#116;&#111;:&#x6D;&#105;&#107;&#x65;&#x6C;&#64;&#116;&#x65;&#115;&#116;&#46;&#108;&#105;&#x6E;&#x64;&#115;&#97;&#97;&#114;.&#110;&#101;&#116;&#x2E;&#97;u">&#x6D;&#105;&#107;&#x65;&#x6C;&#64;&#116;&#x65;&#115;&#116;&#46;&#108;&#105;&#x6E;&#x64;&#115;&#97;&#97;&#114;.&#110;&#101;&#116;&#x2E;&#97;u</a>'
+  from    'Mikel Lindsaar <a href="&#109;&#x61;&#x69;&#108;&#116;&#x6F;:&#x6D;&#105;&#x6B;&#x65;&#x6C;&#64;&#116;&#101;&#115;&#116;&#x2E;&#108;i&#110;&#x64;&#x73;&#x61;&#97;&#114;&#x2E;&#110;&#101;&#116;&#x2E;&#97;&#x75;">&#x6D;&#105;&#x6B;&#x65;&#x6C;&#64;&#116;&#101;&#115;&#116;&#x2E;&#108;i&#110;&#x64;&#x73;&#x61;&#97;&#114;&#x2E;&#110;&#101;&#116;&#x2E;&#97;&#x75;</a>'
   subject 'First multipart email sent with Mail'</p>
 
 <p>text_part do
@@ -677,53 +653,4 @@ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p></div>
-</td>
-<td>
-<!--content-->
-<div class="content">
-<h2 id="language_statistics_heading">Language Statistics</h2>
-<table id="code_stats">
-
-<tr>
-<td>100%</td>
-<td>Ruby</td>
-<td><span data-lang="Ruby"></span></td>
-<td style="width:400px;"><div><span data-lang="Ruby" percent="100%" style="width:0%;"></span><span total="30405"></span></div></td>
-</tr>
-<tr>
-
-</table>
-<h2 id="recent_commits_heading">Recent Commits</h2>
-<ol id="recent_commits">
-
-
-<li>Merge pull request #387 from mickeyreiss/master, Arun Agrawal, <span relative_date="1335244262000"></span></li>
-
-
-<li>Fixed typo in documentation, Mickey Reiss, <span relative_date="1335244077000"></span></li>
-
-
-<li>Merge branch 'master' of https://github.com/robdimarco/mail into robdimarco-master, Mikel Lindsaar, <span relative_date="1332572944000"></span></li>
-
-
-<li>Merge pull request #374 from gerad/master, Mikel Lindsaar, <span relative_date="1332572848000"></span></li>
-
-
-<li>Merge pull request #364 from matehat/patch-1, Arun Agrawal, <span relative_date="1332572667000"></span></li>
-
-</ol>
-<div id="filebrowser">
-<div id="breadcrumb"><span>mail</span></div>
-<div id="filelists"><div depth="0" class="filelist"><table class="repo_nav"> <thead><tr><th></th><th>name</th><th class="size"><span>sloc</span>&nbsp;&nbsp;<span>size</span></th><th>age</th><th class="message"><span>message</span>&nbsp;&nbsp;<span>description</span><div class="history"><a target="_blank" href="https://github.com/joekychen/mail/commits/master">history</a></div></th></tr></thead> <tbody>   <tr class="d"> <td class="icon"></td> <td><a forward>lib</a></td> <td class="size"><span>-</span><span>4 items</span></td> <td relative_date="1335244077000"></td> <td class="message"><div><span>Fixed typo in documentation</span><span class="file_browser_author" email="mreiss@andrew.cmu.edu"> Mickey Reiss</span></div><div></div></td> </tr>  <tr class="d"> <td class="icon"></td> <td><a forward>patches</a></td> <td class="size"><span>-</span><span>1 items</span></td> <td relative_date="1296017652000"></td> <td class="message"><div><span>Adding patch file</span><span class="file_browser_author" email="mikel@rubyx.com"> Mikel Lindsaar</span></div><div></div></td> </tr>  <tr class="d"> <td class="icon"></td> <td><a forward>reference</a></td> <td class="size"><span>-</span><span>25 items</span></td> <td relative_date="1291970874000"></td> <td class="message"><div><span>Closes issue 135 - Invalid filename for windows</span><span class="file_browser_author" email="mikel@rubyx.com"> Mikel Lindsaar</span></div><div></div></td> </tr>  <tr class="d"> <td class="icon"></td> <td><a forward>spec</a></td> <td class="size"><span>-</span><span>6 items</span></td> <td relative_date="1331725467000"></td> <td class="message"><div><span>Preventing file system traversal in file_delivery method</span><span class="file_browser_author" email="mikel@rubyx.com"> Mikel Lindsaar</span></div><div></div></td> </tr>  <tr class="f"> <td class="icon"></td> <td><a href="https://github.com/joekychen/mail/blob/master/CHANGELOG.rdoc"target='_blank'>CHANGELOG.rdoc</a></td> <td class="size"><span>-</span><span>28K</span></td> <td relative_date="1332572561000"></td> <td class="message"><div><span>Removing unused variable</span><span class="file_browser_author" email="mikel@rubyx.com"> Mikel Lindsaar</span></div><div></div></td> </tr>  <tr class="f markdown"> <td class="icon"></td> <td><a markdown="CONTRIBUTING.html">CONTRIBUTING.md</a></td> <td class="size"><span>36 lines</span><span>1.9K</span></td> <td relative_date="1326511286000"></td> <td class="message"><div><span>Updating README and CONTRIBUTING</span><span class="file_browser_author" email="mikel@rubyx.com"> Mikel Lindsaar</span></div><div></div></td> </tr>  <tr class="f"> <td class="icon"></td> <td><a href="https://github.com/joekychen/mail/blob/master/Dependencies.txt"target='_blank'>Dependencies.txt</a></td> <td class="size"><span>-</span><span>213B</span></td> <td relative_date="1258600558000"></td> <td class="message"><div><span>Rename Dependancies.txt -> Dependencies.txt</span><span class="file_browser_author" email="ninja@engineyard.com"> Tim Carey-Smith, Corey Donohoe, Simon Rozet & Ben Burkert</span></div><div></div></td> </tr>  <tr class="f"> <td class="icon"></td> <td><a href="Gemfile.html">Gemfile</a></td> <td class="size"><span>23 lines</span><span>523B</span></td> <td relative_date="1327068476000"></td> <td class="message"><div><span>Updating treetop version, specs now run 20-30% faster</span><span class="file_browser_author" email="mikel@rubyx.com"> Mikel Lindsaar</span></div><div></div></td> </tr>  <tr class="f markdown shown"> <td class="icon"></td> <td><a markdown="README.html">README.md</a></td> <td class="size"><span>501 lines</span><span>20K</span></td> <td relative_date="1330608286000"></td> <td class="message"><div><span>Small typo in readme.</span><span class="file_browser_author" email="mathieu.damours@nextorms.com"> Mathieu D'Amours</span></div><div>README.md for project mail</div></td> </tr>  <tr class="f"> <td class="icon"></td> <td><a href="https://github.com/joekychen/mail/blob/master/ROADMAP"target='_blank'>ROADMAP</a></td> <td class="size"><span>-</span><span>2.4K</span></td> <td relative_date="1270810999000"></td> <td class="message"><div><span>Updating Roadmap</span><span class="file_browser_author" email="raasdnil@gmail.com"> Mikel Lindsaar</span></div><div></div></td> </tr>  <tr class="f"> <td class="icon"></td> <td><a href="Rakefile.html">Rakefile</a></td> <td class="size"><span>32 lines</span><span>1023B</span></td> <td relative_date="1326627498000"></td> <td class="message"><div><span>Version bump to 2.4.0 and gem release</span><span class="file_browser_author" email="mikel@rubyx.com"> Mikel Lindsaar</span></div><div></div></td> </tr>  <tr class="f"> <td class="icon"></td> <td><a href="https://github.com/joekychen/mail/blob/master/TODO.rdoc"target='_blank'>TODO.rdoc</a></td> <td class="size"><span>-</span><span>425B</span></td> <td relative_date="1266973237000"></td> <td class="message"><div><span>Fixing up TODO and docs</span><span class="file_browser_author" email="raasdnil@gmail.com"> Mikel Lindsaar</span></div><div></div></td> </tr>  <tr class="f"> <td class="icon"></td> <td><a href="https://github.com/joekychen/mail/blob/master/mail.gemspec"target='_blank'>mail.gemspec</a></td> <td class="size"><span>-</span><span>1.0K</span></td> <td relative_date="1326627498000"></td> <td class="message"><div><span>Version bump to 2.4.0 and gem release</span><span class="file_browser_author" email="mikel@rubyx.com"> Mikel Lindsaar</span></div><div></div></td> </tr>  <tr class="f"> <td class="icon"></td> <td><a href="test.html">test.rb</a></td> <td class="size"><span>12 lines</span><span>426B</span></td> <td relative_date="1288062582000"></td> <td class="message"><div><span>Merge branch 'master' of github.com:dball/mail  Conflicts: 	lib/mail/encodings.rb 	lib/mail/utilities.rb 	spec/mail/network/retriever_methods/pop3_spec.rb</span><span class="file_browser_author" email="donald.ball@gmail.com"> Donald Ball</span></div><div></div></td> </tr>  </tbody> </table> <div class="spinner"></div> </div></div>
-</div>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<script>docas={user:"joekychen",repo:"mail"};document.write('<script src=' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0rc1/zepto.min.js':'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js') + '><\/script>')</script>
-<script src="javascript/index.min.js"></script>
-</body>
-</html>
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>

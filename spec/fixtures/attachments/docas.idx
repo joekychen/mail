@@ -1,0 +1,8 @@
+f | test.tiff | g | 14K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | basic_email.eml | g | 1.5K |  | Mikel Lindsaar | raasdnil@gmail.com | 1256986806 |  | Adding changes to get compatibility with actionmailer, also handled attachment handling
+f | test.pdf | g | 11K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | test.png | g | 6.8K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | test.jpg | g | 2.0K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | test.zip | g | 11K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | test.gif | g | 3.6K |  | Mikel Lindsaar | raasdnil@gmail.com | 1253258364 |  | Added initial attachment support
+f | てすと.txt | g | 33B |  | Mikel Lindsaar | raasdnil@gmail.com | 1256431468 |  | Adding in some multibyte support... and cleanup for first gem release

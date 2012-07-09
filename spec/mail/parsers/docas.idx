@@ -1,0 +1,2 @@
+f | content_transfer_encoding_parser_spec.rb | s | 2.3K | 62 | Jason Stirk | jason@reinteractive.net | 1326514617 |  | Fix warning "useless use of == in void context"
+f | address_lists_parser_spec.rb | s | 527B | 13 | Jeremy Kemper | jeremy@bitsweat.net | 1269844621 |  | Switch from vendored 1.4.3 fork to gem dep on 1.4.5
