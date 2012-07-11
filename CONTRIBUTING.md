@@ -1,3 +1,5 @@
+    Here are some thoughts on how to get your pull request merged quickly.
+
 Contributing to Mail
 ====================
 
